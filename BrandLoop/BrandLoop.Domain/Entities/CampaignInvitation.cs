@@ -16,8 +16,8 @@ namespace BrandLoop.Domain.Entities
         public int CampaignId { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string UserName { get; set; } // KOL được mời
+        [StringLength(255)]
+        public string Email { get; set; } // KOL được mời
 
         [StringLength(255)]
         public string Title { get; set; }
@@ -40,7 +40,7 @@ namespace BrandLoop.Domain.Entities
         [ForeignKey("CampaignId")]
         public virtual Campaign Campaign { get; set; }
 
-        [ForeignKey("UserName")]
+        [ForeignKey("Email")]
         public virtual User User { get; set; }
 
         public virtual ICollection<Deal> Deals { get; set; }

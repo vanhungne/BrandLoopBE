@@ -14,8 +14,8 @@ namespace BrandLoop.Domain.Entities
         public int SkillId { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string UserName { get; set; }
+        [StringLength(255)]
+        public string Email { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -25,7 +25,7 @@ namespace BrandLoop.Domain.Entities
         public string ProficiencyLevel { get; set; } // Beginner, Intermediate, Expert
 
         // Navigation properties
-        [ForeignKey("UserName")]
+        [ForeignKey("Email")]
         public virtual User User { get; set; }
     }
 }

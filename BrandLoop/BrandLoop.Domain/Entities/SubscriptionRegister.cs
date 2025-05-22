@@ -14,8 +14,8 @@ namespace BrandLoop.Domain.Entities
         public int Id { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string UserName { get; set; }
+        [StringLength(255)]
+        public string Email { get; set; }
 
         public int SubscriptionId { get; set; }
 
@@ -27,7 +27,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime? ExpirationDate { get; set; }
 
         // Navigation properties
-        [ForeignKey("UserName")]
+        [ForeignKey("Email")]
         public virtual User User { get; set; }
 
         [ForeignKey("SubscriptionId")]

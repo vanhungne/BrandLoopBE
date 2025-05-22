@@ -12,10 +12,6 @@ namespace BrandLoop.Domain.Entities
     public class User
     {
         [Key]
-        [StringLength(50)]
-        public string UserName { get; set; }
-
-        [Required]
         [StringLength(255)]
         public string Email { get; set; }
 

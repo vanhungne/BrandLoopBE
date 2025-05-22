@@ -35,7 +35,7 @@ namespace BrandLoop.Infratructure.Reporitory
 
         public async Task<string> ConfirmEmailAsync(string username)
         {
-            var user = await GetUserByUsernameAsync(username);
+            var user = await GetUserByEmailAsync(username);
             if (user == null)
             {
                 return "Invalid confirmation request.";
@@ -95,7 +95,7 @@ namespace BrandLoop.Infratructure.Reporitory
         public string GetMailBody(RegisterBaseModel model)
         {
             string apiUrl = _configuration["Host:https"];
-            string token = GenerateVerificationToken(model.Username);
+            string token = GenerateVerificationToken(model.Email);
 
             // Liên kết xác nhận sử dụng phương thức GET
             string url = $"{apiUrl}/api/Authen/confirm-email?token={token}";
@@ -123,13 +123,13 @@ namespace BrandLoop.Infratructure.Reporitory
     </div>", url);
         }
 
-        public async Task<User> GetUserByUsernameAsync(string username)
+        public async Task<User> GetUserByEmailAsync(string email)
         {
-            if (string.IsNullOrWhiteSpace(username))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                throw new ArgumentNullException(nameof(username), "Username cannot be null or empty."); // Ném ngoại lệ nếu username không hợp lệ
+                throw new ArgumentNullException(nameof(email), "Username cannot be null or empty."); // Ném ngoại lệ nếu username không hợp lệ
             }
-            return await _dbcontext.Users?.FirstOrDefaultAsync(u => u.UserName == username);
+            return await _dbcontext.Users?.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public Task UpdateUserAsync(User user)
@@ -137,16 +137,16 @@ namespace BrandLoop.Infratructure.Reporitory
             throw new NotImplementedException();
         }
 
-        public string GenerateVerificationToken(string username)
+        public string GenerateVerificationToken(string email)
         {
-            if (string.IsNullOrWhiteSpace(username))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                throw new ArgumentException("Username cannot be null or empty.", nameof(username));
+                throw new ArgumentException("Username cannot be null or empty.", nameof(email));
             }
 
             var claims = new[]
             {
-        new Claim(ClaimTypes.NameIdentifier, username),
+        new Claim(ClaimTypes.NameIdentifier, email),
     };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -181,13 +181,13 @@ namespace BrandLoop.Infratructure.Reporitory
             </div>
             <p style='margin-top: 20px; font-size: 14px; color: #777;'>If you did not register with BrandLoop, please ignore this email.</p>
         </div>
-    </div>", accountType, model.Username, model.Email, model.FullName);
+    </div>", accountType, model.Email, model.FullName);
             }
             else
             {
                 // Original verification email for regular users
                 string apiUrl = _configuration["Host:https"];
-                string token = GenerateVerificationToken(model.Username);
+                string token = GenerateVerificationToken(model.Email);
                 string url = $"{apiUrl}/api/Authen/confirm-email?token={token}";
 
                 return string.Format(@"
