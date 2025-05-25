@@ -166,9 +166,9 @@ namespace BrandLoop.API.Controllers
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var username = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                var email = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
-                var result = await _emailSender.ConfirmEmailAsync(username);
+                var result = await _emailSender.ConfirmEmailAsync(email);
                 return Content(@"
     <html>
         <head>
@@ -237,16 +237,16 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpPost("send-verification-email")]
-        public async Task<IActionResult> SendVerificationEmail([FromQuery] string username)
+        public async Task<IActionResult> SendVerificationEmail([FromQuery] string email)
         {
-            if (string.IsNullOrWhiteSpace(username))
+            if (string.IsNullOrWhiteSpace(email))
             {
-                return BadRequest(new { message = "Username cannot be null or empty." });
+                return BadRequest(new { message = "Email cannot be null or empty." });
             }
 
             try
             {
-                var user = await _emailSender.GetUserByUsernameAsync(username);
+                var user = await _emailSender.GetUserByEmailAsync(email);
 
                 if (user == null)
                 {
@@ -260,7 +260,6 @@ namespace BrandLoop.API.Controllers
 
                 string emailBody = _emailSender.GetMailBody(new RegisterBaseModel
                 {
-                    Username = user.UserName,
                     Email = user.Email
                 });
 

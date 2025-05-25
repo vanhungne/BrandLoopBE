@@ -13,8 +13,8 @@ namespace BrandLoop.Domain.Entities
         [Key]
         public int LogId { get; set; }
 
-        [StringLength(50)]
-        public string UserName { get; set; }
+        [StringLength(255)]
+        public string Email { get; set; }
 
         [StringLength(255)]
         public string Action { get; set; }
@@ -29,7 +29,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
-        [ForeignKey("UserName")]
+        [ForeignKey("Email")]
         public virtual User User { get; set; }
     }
 }

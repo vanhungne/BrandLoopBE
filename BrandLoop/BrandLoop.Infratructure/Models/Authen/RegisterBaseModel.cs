@@ -10,11 +10,7 @@ namespace BrandLoop.Infratructure.Models.Authen
     public class RegisterBaseModel
     {
         [Required]
-        [StringLength(50)]
-        public string Username { get; set; }
-
-        [Required]
-        [StringLength(100)]
+        [StringLength(255)]
         [EmailAddress]
         public string Email { get; set; }
 

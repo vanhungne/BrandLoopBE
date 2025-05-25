@@ -47,7 +47,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             var claims = new[]
             {
                     new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
-                    new Claim(ClaimTypes.NameIdentifier, user.UserName?.ToString() ?? string.Empty),
+                    new Claim(ClaimTypes.NameIdentifier, user.Email?.ToString() ?? string.Empty),
                     new Claim(ClaimTypes.Role, user.RoleId == 1 ? "Admin" : user.RoleId == 2 ? "Brand":  user.RoleId == 3 ? "KOL" :"Guest"),
                     new Claim("RoleId", user.RoleId.ToString() ?? string.Empty),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
@@ -68,7 +68,7 @@ namespace BrandLoop.Infratructure.ReporitorY
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        public async Task<string> GenerateRefreshToken(string username)
+        public async Task<string> GenerateRefreshToken(string email)
         {
             var refreshToken = Guid.NewGuid().ToString();
             var expriDate = DateTimeHelper.GetVietnamNow().AddDays(7);
@@ -76,7 +76,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             var newToken = new RefreshTokens
             {
                 Token = refreshToken,
-                UserName = username,
+                Email = email,
                 Expires = expriDate,
             };
             _context.RefreshTokens.Add(newToken);
@@ -112,7 +112,7 @@ namespace BrandLoop.Infratructure.ReporitorY
 
             var claims = new[]
             {
-        new Claim(ClaimTypes.NameIdentifier, user.UserName),
+        new Claim(ClaimTypes.NameIdentifier, user.Email),
         new Claim(ClaimTypes.Role, user.Role.RoleName),
         new Claim("RoleId", user.RoleId.ToString()),
         new Claim(ClaimTypes.Email, user.Email),
@@ -148,7 +148,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                 return (null, null);
             }
             var accessToken = await GenerateAccessToken(user);
-            var refreshToken = await GenerateRefreshToken(user.UserName);
+            var refreshToken = await GenerateRefreshToken(user.Email);
             user.LastLogin = DateTimeHelper.GetVietnamNow();
             await _context.SaveChangesAsync();
 
@@ -164,20 +164,20 @@ namespace BrandLoop.Infratructure.ReporitorY
 
             var user = await _context.Users
                 .Include(u => u.Role)
-                .Where(u => u.UserName == refreshTokenEntity.UserName && u.Status == UserStatus.Active)
+                .Where(u => u.Email == refreshTokenEntity.Email && u.Status == UserStatus.Active)
                 .SingleOrDefaultAsync();
 
             if (user == null)
                 return (null, null);
 
             var accessToken = await GenerateAccessToken(user);
-            var newRefreshToken = await GenerateRefreshToken(user.UserName);
+            var newRefreshToken = await GenerateRefreshToken(user.Email);
             user.LastLogin = DateTimeHelper.GetVietnamNow();
             await _context.SaveChangesAsync();
             return (accessToken, newRefreshToken);
         }
 
-        public async Task<bool> Logout(string username)
+        public async Task<bool> Logout(string email)
         {
             return await Task.FromResult(true);
         }
@@ -196,7 +196,6 @@ namespace BrandLoop.Infratructure.ReporitorY
             }
             var user = new User
             {
-                UserName = model.Username,
                 Email = model.Email,
                 Phone = model.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
@@ -217,9 +216,6 @@ namespace BrandLoop.Infratructure.ReporitorY
         {
             if (await _context.Users.AnyAsync(u => u.Email == model.Email))
                 return "Email already exists";
-
-            if (await _context.Users.AnyAsync(u => u.UserName == model.Username))
-                return "Username already exists";
 
             if (await _context.Users.AnyAsync(u => u.Phone == model.PhoneNumber))
                 return "Phone number already exists";
@@ -250,7 +246,6 @@ namespace BrandLoop.Infratructure.ReporitorY
             // Create user with pending status (Status = 0)
             var user = new User
             {
-                UserName = model.Username,
                 Email = model.Email,
                 Phone = model.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
@@ -265,7 +260,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             // Create brand profile
             var brandProfile = new BrandProfile
             {
-                UserName = model.Username,
+                Email = model.Email,
                 CompanyName = model.CompanyName,
                 Industry = model.Industry,
                 Website = model.Website,
@@ -293,7 +288,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                     await _context.SaveChangesAsync();
 
                     // Notify admin about new registration
-                    await NotifyAdminsAboutRegistration(user.UserName, "Brand");
+                    await NotifyAdminsAboutRegistration(user.Email, "Brand");
 
                     await transaction.CommitAsync();
                 }
@@ -329,7 +324,6 @@ namespace BrandLoop.Infratructure.ReporitorY
             // Create user with pending status (Status = 0)
             var user = new User
             {
-                UserName = model.Username,
                 Email = model.Email,
                 Phone = model.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
@@ -344,7 +338,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             // Create KOL profile
             var kolProfile = new InfluenceProfile
             {
-                UserName = model.Username,
+                Email = model.Email,
                 Nickname = model.Nickname,
                 Bio = model.Bio,
                 ContentCategory = model.ContentCategory,
@@ -374,7 +368,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                     await _context.SaveChangesAsync();
 
                     // Notify admin about new registration
-                    await NotifyAdminsAboutRegistration(user.UserName, "KOL");
+                    await NotifyAdminsAboutRegistration(user.Email, "KOL");
 
                     await transaction.CommitAsync();
                 }
@@ -408,9 +402,9 @@ namespace BrandLoop.Infratructure.ReporitorY
         }
 
         // Method to approve registration
-        public async Task<bool> ApproveRegistration(string username)
+        public async Task<bool> ApproveRegistration(string email)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username && u.Status == 0);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Status == 0);
 
             if (user == null)
                 return false;
@@ -434,7 +428,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             await _notificationRepository.CreateNotification(
                 new Notification
                 {
-                    UserName = username,
+                    Email = email,
                     Content = notificationMessage,
                     NotificationType = "Registration",
                     IsRead = false,
@@ -445,9 +439,9 @@ namespace BrandLoop.Infratructure.ReporitorY
         }
 
         // Method to reject registration
-        public async Task<bool> RejectRegistration(string username, string reason)
+        public async Task<bool> RejectRegistration(string email, string reason)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username && u.Status == 0);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Status == 0);
 
             if (user == null)
                 return false;
@@ -471,7 +465,7 @@ namespace BrandLoop.Infratructure.ReporitorY
         }
 
         // Helper method to notify admins about new registrations
-        private async Task NotifyAdminsAboutRegistration(string username, string accountType)
+        private async Task NotifyAdminsAboutRegistration(string email, string accountType)
         {
             // Get all admin users
             var admins = await _context.Users
@@ -483,8 +477,8 @@ namespace BrandLoop.Infratructure.ReporitorY
                 await _notificationRepository.CreateNotification(
                     new Notification
                     {
-                        UserName = admin.UserName,
-                        Content = $"New {accountType} registration: {username} requires approval",
+                        Email = admin.Email,
+                        Content = $"New {accountType} registration: {email} requires approval",
                         NotificationType = "AdminRegistration",
                         IsRead = false,
                         CreatedAt = DateTimeHelper.GetVietnamNow()

@@ -16,10 +16,11 @@ namespace BrandLoop.Domain.Entities
 
         public string? Token { get; set; }
 
-        public string UserName { get; set; }
+        [StringLength(255)]
+        public string Email { get; set; }
 
         public DateTime Expires { get; set; }
-        [ForeignKey("UserName")]
+        [ForeignKey("Email")]
         public User? User { get; set; }
 
     }

@@ -23,7 +23,7 @@ namespace BrandLoop.Domain.Entities
 
         public string Content { get; set; }
 
-        [StringLength(50)]
+        [StringLength(255)]
         public string Author { get; set; }
 
         public DateTime? PublishedAt { get; set; }

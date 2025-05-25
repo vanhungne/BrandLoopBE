@@ -10,8 +10,8 @@ namespace BrandLoop.Infratructure.Interface
     public interface INotificationRepository
     {
         Task<bool> CreateNotification(Notification notification);
-        Task<List<Notification>> GetUserNotifications(string username, bool unreadOnly = false);
+        Task<List<Notification>> GetUserNotifications(string email, bool unreadOnly = false);
         Task<bool> MarkNotificationAsRead(int notificationId);
-        Task<bool> MarkAllNotificationsAsRead(string username);
+        Task<bool> MarkAllNotificationsAsRead(string email);
     }
 }

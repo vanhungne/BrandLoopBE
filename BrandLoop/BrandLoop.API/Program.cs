@@ -147,13 +147,13 @@ public class Program
         // Middleware pipeline
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
-                c.RoutePrefix = string.Empty;
-                c.InjectJavascript("/swagger/custom-swagger.js");
-            });
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+            c.RoutePrefix = string.Empty;
+            c.InjectJavascript("/swagger/custom-swagger.js");
+        });
         }
         app.UseStaticFiles();
 

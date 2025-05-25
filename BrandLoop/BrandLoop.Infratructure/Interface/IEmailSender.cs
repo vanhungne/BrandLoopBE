@@ -13,9 +13,9 @@ namespace BrandLoop.Infratructure.Interface
         Task<bool> EmailSendAsync(string email, string subject, string message);
 
         string GetMailBody(RegisterBaseModel model);
-        Task<User> GetUserByUsernameAsync(string username);
+        Task<User> GetUserByEmailAsync(string email);
         Task UpdateUserAsync(User user);
-        Task<string> ConfirmEmailAsync(string username);
+        Task<string> ConfirmEmailAsync(string email);
         string GetMailBody(RegisterBaseModel model, string accountType = "User");
     }
 }

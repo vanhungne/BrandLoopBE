@@ -37,7 +37,7 @@ namespace BrandLoop.Domain.Entities
         public string Status { get; set; } = "pending"; // pending, active, completed, cancelled
 
         [Required]
-        [StringLength(50)]
+        [StringLength(255)]
         public string CreatedBy { get; set; }
 
         // Navigation properties

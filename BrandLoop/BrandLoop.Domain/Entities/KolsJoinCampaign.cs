@@ -16,8 +16,8 @@ namespace BrandLoop.Domain.Entities
         public int CampaignId { get; set; }
 
         [Required]
-        [StringLength(50)]
-        public string UserName { get; set; }
+        [StringLength(255)]
+        public string Email { get; set; }
 
         [StringLength(50)]
         public string Status { get; set; } = "pending"; // pending, accepted, rejected, completed
@@ -28,7 +28,7 @@ namespace BrandLoop.Domain.Entities
         [ForeignKey("CampaignId")]
         public virtual Campaign Campaign { get; set; }
 
-        [ForeignKey("UserName")]
+        [ForeignKey("Email")]
         public virtual User User { get; set; }
 
         public virtual ICollection<Payment> Payments { get; set; }
