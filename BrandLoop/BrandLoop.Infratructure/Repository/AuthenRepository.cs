@@ -352,7 +352,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                 Youtube = model.Youtube,
                 FollowerCount = model.FollowerCount,
                 Gender = model.Gender,
-                Age = model.Age,
+                DayOfBirth = model.DateOfBirth,
                 CreatedAt = DateTimeHelper.GetVietnamNow(),
                 UpdatedAt = DateTimeHelper.GetVietnamNow()
             };
