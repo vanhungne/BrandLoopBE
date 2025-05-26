@@ -43,6 +43,6 @@ namespace BrandLoop.Infratructure.Models.Authen
         [StringLength(10)]
         public string Gender { get; set; }
 
-        public int? Age { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
     }
 }

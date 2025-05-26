@@ -37,7 +37,7 @@ namespace BrandLoop.API.Controllers
         {
             if (model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Password))
             {
-                return BadRequest(new { code = 400, message = "Invalid username or password" });
+                return BadRequest(new { code = 400, message = "Invalid email or password" });
             }
 
             try
@@ -48,7 +48,7 @@ namespace BrandLoop.API.Controllers
 
                 if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
                 {
-                    return Unauthorized(new { code = 401, message = "Invalid username or password" });
+                    return Unauthorized(new { code = 401, message = "Invalid email or password" });
                 }
 
                 // Set the access token in a cookie

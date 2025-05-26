@@ -58,7 +58,7 @@ namespace BrandLoop.Domain.Entities
         [StringLength(10)]
         public string Gender { get; set; }
 
-        public int? Age { get; set; }
+        public DateOnly? DayOfBirth { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
