@@ -7,6 +7,8 @@ using Microsoft.OpenApi.Models;
 using BrandLoop.Infratructure;
 using BrandLoop.Infratructure.Persistence;
 using BrandLoop.Application;
+using BrandLoop.Application.Background;
+using Microsoft.Extensions.Configuration;
 
 public class Program
 {
@@ -29,9 +31,11 @@ public class Program
         // Services
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
+        // Update the following line to use the correct reference to the configuration object
+        builder.Services.Configure<AccountCleanupOptions>(builder.Configuration.GetSection(AccountCleanupOptions.SectionName));
 
         // Add custom services
-        builder.Services
+        builder.Services    
             .AddDatabaseServices(builder.Configuration)
             .AddInfratructure().AddApplication();
 

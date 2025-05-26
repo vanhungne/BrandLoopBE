@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BrandLoop.Infratructure.Migrations
 {
     /// <inheritdoc />
-    public partial class tin : Migration
+    public partial class FIRST : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -492,7 +492,7 @@ namespace BrandLoop.Infratructure.Migrations
                     CampaignGoals = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Budget = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Deadline = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
                 },
                 constraints: table =>

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using BrandLoop.Domain.Entities;
 using BrandLoop.Infratructure.Models.Authen;
+using BrandLoop.Infratructure.Models.CampainModel;
 
 
 namespace BrandLoop.Infratructure.Mapper
@@ -27,7 +28,12 @@ namespace BrandLoop.Infratructure.Mapper
      .ForMember(dest => dest.Instagram, opt => opt.MapFrom(src =>
 
          src.InfluenceProfile != null ? src.InfluenceProfile.Instagram : src.BrandProfile.Instagram));
-        }
+
+
+            CreateMap<Campaign, CampaignDto>().ReverseMap();
+            CreateMap<CreateCampaignDto, Campaign>();
+            CreateMap<UpdateCampaignDto, Campaign>();
+    }
         
     }
 }

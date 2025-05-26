@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Domain.Entities
 {
@@ -34,7 +36,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime? Deadline { get; set; }
 
         [StringLength(50)]
-        public string Status { get; set; } = "pending"; // pending, active, completed, cancelled
+        public CampainStatus Status { get; set; } = CampainStatus.Pending;
 
         [Required]
         [StringLength(255)]
