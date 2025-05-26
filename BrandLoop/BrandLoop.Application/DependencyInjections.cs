@@ -15,6 +15,7 @@ namespace BrandLoop.Application
         {
             services.AddScoped<IAuthenService, AuthenService>();
             services.AddScoped<ICloundinaryService, CloundinaryService>();
+            services.AddScoped<ICampaignService, CampaignService>();
             return services;
         } 
         }

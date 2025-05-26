@@ -25,6 +25,7 @@ namespace BrandLoop.Infratructure
             services.AddScoped<IEmailSender, EmailSenderRepository>();
             services.AddScoped<ICloundinaryRepository, CloundinaryRepository>();
             services.AddScoped<INotificationRepository, NotificationRepository>();
+            services.AddScoped<ICampaignRepository, CampaignRepository>();
 
             return services;
         }

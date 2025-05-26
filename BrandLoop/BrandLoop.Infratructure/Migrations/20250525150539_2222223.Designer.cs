@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    [Migration("20250522152436_tin")]
-    partial class tin
+    [Migration("20250525150539_2222223")]
+    partial class _2222223
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,10 +190,9 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UploadedDate")
                         .HasColumnType("datetime2");
