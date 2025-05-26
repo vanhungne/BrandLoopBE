@@ -25,6 +25,7 @@ namespace BrandLoop.Infratructure.Mapper
      .ForMember(dest => dest.Facebook, opt => opt.MapFrom(src =>
          src.InfluenceProfile != null ? src.InfluenceProfile.Facebook : src.BrandProfile.Facebook))
      .ForMember(dest => dest.Instagram, opt => opt.MapFrom(src =>
+
          src.InfluenceProfile != null ? src.InfluenceProfile.Instagram : src.BrandProfile.Instagram));
         }
         
