@@ -149,7 +149,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             }
             var accessToken = await GenerateAccessToken(user);
 
-            var refreshToken = await GenerateRefreshToken(user.Email);
+            var refreshToken = await GenerateRefreshToken(user.UID);
             var roleId = user.RoleId;
             user.LastLogin = DateTimeHelper.GetVietnamNow();
             await _context.SaveChangesAsync();
