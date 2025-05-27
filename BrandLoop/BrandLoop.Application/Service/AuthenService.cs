@@ -43,12 +43,12 @@ namespace BrandLoop.Application.Service
             return await _repository.GetPendingRegistrations();
         }
 
-        public async Task<(string, string)> Login(LoginModel model)
+        public async Task<(string, string, int)> Login(LoginModel model)
         {
             return await _repository.Login(model);
         }
 
-        public async Task<(string, string)> LoginWithRefreshToken(string refreshToken)
+        public async Task<(string, string, int)> LoginWithRefreshToken(string refreshToken)
         {
             return await _repository.LoginWithRefreshToken(refreshToken);
         }

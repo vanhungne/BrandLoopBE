@@ -44,7 +44,7 @@ namespace BrandLoop.API.Controllers
             {
                 await _unitOfWork.BeginTransactionAsync();
 
-                var (accessToken, refreshToken) = await _service.Login(model);
+                var (accessToken, refreshToken,roleid) = await _service.Login(model);
 
                 if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
                 {
@@ -65,6 +65,7 @@ namespace BrandLoop.API.Controllers
                 {
                     code = 200,
                     refreshToken,
+                    roleid,
                     message = "Login successful -- Doan xem token o dau"
                 });
             }
@@ -85,7 +86,7 @@ namespace BrandLoop.API.Controllers
 
             try
             {
-                var (accessToken, newRefreshToken) = await _service.LoginWithRefreshToken(refreshToken);
+                var (accessToken, newRefreshToken, roleid) = await _service.LoginWithRefreshToken(refreshToken);
 
                 if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(newRefreshToken))
                     return Unauthorized(new { code = 401, message = "Invalid refresh token" });
@@ -95,6 +96,7 @@ namespace BrandLoop.API.Controllers
                     code = 200,
                     accessToken,
                     refreshToken = newRefreshToken,
+                    roleid,
                     message = "Token refreshed successfully"
                 });
             }

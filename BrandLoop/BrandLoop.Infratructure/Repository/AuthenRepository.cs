@@ -135,32 +135,34 @@ namespace BrandLoop.Infratructure.ReporitorY
             return await _context.Users.SingleOrDefaultAsync(z => z.Email.Equals(email));
         }
 
-        public async Task<(string, string)> Login(LoginModel model)
+        public async Task<(string, string, int)> Login(LoginModel model)
         {
             var user = await _context.Users.Include(r => r.Role).Where(x => x.Status == UserStatus.Active)
                 .SingleOrDefaultAsync(x => x.Email.Equals(model.Email));
             if (user == null)
             {
-                return (null, null);
+                return (null, null ,0);
             }
             if (user == null || !BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
             {
-                return (null, null);
+                return (null, null,0);
             }
             var accessToken = await GenerateAccessToken(user);
-            var refreshToken = await GenerateRefreshToken(user.UID);
+
+            var refreshToken = await GenerateRefreshToken(user.Email);
+            var roleId = user.RoleId;
             user.LastLogin = DateTimeHelper.GetVietnamNow();
             await _context.SaveChangesAsync();
 
-            return (accessToken, refreshToken);
+            return (accessToken, refreshToken, roleId);
         }
 
-        public async Task<(string, string)> LoginWithRefreshToken(string refreshToken)
+        public async Task<(string, string, int)> LoginWithRefreshToken(string refreshToken)
         {
             var refreshTokenEntity = await ValidateRefreshToken(refreshToken);
 
             if (refreshTokenEntity == null)
-                return (null, null);
+                return (null, null,0);
 
             var user = await _context.Users
                 .Include(u => u.Role)
@@ -168,13 +170,14 @@ namespace BrandLoop.Infratructure.ReporitorY
                 .SingleOrDefaultAsync();
 
             if (user == null)
-                return (null, null);
+                return (null, null,0);
 
             var accessToken = await GenerateAccessToken(user);
             var newRefreshToken = await GenerateRefreshToken(user.Email);
+            var roleId = user.RoleId;
             user.LastLogin = DateTimeHelper.GetVietnamNow();
             await _context.SaveChangesAsync();
-            return (accessToken, newRefreshToken);
+            return (accessToken, newRefreshToken, roleId);
         }
 
         public async Task<bool> Logout(string email)

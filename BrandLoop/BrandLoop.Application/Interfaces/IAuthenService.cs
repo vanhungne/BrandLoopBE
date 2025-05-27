@@ -12,8 +12,8 @@ namespace BrandLoop.Application.Interfaces
 {
     public interface IAuthenService
     {
-        Task<(string, string)> Login(LoginModel model);
-        Task<(string, string)> LoginWithRefreshToken(string refreshToken);
+        Task<(string, string, int)> Login(LoginModel model);
+        Task<(string, string, int)> LoginWithRefreshToken(string refreshToken);
         Task<string> Register(RegisterBaseModel model, IFormFile avatarFile);
         Task<string> RegisterBrand(RegisterBrandModel model, IFormFile avatarFile, IFormFile logoFile);
         Task<string> RegisterKOL(RegisterKOLModel model, IFormFile avatarFile);
