@@ -59,35 +59,35 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<BrandProfile>()
                 .HasOne(bp => bp.User)
                 .WithOne(u => u.BrandProfile)
-                .HasForeignKey<BrandProfile>(bp => bp.Email)
+                .HasForeignKey<BrandProfile>(bp => bp.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // User and InfluenceProfile relationship
             modelBuilder.Entity<InfluenceProfile>()
                 .HasOne(ip => ip.User)
                 .WithOne(u => u.InfluenceProfile)
-                .HasForeignKey<InfluenceProfile>(ip => ip.Email)
+                .HasForeignKey<InfluenceProfile>(ip => ip.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // User and ContentAndStyle relationship
             modelBuilder.Entity<ContentAndStyle>()
                 .HasOne(cs => cs.User)
                 .WithMany(u => u.ContentAndStyles)
-                .HasForeignKey(cs => cs.Email)
+                .HasForeignKey(cs => cs.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // User and Skill relationship
             modelBuilder.Entity<Skill>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.Skills)
-                .HasForeignKey(s => s.Email)
+                .HasForeignKey(s => s.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // User and Notification relationship
             modelBuilder.Entity<Notification>()
                 .HasOne(n => n.User)
                 .WithMany(u => u.Notifications)
-                .HasForeignKey(n => n.Email)
+                .HasForeignKey(n => n.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Conversation setup
@@ -100,7 +100,7 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<ConversationParticipant>()
                 .HasOne(cp => cp.User)
                 .WithMany(u => u.ConversationParticipants)
-                .HasForeignKey(cp => cp.Email)
+                .HasForeignKey(cp => cp.UID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Message relationships
@@ -126,7 +126,7 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<MessageReadStatus>()
                 .HasOne(mrs => mrs.User)
                 .WithMany(u => u.MessageReadStatuses)
-                .HasForeignKey(mrs => mrs.Email)
+                .HasForeignKey(mrs => mrs.UID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Subscription and Feature relationship (many-to-many)
@@ -146,7 +146,7 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<SubscriptionRegister>()
                 .HasOne(sr => sr.User)
                 .WithMany(u => u.SubscriptionRegisters)
-                .HasForeignKey(sr => sr.Email)
+                .HasForeignKey(sr => sr.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<SubscriptionRegister>()
@@ -178,7 +178,7 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<KolsJoinCampaign>()
                 .HasOne(kjc => kjc.User)
                 .WithMany(u => u.KolsJoinCampaigns)
-                .HasForeignKey(kjc => kjc.Email)
+                .HasForeignKey(kjc => kjc.UID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Payment relationships
@@ -204,7 +204,7 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<Feedback>()
                 .HasOne(f => f.User)
                 .WithMany(u => u.Feedbacks)
-                .HasForeignKey(f => f.Email)
+                .HasForeignKey(f => f.UID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // CampaignInvitation relationships
@@ -217,7 +217,7 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<CampaignInvitation>()
                 .HasOne(ci => ci.User)
                 .WithMany(u => u.CampaignInvitations)
-                .HasForeignKey(ci => ci.Email)
+                .HasForeignKey(ci => ci.UID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Deal relationships
@@ -245,14 +245,14 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<AuditLog>()
                 .HasOne(al => al.User)
                 .WithMany(u => u.AuditLogs)
-                .HasForeignKey(al => al.Email)
+                .HasForeignKey(al => al.UID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Wallet relationships
             modelBuilder.Entity<Wallet>()
                 .HasOne(w => w.User)
                 .WithMany()
-                .HasForeignKey(w => w.Email)
+                .HasForeignKey(w => w.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Transaction relationships

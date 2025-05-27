@@ -22,20 +22,20 @@ namespace BrandLoop.API.Controllers
             var pendingRegistrations = await _authenService.GetPendingRegistrations();
             return Ok(pendingRegistrations);
         }
-        [HttpPost("approve-registration/{email}")]
-        public async Task<IActionResult> ApproveRegistration(string email)
+        [HttpPost("approve-registration/{uid}")]
+        public async Task<IActionResult> ApproveRegistration(string uid)
         {
-            var result = await _authenService.ApproveRegistration(email);
+            var result = await _authenService.ApproveRegistration(uid);
 
             if (result)
                 return Ok(new { success = true, message = "Registration approved successfully" });
 
             return NotFound(new { success = false, message = "User not found or already approved" });
         }
-        [HttpPost("reject-registration/{email}")]
-        public async Task<IActionResult> RejectRegistration(string email, [FromBody] RejectRegistrationModel model)
+        [HttpPost("reject-registration/{uid}")]
+        public async Task<IActionResult> RejectRegistration(string uid, [FromBody] RejectRegistrationModel model)
         {
-            var result = await _authenService.RejectRegistration(email, model.Reason);
+            var result = await _authenService.RejectRegistration(uid, model.Reason);
 
             if (result)
                 return Ok(new { success = true, message = "Registration rejected successfully" });

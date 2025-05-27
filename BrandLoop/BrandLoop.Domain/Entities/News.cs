@@ -5,12 +5,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Domain.Entities
 {
     public class News
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int NewsId { get; set; }
 
         [Required]
@@ -23,13 +25,16 @@ namespace BrandLoop.Domain.Entities
 
         public string Content { get; set; }
 
-        [StringLength(255)]
+        [StringLength(32)]
         public string Author { get; set; }
+
+        [StringLength(255)]
+        public string AuthorName { get; set; }
 
         public DateTime? PublishedAt { get; set; }
 
         [StringLength(20)]
-        public string Status { get; set; } = "draft";
+        public NewsStatus Status { get; set; } = NewsStatus.Draft;
 
         [StringLength(100)]
         public string Category { get; set; }

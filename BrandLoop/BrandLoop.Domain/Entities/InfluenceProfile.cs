@@ -15,8 +15,8 @@ namespace BrandLoop.Domain.Entities
         public int InfluenceId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string Email { get; set; }
+        [StringLength(32)]
+        public string UID { get; set; }
 
         [StringLength(100)]
         public string Nickname { get; set; }
@@ -65,7 +65,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
-        [ForeignKey("Email")]
+        [ForeignKey("UID")]
         public virtual User User { get; set; }
     }
 }

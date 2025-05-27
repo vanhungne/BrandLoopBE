@@ -12,6 +12,9 @@ namespace BrandLoop.Domain.Entities
     public class User
     {
         [Key]
+        [StringLength(32)]
+        public string UID { get; set; }
+
         [StringLength(255)]
         public string Email { get; set; }
 

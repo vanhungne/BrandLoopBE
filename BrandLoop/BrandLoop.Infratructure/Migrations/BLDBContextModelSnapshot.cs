@@ -42,11 +42,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<int?>("TargetId")
                         .HasColumnType("int");
 
@@ -55,9 +50,14 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("LogId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("AuditLogs");
                 });
@@ -90,11 +90,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("EstablishedYear")
                         .HasColumnType("int");
@@ -129,6 +124,11 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -139,7 +139,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("UID")
                         .IsUnique();
 
                     b.ToTable("BrandProfiles");
@@ -174,8 +174,8 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
@@ -217,11 +217,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -247,11 +242,16 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("InvitationId");
 
                     b.HasIndex("CampaignId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("CampaignInvitations");
                 });
@@ -314,15 +314,15 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("VideoUrl")
                         .IsRequired()
@@ -331,7 +331,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasKey("ContentId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("ContentAndStyles");
                 });
@@ -374,11 +374,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<int>("ConversationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("datetime2");
 
@@ -388,11 +383,16 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ConversationId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("ConversationParticipants");
                 });
@@ -494,19 +494,19 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime?>("EditedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<int?>("Rating")
                         .HasColumnType("int");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.HasKey("FeedbackId");
 
                     b.HasIndex("CampaignId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("Feedbacks");
                 });
@@ -536,11 +536,6 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.Property<DateOnly?>("DayOfBirth")
                         .HasColumnType("date");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
 
                     b.Property<decimal?>("EngagementRate")
                         .HasColumnType("decimal(18,2)");
@@ -588,6 +583,11 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -601,7 +601,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasKey("InfluenceId");
 
-                    b.HasIndex("Email")
+                    b.HasIndex("UID")
                         .IsUnique();
 
                     b.ToTable("InfluenceProfiles");
@@ -621,21 +621,21 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("KolsJoinCampaignId");
 
                     b.HasIndex("CampaignId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("KolsJoinCampaigns");
                 });
@@ -668,8 +668,8 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.Property<string>("Sender")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -691,22 +691,22 @@ namespace BrandLoop.Infratructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("ReadAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Email");
-
                     b.HasIndex("MessageId");
+
+                    b.HasIndex("UID");
 
                     b.ToTable("MessageReadStatuses");
                 });
@@ -720,6 +720,11 @@ namespace BrandLoop.Infratructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NewsId"));
 
                     b.Property<string>("Author")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<string>("AuthorName")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
@@ -749,10 +754,9 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -784,11 +788,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
@@ -804,9 +803,14 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("int");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("NotificationId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("Notifications");
                 });
@@ -868,20 +872,20 @@ namespace BrandLoop.Infratructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RId"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<DateTime>("Expires")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("RId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("RefreshTokens");
                 });
@@ -981,11 +985,6 @@ namespace BrandLoop.Infratructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SkillId"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<string>("ProficiencyLevel")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -996,9 +995,14 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("SkillId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
                     b.ToTable("Skills");
                 });
@@ -1070,11 +1074,6 @@ namespace BrandLoop.Infratructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("datetime2");
 
@@ -1089,11 +1088,16 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<int>("SubscriptionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("Email");
-
                     b.HasIndex("SubscriptionId");
+
+                    b.HasIndex("UID");
 
                     b.ToTable("SubscriptionRegisters");
                 });
@@ -1165,12 +1169,17 @@ namespace BrandLoop.Infratructure.Migrations
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.User", b =>
                 {
-                    b.Property<string>("Email")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("UID")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -1204,7 +1213,7 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Email");
+                    b.HasKey("UID");
 
                     b.HasIndex("RoleId");
 
@@ -1225,16 +1234,16 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("UID")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserEmail")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<string>("UserUID")
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<string>("WalletType")
                         .IsRequired()
@@ -1243,9 +1252,9 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasKey("WalletId");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("UID");
 
-                    b.HasIndex("UserEmail");
+                    b.HasIndex("UserUID");
 
                     b.ToTable("Wallets");
                 });
@@ -1254,7 +1263,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("AuditLogs")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1265,7 +1274,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithOne("BrandProfile")
-                        .HasForeignKey("BrandLoop.Domain.Entities.BrandProfile", "Email")
+                        .HasForeignKey("BrandLoop.Domain.Entities.BrandProfile", "UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1301,7 +1310,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("CampaignInvitations")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1325,7 +1334,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("ContentAndStyles")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1342,7 +1351,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("ConversationParticipants")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1372,7 +1381,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("Feedbacks")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1385,7 +1394,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithOne("InfluenceProfile")
-                        .HasForeignKey("BrandLoop.Domain.Entities.InfluenceProfile", "Email")
+                        .HasForeignKey("BrandLoop.Domain.Entities.InfluenceProfile", "UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1402,7 +1411,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("KolsJoinCampaigns")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1432,16 +1441,16 @@ namespace BrandLoop.Infratructure.Migrations
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.MessageReadStatus", b =>
                 {
-                    b.HasOne("BrandLoop.Domain.Entities.User", "User")
-                        .WithMany("MessageReadStatuses")
-                        .HasForeignKey("Email")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("BrandLoop.Domain.Entities.Message", "Message")
                         .WithMany("ReadStatuses")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BrandLoop.Domain.Entities.User", "User")
+                        .WithMany("MessageReadStatuses")
+                        .HasForeignKey("UID")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Message");
@@ -1464,7 +1473,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1492,7 +1501,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("RefreshTokens")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1503,7 +1512,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("Skills")
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1531,16 +1540,16 @@ namespace BrandLoop.Infratructure.Migrations
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.SubscriptionRegister", b =>
                 {
-                    b.HasOne("BrandLoop.Domain.Entities.User", "User")
-                        .WithMany("SubscriptionRegisters")
-                        .HasForeignKey("Email")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("BrandLoop.Domain.Entities.Subscription", "Subscription")
                         .WithMany("SubscriptionRegisters")
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BrandLoop.Domain.Entities.User", "User")
+                        .WithMany("SubscriptionRegisters")
+                        .HasForeignKey("UID")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Subscription");
@@ -1580,13 +1589,13 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("Email")
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BrandLoop.Domain.Entities.User", null)
                         .WithMany("Wallets")
-                        .HasForeignKey("UserEmail");
+                        .HasForeignKey("UserUID");
 
                     b.Navigation("User");
                 });

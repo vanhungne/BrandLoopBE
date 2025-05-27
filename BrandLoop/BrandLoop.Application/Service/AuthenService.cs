@@ -23,14 +23,14 @@ namespace BrandLoop.Application.Service
             _emailSender = emailSender;
         }
 
-        public async Task<bool> ApproveRegistration(string username)
+        public async Task<bool> ApproveRegistration(string uid)
         {
-            return await _repository.ApproveRegistration(username);
+            return await _repository.ApproveRegistration(uid);
         }
 
-        public async Task<string> ConfirmEmailAsync(string? username)
+        public async Task<string> ConfirmEmailAsync(string? email)
         {
-            return await _emailSender.ConfirmEmailAsync(username);
+            return await _emailSender.ConfirmEmailAsync(email);
         }
 
         public string GenerateJwtToken(User user)
@@ -67,9 +67,9 @@ namespace BrandLoop.Application.Service
             return await _repository.RegisterKOL(model, avatarFile);
         }
 
-        public async Task<bool> RejectRegistration(string username, string reason)
+        public async Task<bool> RejectRegistration(string uid, string reason)
         {
-            return await _repository.RejectRegistration(username, reason);
+            return await _repository.RejectRegistration(uid, reason);
         }
     }
 }

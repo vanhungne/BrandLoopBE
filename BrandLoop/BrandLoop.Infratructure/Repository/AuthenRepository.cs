@@ -47,7 +47,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             var claims = new[]
             {
                     new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
-                    new Claim(ClaimTypes.NameIdentifier, user.Email?.ToString() ?? string.Empty),
+                    new Claim(ClaimTypes.NameIdentifier, user.UID?.ToString() ?? string.Empty),
                     new Claim(ClaimTypes.Role, user.RoleId == 1 ? "Admin" : user.RoleId == 2 ? "Brand":  user.RoleId == 3 ? "KOL" :"Guest"),
                     new Claim("RoleId", user.RoleId.ToString() ?? string.Empty),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
@@ -68,7 +68,7 @@ namespace BrandLoop.Infratructure.ReporitorY
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        public async Task<string> GenerateRefreshToken(string email)
+        public async Task<string> GenerateRefreshToken(string uid)
         {
             var refreshToken = Guid.NewGuid().ToString();
             var expriDate = DateTimeHelper.GetVietnamNow().AddDays(7);
@@ -76,7 +76,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             var newToken = new RefreshTokens
             {
                 Token = refreshToken,
-                Email = email,
+                UID = uid,
                 Expires = expriDate,
             };
             _context.RefreshTokens.Add(newToken);
@@ -112,7 +112,7 @@ namespace BrandLoop.Infratructure.ReporitorY
 
             var claims = new[]
             {
-        new Claim(ClaimTypes.NameIdentifier, user.Email),
+        new Claim(ClaimTypes.NameIdentifier, user.UID),
         new Claim(ClaimTypes.Role, user.Role.RoleName),
         new Claim("RoleId", user.RoleId.ToString()),
         new Claim(ClaimTypes.Email, user.Email),
@@ -148,7 +148,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                 return (null, null);
             }
             var accessToken = await GenerateAccessToken(user);
-            var refreshToken = await GenerateRefreshToken(user.Email);
+            var refreshToken = await GenerateRefreshToken(user.UID);
             user.LastLogin = DateTimeHelper.GetVietnamNow();
             await _context.SaveChangesAsync();
 
@@ -164,7 +164,7 @@ namespace BrandLoop.Infratructure.ReporitorY
 
             var user = await _context.Users
                 .Include(u => u.Role)
-                .Where(u => u.Email == refreshTokenEntity.Email && u.Status == UserStatus.Active)
+                .Where(u => u.UID == refreshTokenEntity.UID && u.Status == UserStatus.Active)
                 .SingleOrDefaultAsync();
 
             if (user == null)
@@ -194,8 +194,12 @@ namespace BrandLoop.Infratructure.ReporitorY
                 avatarUrl = await
                     cloudinaryService.UploadImage(avatarFile);
             }
+
+            var id = GenerateCompactUid();
+            id = await _context.Users.FirstOrDefaultAsync(u => u.UID == id) != null ? GenerateCompactUid() : id;
             var user = new User
             {
+                UID = id,
                 Email = model.Email,
                 Phone = model.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
@@ -203,7 +207,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                 ProfileImage = avatarUrl ?? "Null avatar",
                 RoleId = 1,
                 Status = UserStatus.Active,
-                CreatedAt = DateTimeHelper.GetVietnamNow().AddHours(7),
+                CreatedAt = DateTimeHelper.GetVietnamNow(),
             };
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -244,8 +248,12 @@ namespace BrandLoop.Infratructure.ReporitorY
             }
 
             // Create user with pending status (Status = 0)
+            var id = GenerateCompactUid();
+            id = await _context.Users.FirstOrDefaultAsync(u => u.UID == id) != null ? GenerateCompactUid() : id;
+
             var user = new User
             {
+                UID = id,
                 Email = model.Email,
                 Phone = model.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
@@ -260,7 +268,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             // Create brand profile
             var brandProfile = new BrandProfile
             {
-                Email = model.Email,
+                UID = id,
                 CompanyName = model.CompanyName,
                 Industry = model.Industry,
                 Website = model.Website,
@@ -322,8 +330,12 @@ namespace BrandLoop.Infratructure.ReporitorY
             }
 
             // Create user with pending status (Status = 0)
+            var id = GenerateCompactUid();
+            id = await _context.Users.FirstOrDefaultAsync(u => u.UID == id) != null ? GenerateCompactUid() : id;
+
             var user = new User
             {
+                UID = id,
                 Email = model.Email,
                 Phone = model.PhoneNumber,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
@@ -338,7 +350,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             // Create KOL profile
             var kolProfile = new InfluenceProfile
             {
-                Email = model.Email,
+                UID = id,
                 Nickname = model.Nickname,
                 Bio = model.Bio,
                 ContentCategory = model.ContentCategory,
@@ -402,9 +414,9 @@ namespace BrandLoop.Infratructure.ReporitorY
         }
 
         // Method to approve registration
-        public async Task<bool> ApproveRegistration(string email)
+        public async Task<bool> ApproveRegistration(string uid)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Status == 0);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UID == uid && u.Status == 0);
 
             if (user == null)
                 return false;
@@ -428,7 +440,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             await _notificationRepository.CreateNotification(
                 new Notification
                 {
-                    Email = email,
+                    UID = uid,
                     Content = notificationMessage,
                     NotificationType = "Registration",
                     IsRead = false,
@@ -439,9 +451,9 @@ namespace BrandLoop.Infratructure.ReporitorY
         }
 
         // Method to reject registration
-        public async Task<bool> RejectRegistration(string email, string reason)
+        public async Task<bool> RejectRegistration(string uid, string reason)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Status == 0);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UID == uid && u.Status == 0);
 
             if (user == null)
                 return false;
@@ -465,8 +477,13 @@ namespace BrandLoop.Infratructure.ReporitorY
         }
 
         // Helper method to notify admins about new registrations
-        private async Task NotifyAdminsAboutRegistration(string email, string accountType)
+        private async Task NotifyAdminsAboutRegistration(string uid, string accountType)
         {
+            // Get user registration
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UID == uid);
+            if (user == null)
+                return;
+
             // Get all admin users
             var admins = await _context.Users
                 .Where(u => u.RoleId == 1 && u.Status == UserStatus.Active)
@@ -477,13 +494,17 @@ namespace BrandLoop.Infratructure.ReporitorY
                 await _notificationRepository.CreateNotification(
                     new Notification
                     {
-                        Email = admin.Email,
-                        Content = $"New {accountType} registration: {email} requires approval",
+                        UID = admin.UID,
+                        Content = $"New {accountType} registration: {user.Email} requires approval",
                         NotificationType = "AdminRegistration",
                         IsRead = false,
                         CreatedAt = DateTimeHelper.GetVietnamNow()
                     });
             }
+        }
+        public static string GenerateCompactUid()
+        {
+            return Guid.NewGuid().ToString("N");
         }
     }
 }

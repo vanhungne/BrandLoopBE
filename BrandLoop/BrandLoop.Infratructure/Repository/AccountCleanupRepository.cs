@@ -61,7 +61,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa notifications
             var notifications = await _context.Notifications
-                .Where(n => n.Email == user.Email)
+                .Where(n => n.UID == user.UID)
                 .ToListAsync();
 
             if (notifications.Any())
@@ -71,7 +71,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa ContentAndStyles
             var contentAndStyles = await _context.ContentAndStyles
-                .Where(c => c.Email == user.Email)
+                .Where(c => c.UID == user.UID)
                 .ToListAsync();
             if (contentAndStyles.Any())
             {
@@ -80,7 +80,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa Skills
             var skills = await _context.Skills
-                .Where(s => s.Email == user.Email)
+                .Where(s => s.UID == user.UID)
                 .ToListAsync();
             if (skills.Any())
             {
@@ -89,7 +89,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa ConversationParticipants
             var conversationParticipants = await _context.ConversationParticipants
-                .Where(cp => cp.Email == user.Email)
+                .Where(cp => cp.UID == user.UID)
                 .ToListAsync();
             if (conversationParticipants.Any())
             {
@@ -98,7 +98,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa Messages
             var messages = await _context.Messages
-                .Where(m => m.Sender == user.Email)
+                .Where(m => m.Sender == user.UID)
                 .ToListAsync();
             if (messages.Any())
             {
@@ -107,7 +107,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa MessageReadStatuses
             var messageReadStatuses = await _context.MessageReadStatuses
-                .Where(mrs => mrs.Email == user.Email)
+                .Where(mrs => mrs.UID == user.UID)
                 .ToListAsync();
             if (messageReadStatuses.Any())
             {
@@ -116,7 +116,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa SubscriptionRegisters
             var subscriptionRegisters = await _context.SubscriptionRegisters
-                .Where(sr => sr.Email == user.Email)
+                .Where(sr => sr.UID == user.UID)
                 .ToListAsync();
             if (subscriptionRegisters.Any())
             {
@@ -125,7 +125,7 @@ namespace BrandLoop.Infratructure.Service
 
             // Xóa Wallets
             var wallets = await _context.Wallets
-                .Where(w => w.Email == user.Email)
+                .Where(w => w.UID == user.UID)
                 .ToListAsync();
             if (wallets.Any())
             {

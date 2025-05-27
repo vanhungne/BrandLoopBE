@@ -14,8 +14,8 @@ namespace BrandLoop.Domain.Entities
         public int BrandId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string Email { get; set; }
+        [StringLength(32)]
+        public string UID { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -56,7 +56,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
-        [ForeignKey("Email")]
+        [ForeignKey("UID")]
         public virtual User User { get; set; }
 
         public virtual ICollection<Campaign> Campaigns { get; set; }

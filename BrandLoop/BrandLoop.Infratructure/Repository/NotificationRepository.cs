@@ -40,9 +40,9 @@ namespace BrandLoop.Infratructure.Repository
             }
         }
 
-        public async Task<List<Notification>> GetUserNotifications(string email, bool unreadOnly = false)
+        public async Task<List<Notification>> GetUserNotifications(string uid, bool unreadOnly = false)
         {
-            var query = _context.Notifications.Where(n => n.Email == email);
+            var query = _context.Notifications.Where(n => n.UID == uid);
 
             if (unreadOnly)
                 query = query.Where(n => !n.IsRead);
@@ -50,12 +50,12 @@ namespace BrandLoop.Infratructure.Repository
             return await query.OrderByDescending(n => n.CreatedAt).ToListAsync();
         }
 
-        public async Task<bool> MarkAllNotificationsAsRead(string email)
+        public async Task<bool> MarkAllNotificationsAsRead(string uid)
         {
             try
             {
                 var notifications = await _context.Notifications
-                    .Where(n => n.Email == email && !n.IsRead)
+                    .Where(n => n.UID == uid && !n.IsRead)
                     .ToListAsync();
 
                 foreach (var notification in notifications)

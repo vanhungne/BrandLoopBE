@@ -17,10 +17,10 @@ namespace BrandLoop.Application.Interfaces
         Task<string> Register(RegisterBaseModel model, IFormFile avatarFile);
         Task<string> RegisterBrand(RegisterBrandModel model, IFormFile avatarFile, IFormFile logoFile);
         Task<string> RegisterKOL(RegisterKOLModel model, IFormFile avatarFile);
-        Task<bool> ApproveRegistration(string username);
-        Task<bool> RejectRegistration(string username, string reason);
+        Task<bool> ApproveRegistration(string uid);
+        Task<bool> RejectRegistration(string uid, string reason);
         Task<List<PendingRegistrationDto>> GetPendingRegistrations();
         string GenerateJwtToken(User user);
-        Task<string> ConfirmEmailAsync(string? username);
+        Task<string> ConfirmEmailAsync(string? email);
     }
 }

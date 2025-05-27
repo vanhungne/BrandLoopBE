@@ -15,8 +15,8 @@ namespace BrandLoop.Domain.Entities
         public int NotificationId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string Email { get; set; }
+        [StringLength(32)]
+        public string UID { get; set; }
 
         [Required]
         [StringLength(50)]
@@ -35,7 +35,7 @@ namespace BrandLoop.Domain.Entities
         public int? RelatedId { get; set; }
 
         // Navigation properties
-        [ForeignKey("Email")]
+        [ForeignKey("UID")]
         public virtual User User { get; set; }
     }
 

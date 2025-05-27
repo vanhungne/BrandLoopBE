@@ -15,8 +15,8 @@ namespace BrandLoop.Domain.Entities
         public int WalletId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string Email { get; set; }
+        [StringLength(32)]
+        public string UID { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
@@ -28,7 +28,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
-        [ForeignKey("Email")]
+        [ForeignKey("UID")]
         public virtual User User { get; set; }
 
         public virtual ICollection<Transaction> FromTransactions { get; set; }

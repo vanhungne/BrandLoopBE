@@ -33,9 +33,9 @@ namespace BrandLoop.Infratructure.Reporitory
             _dbcontext = dbcontext;
         }
 
-        public async Task<string> ConfirmEmailAsync(string username)
+        public async Task<string> ConfirmEmailAsync(string email)
         {
-            var user = await GetUserByEmailAsync(username);
+            var user = await GetUserByEmailAsync(email);
             if (user == null)
             {
                 return "Invalid confirmation request.";
