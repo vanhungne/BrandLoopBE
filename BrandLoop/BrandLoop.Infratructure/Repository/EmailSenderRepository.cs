@@ -168,20 +168,19 @@ namespace BrandLoop.Infratructure.Reporitory
             {
                 // Custom template for Brand/KOL registration pending approval
                 return string.Format(@"
-    <div style='text-align: center; font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;'>
-        <div style='max-width: 500px; margin: auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);'>
-            <h1 style='color: #333;'>Welcome to <span style='color: #008CBA;'>BrandLoop</span></h1>
-            <p style='font-size: 16px; color: #555;'>Thank you for registering as a {0}!</p>
-            <p style='font-size: 16px; color: #555;'>Your registration is currently pending administrator approval.</p>
-            <p style='font-size: 16px; color: #555;'>You will receive another email once your account has been approved.</p>
-            <div style='background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;'>
-                <p style='margin: 5px 0; color: #666;'><strong>Username:</strong> {1}</p>
-                <p style='margin: 5px 0; color: #666;'><strong>Email:</strong> {2}</p>
-                <p style='margin: 5px 0; color: #666;'><strong>Full Name:</strong> {3}</p>
-            </div>
-            <p style='margin-top: 20px; font-size: 14px; color: #777;'>If you did not register with BrandLoop, please ignore this email.</p>
+<div style='text-align: center; font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;'>
+    <div style='max-width: 500px; margin: auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);'>
+        <h1 style='color: #333;'>Welcome to <span style='color: #008CBA;'>BrandLoop</span></h1>
+        <p style='font-size: 16px; color: #555;'>Thank you for registering as a {0}!</p>
+        <p style='font-size: 16px; color: #555;'>Your registration is currently pending administrator approval.</p>
+        <div style='background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+            <p style='margin: 5px 0; color: #666;'><strong>Username:</strong> {1}</p>
+            <p style='margin: 5px 0; color: #666;'><strong>Email:</strong> {2}</p>
+            <p style='margin: 5px 0; color: #666;'><strong>Full Name:</strong> {3}</p>
         </div>
-    </div>", accountType, model.Email, model.FullName);
+        <p style='margin-top: 20px; font-size: 14px; color: #777;'>If you did not register with BrandLoop, please ignore this email.</p>
+    </div>
+</div>", accountType, model.Email, model.Email, model.FullName);
             }
             else
             {
