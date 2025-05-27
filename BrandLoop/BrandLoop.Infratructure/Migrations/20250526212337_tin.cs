@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BrandLoop.Infratructure.Migrations
 {
     /// <inheritdoc />
-    public partial class FIRST : Migration
+    public partial class tin : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -98,6 +98,7 @@ namespace BrandLoop.Infratructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -111,7 +112,7 @@ namespace BrandLoop.Infratructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Email);
+                    table.PrimaryKey("PK_Users", x => x.UID);
                     table.ForeignKey(
                         name: "FK_Users_Roles_RoleId",
                         column: x => x.RoleId,
@@ -152,7 +153,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     LogId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Action = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     TargetTable = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     TargetId = table.Column<int>(type: "int", nullable: true),
@@ -163,10 +164,10 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     table.PrimaryKey("PK_AuditLogs", x => x.LogId);
                     table.ForeignKey(
-                        name: "FK_AuditLogs_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_AuditLogs_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -176,7 +177,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     BrandId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     CompanyName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Industry = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Website = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -196,10 +197,10 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     table.PrimaryKey("PK_BrandProfiles", x => x.BrandId);
                     table.ForeignKey(
-                        name: "FK_BrandProfiles_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_BrandProfiles_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -209,7 +210,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     ContentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     ContentName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     VideoUrl = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
@@ -220,10 +221,10 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     table.PrimaryKey("PK_ContentAndStyles", x => x.ContentId);
                     table.ForeignKey(
-                        name: "FK_ContentAndStyles_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_ContentAndStyles_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -234,7 +235,7 @@ namespace BrandLoop.Infratructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ConversationId = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     JoinedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LeftAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false)
@@ -249,10 +250,10 @@ namespace BrandLoop.Infratructure.Migrations
                         principalColumn: "ConversationId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ConversationParticipants_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_ConversationParticipants_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -262,7 +263,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     InfluenceId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Nickname = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContentCategory = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
@@ -278,7 +279,7 @@ namespace BrandLoop.Infratructure.Migrations
                     FollowerCount = table.Column<int>(type: "int", nullable: true),
                     EngagementRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Gender = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: true),
+                    DayOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -286,10 +287,10 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     table.PrimaryKey("PK_InfluenceProfiles", x => x.InfluenceId);
                     table.ForeignKey(
-                        name: "FK_InfluenceProfiles_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_InfluenceProfiles_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -300,7 +301,7 @@ namespace BrandLoop.Infratructure.Migrations
                     MessageId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ConversationId = table.Column<int>(type: "int", nullable: false),
-                    Sender = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Sender = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -320,7 +321,7 @@ namespace BrandLoop.Infratructure.Migrations
                         name: "FK_Messages_Users_Sender",
                         column: x => x.Sender,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -333,9 +334,10 @@ namespace BrandLoop.Infratructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Slug = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Author = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Author = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    AuthorName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     PublishedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Status = table.Column<int>(type: "int", maxLength: 20, nullable: false),
                     Category = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     FeaturedImage = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -348,7 +350,7 @@ namespace BrandLoop.Infratructure.Migrations
                         name: "FK_News_Users_Author",
                         column: x => x.Author,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -358,7 +360,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     NotificationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     NotificationType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", maxLength: 20, nullable: false),
@@ -370,10 +372,10 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     table.PrimaryKey("PK_Notifications", x => x.NotificationId);
                     table.ForeignKey(
-                        name: "FK_Notifications_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_Notifications_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -384,17 +386,17 @@ namespace BrandLoop.Infratructure.Migrations
                     RId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Token = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Expires = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RefreshTokens", x => x.RId);
                     table.ForeignKey(
-                        name: "FK_RefreshTokens_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_RefreshTokens_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -404,7 +406,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     SkillId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     SkillName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     ProficiencyLevel = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
@@ -412,10 +414,10 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     table.PrimaryKey("PK_Skills", x => x.SkillId);
                     table.ForeignKey(
-                        name: "FK_Skills_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_Skills_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -425,7 +427,7 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     SubscriptionId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -441,10 +443,10 @@ namespace BrandLoop.Infratructure.Migrations
                         principalColumn: "SubscriptionId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_SubscriptionRegisters_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_SubscriptionRegisters_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -454,27 +456,27 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     WalletId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     WalletType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserEmail = table.Column<string>(type: "nvarchar(255)", nullable: true)
+                    UserUID = table.Column<string>(type: "nvarchar(32)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Wallets", x => x.WalletId);
                     table.ForeignKey(
-                        name: "FK_Wallets_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_Wallets_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Wallets_Users_UserEmail",
-                        column: x => x.UserEmail,
+                        name: "FK_Wallets_Users_UserUID",
+                        column: x => x.UserUID,
                         principalTable: "Users",
-                        principalColumn: "Email");
+                        principalColumn: "UID");
                 });
 
             migrationBuilder.CreateTable(
@@ -493,7 +495,7 @@ namespace BrandLoop.Infratructure.Migrations
                     Budget = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     Deadline = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false)
+                    CreatedBy = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -508,7 +510,7 @@ namespace BrandLoop.Infratructure.Migrations
                         name: "FK_Campaigns_Users_CreatedBy",
                         column: x => x.CreatedBy,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -519,7 +521,7 @@ namespace BrandLoop.Infratructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MessageId = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     ReadAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -532,10 +534,10 @@ namespace BrandLoop.Infratructure.Migrations
                         principalColumn: "MessageId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MessageReadStatuses_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_MessageReadStatuses_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -583,7 +585,7 @@ namespace BrandLoop.Infratructure.Migrations
                     InvitationId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProposedRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
@@ -602,10 +604,10 @@ namespace BrandLoop.Infratructure.Migrations
                         principalColumn: "CampaignId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CampaignInvitations_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_CampaignInvitations_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -641,7 +643,7 @@ namespace BrandLoop.Infratructure.Migrations
                     FeedbackId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Rating = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -657,10 +659,10 @@ namespace BrandLoop.Infratructure.Migrations
                         principalColumn: "CampaignId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Feedbacks_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_Feedbacks_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -671,7 +673,7 @@ namespace BrandLoop.Infratructure.Migrations
                     KolsJoinCampaignId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     AppliedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -685,10 +687,10 @@ namespace BrandLoop.Infratructure.Migrations
                         principalColumn: "CampaignId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_KolsJoinCampaigns_Users_Email",
-                        column: x => x.Email,
+                        name: "FK_KolsJoinCampaigns_Users_UID",
+                        column: x => x.UID,
                         principalTable: "Users",
-                        principalColumn: "Email",
+                        principalColumn: "UID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -764,14 +766,14 @@ namespace BrandLoop.Infratructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuditLogs_Email",
+                name: "IX_AuditLogs_UID",
                 table: "AuditLogs",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BrandProfiles_Email",
+                name: "IX_BrandProfiles_UID",
                 table: "BrandProfiles",
-                column: "Email",
+                column: "UID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -780,9 +782,9 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "CampaignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CampaignInvitations_Email",
+                name: "IX_CampaignInvitations_UID",
                 table: "CampaignInvitations",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CampaignReports_CampaignId",
@@ -800,9 +802,9 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "CreatedBy");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContentAndStyles_Email",
+                name: "IX_ContentAndStyles_UID",
                 table: "ContentAndStyles",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConversationParticipants_ConversationId",
@@ -810,9 +812,9 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "ConversationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ConversationParticipants_Email",
+                name: "IX_ConversationParticipants_UID",
                 table: "ConversationParticipants",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Deals_InvitationId",
@@ -825,14 +827,14 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "CampaignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Feedbacks_Email",
+                name: "IX_Feedbacks_UID",
                 table: "Feedbacks",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InfluenceProfiles_Email",
+                name: "IX_InfluenceProfiles_UID",
                 table: "InfluenceProfiles",
-                column: "Email",
+                column: "UID",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -841,19 +843,19 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "CampaignId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_KolsJoinCampaigns_Email",
+                name: "IX_KolsJoinCampaigns_UID",
                 table: "KolsJoinCampaigns",
-                column: "Email");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MessageReadStatuses_Email",
-                table: "MessageReadStatuses",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MessageReadStatuses_MessageId",
                 table: "MessageReadStatuses",
                 column: "MessageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MessageReadStatuses_UID",
+                table: "MessageReadStatuses",
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_ConversationId",
@@ -871,9 +873,9 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "Author");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_Email",
+                name: "IX_Notifications_UID",
                 table: "Notifications",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_KolsJoinCampaignId",
@@ -886,14 +888,14 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "SubscriptionRegisterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_Email",
+                name: "IX_RefreshTokens_UID",
                 table: "RefreshTokens",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Skills_Email",
+                name: "IX_Skills_UID",
                 table: "Skills",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubscriptionFeatures_FeatureId",
@@ -906,14 +908,14 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "SubscriptionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SubscriptionRegisters_Email",
-                table: "SubscriptionRegisters",
-                column: "Email");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_SubscriptionRegisters_SubscriptionId",
                 table: "SubscriptionRegisters",
                 column: "SubscriptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SubscriptionRegisters_UID",
+                table: "SubscriptionRegisters",
+                column: "UID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_FromWalletId",
@@ -931,14 +933,14 @@ namespace BrandLoop.Infratructure.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Wallets_Email",
+                name: "IX_Wallets_UID",
                 table: "Wallets",
-                column: "Email");
+                column: "UID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Wallets_UserEmail",
+                name: "IX_Wallets_UserUID",
                 table: "Wallets",
-                column: "UserEmail");
+                column: "UserUID");
         }
 
         /// <inheritdoc />

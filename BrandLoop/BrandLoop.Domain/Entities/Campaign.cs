@@ -39,7 +39,7 @@ namespace BrandLoop.Domain.Entities
         public CampainStatus Status { get; set; } = CampainStatus.Pending;
 
         [Required]
-        [StringLength(255)]
+        [StringLength(32)]
         public string CreatedBy { get; set; }
 
         // Navigation properties

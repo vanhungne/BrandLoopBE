@@ -15,8 +15,8 @@ namespace BrandLoop.Domain.Entities
 
         public int MessageId { get; set; }
 
-        [StringLength(255)]
-        public string Email { get; set; }
+        [StringLength(32)]
+        public string UID { get; set; }
 
         public DateTime? ReadAt { get; set; }
 
@@ -24,7 +24,7 @@ namespace BrandLoop.Domain.Entities
         [ForeignKey("MessageId")]
         public virtual Message Message { get; set; }
 
-        [ForeignKey("Email")]
+        [ForeignKey("UID")]
         public virtual User User { get; set; }
     }
 }

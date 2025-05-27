@@ -14,8 +14,8 @@ namespace BrandLoop.Domain.Entities
         public int ContentId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string Email { get; set; }
+        [StringLength(32)]
+        public string UID { get; set; }
 
         [StringLength(200)]
         public string ContentName { get; set; }
@@ -32,7 +32,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
-        [ForeignKey("Email")]
+        [ForeignKey("UID")]
         public virtual User User { get; set; }
     }
 }

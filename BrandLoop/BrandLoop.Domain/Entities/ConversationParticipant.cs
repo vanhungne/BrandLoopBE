@@ -15,8 +15,8 @@ namespace BrandLoop.Domain.Entities
 
         public int ConversationId { get; set; }
 
-        [StringLength(255)]
-        public string Email { get; set; }
+        [StringLength(32)]
+        public string UID { get; set; }
 
         public DateTime JoinedAt { get; set; } = DateTime.Now;
 
@@ -28,7 +28,7 @@ namespace BrandLoop.Domain.Entities
         [ForeignKey("ConversationId")]
         public virtual Conversation Conversation { get; set; }
 
-        [ForeignKey("Email")]
+        [ForeignKey("UID")]
         public virtual User User { get; set; }
     }
 }

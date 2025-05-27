@@ -16,7 +16,7 @@ namespace BrandLoop.Domain.Entities
         public int ConversationId { get; set; }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(32)]
         public string Sender { get; set; }
 
         [Required]
