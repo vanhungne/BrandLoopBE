@@ -88,8 +88,9 @@ namespace BrandLoop.Application.Service
             }
         }
 
-        public async Task<CampaignDto> CreateCampaignAsync(CreateCampaignDto dto)
+        public async Task<CampaignDto> CreateCampaignAsync(CreateCampaignDto dto, string uid)
         {
+            var branid =await _campaignRepository.getIdBrand(uid);
             try
             {
                 if (dto == null)
@@ -98,11 +99,6 @@ namespace BrandLoop.Application.Service
                 }
 
                 // Validate business rules
-                if (dto.BrandId <= 0)
-                {
-                    throw new ArgumentException("Brand ID phải lớn hơn 0");
-                }
-
                 if (string.IsNullOrWhiteSpace(dto.CampaignName))
                 {
                     throw new ArgumentException("Tên campaign không được để trống");
@@ -116,12 +112,14 @@ namespace BrandLoop.Application.Service
                 var campaign = _mapper.Map<Campaign>(dto);
                 campaign.UploadedDate = DateTime.Now;
                 campaign.LastUpdate = DateTime.Now;
-                campaign.Status = CampainStatus.Pending; // Sửa lỗi chính tả
+                campaign.Status = CampainStatus.Pending;
+                campaign.CreatedBy = uid ?? throw new ArgumentNullException(nameof(uid), "User ID không được để trống");
+                campaign.BrandId = branid;
 
                 var result = await _campaignRepository.CreateCampaignAsync(campaign);
                 var mappedResult = _mapper.Map<CampaignDto>(result);
 
-                _logger.LogInformation("Created new campaign {CampaignId} for brand {BrandId}", result.CampaignId, dto.BrandId);
+                _logger.LogInformation("Created new campaign {CampaignId} for brand {BrandId}", result.CampaignId);
                 return mappedResult;
             }
             catch (ArgumentNullException ex)
@@ -134,7 +132,7 @@ namespace BrandLoop.Application.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while creating campaign for brand {BrandId}", dto?.BrandId);
+                _logger.LogError(ex, "Error occurred while creating campaign for brand {BrandId}");
                 throw new InvalidOperationException("Lỗi khi tạo campaign", ex);
             }
         }

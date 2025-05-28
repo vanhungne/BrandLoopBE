@@ -12,7 +12,7 @@ namespace BrandLoop.Application.Interfaces
     {
         Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(int brandId);
         Task<CampaignDto> GetCampaignDetailAsync(int campaignId);
-        Task<CampaignDto> CreateCampaignAsync(CreateCampaignDto dto);
+        Task<CampaignDto> CreateCampaignAsync(CreateCampaignDto dto,string uid);
         Task<CampaignDto> UpdateCampaignAsync(UpdateCampaignDto dto);
         Task<bool> DeleteCampaignAsync(int campaignId);
         Task<CampaignDto> UpdateCampaignStatusAsync(int campaignId, CampainStatus status);

@@ -18,5 +18,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<bool> DeleteCampaignAsync(int campaignId);
         Task<Campaign> UpdateCampaignStatusAsync(int campaignId, CampainStatus status);
         Task<Campaign> DuplicateCampaignAsync(int campaignId);
+        Task<int> getIdBrand(string uid);
     }
 }

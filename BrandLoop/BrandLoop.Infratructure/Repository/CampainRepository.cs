@@ -20,6 +20,13 @@ namespace BrandLoop.Infratructure.Repository
         {
             _context = context;
         }
+        public async Task<int> getIdBrand(string uid) {
+            return await _context.BrandProfiles
+                .Where(b => b.UID == uid)
+                .Select(b => b.BrandId)
+                .FirstOrDefaultAsync();
+
+        }
 
         public async Task<IEnumerable<Campaign>> GetBrandCampaignsAsync(int brandId)
         {

@@ -5,6 +5,7 @@ using BrandLoop.Infratructure.Models.CampainModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BrandLoop.API.Controllers
 {
@@ -80,11 +81,14 @@ namespace BrandLoop.API.Controllers
         /// </summary>
         /// <param name="dto">Thông tin campaign cần tạo</param>
         /// <returns>Campaign đã tạo</returns>
+        [Authorize(Roles = "Brand,Admin")]
         [HttpPost]
         public async Task<ActionResult<ApiResponse<CampaignDto>>> CreateCampaign([FromBody] CreateCampaignDto dto)
         {
+
             try
             {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (!ModelState.IsValid)
                 {
                     var errors = string.Join(", ", ModelState.Values
@@ -93,7 +97,7 @@ namespace BrandLoop.API.Controllers
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult($"Dữ liệu không hợp lệ: {errors}"));
                 }
 
-                var result = await _campaignService.CreateCampaignAsync(dto);
+                var result = await _campaignService.CreateCampaignAsync(dto,uid);
                 if (result == null)
                 {
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Không thể tạo campaign"));

@@ -1,7 +1,9 @@
 ﻿using BrandLoop.Application.Interfaces;
+    using BrandLoop.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using BrandLoop.Infratructure.Models.Authen;
 
 namespace BrandLoop.API.Controllers
 {
@@ -16,12 +18,28 @@ namespace BrandLoop.API.Controllers
         {
             _authenService = authenService;
         }
+
         [HttpGet("pending-registrations")]
-        public async Task<IActionResult> GetPendingRegistrations()
+        public async Task<IActionResult> GetPendingRegistrations([FromQuery] PaginationFilter filter)
         {
-            var pendingRegistrations = await _authenService.GetPendingRegistrations();
-            return Ok(pendingRegistrations);
+            var allRegistrations = await _authenService.GetPendingRegistrations();
+            var totalRecords = allRegistrations.Count;
+            
+            var pagedData = allRegistrations
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+            var response = new PaginationResponse<PendingRegistrationDto>(
+                pagedData, 
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+            );
+            
+            return Ok(response);
         }
+
         [HttpPost("approve-registration/{uid}")]
         public async Task<IActionResult> ApproveRegistration(string uid)
         {
@@ -32,6 +50,7 @@ namespace BrandLoop.API.Controllers
 
             return NotFound(new { success = false, message = "User not found or already approved" });
         }
+
         [HttpPost("reject-registration/{uid}")]
         public async Task<IActionResult> RejectRegistration(string uid, [FromBody] RejectRegistrationModel model)
         {
