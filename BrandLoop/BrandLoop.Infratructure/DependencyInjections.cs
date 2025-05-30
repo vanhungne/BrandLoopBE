@@ -29,7 +29,7 @@ namespace BrandLoop.Infratructure
             services.AddScoped<INotificationRepository, NotificationRepository>();
             services.AddScoped<ICampaignRepository, CampaignRepository>();
             services.AddScoped<IAccountCleanupRepository, AccountCleanupRepository>();
-
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
     }

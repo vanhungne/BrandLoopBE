@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Domain.Entities
 {
@@ -20,7 +21,7 @@ namespace BrandLoop.Domain.Entities
         public string UID { get; set; }
 
         [StringLength(50)]
-        public string Status { get; set; } = "pending"; // pending, accepted, rejected, completed
+        public KolJoinCampaignStatus Status { get; set; } = KolJoinCampaignStatus.Pending;
 
         public DateTime AppliedAt { get; set; } = DateTime.Now;
 

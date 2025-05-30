@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Domain.Entities
 {
@@ -22,7 +23,7 @@ namespace BrandLoop.Domain.Entities
         [Column(TypeName = "decimal(18,2)")]
         public decimal Balance { get; set; } = 0;
         [StringLength(50)]
-        public string WalletType { get; set; } = "main";
+        public TransactionType WalletType { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;

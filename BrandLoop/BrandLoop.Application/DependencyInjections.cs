@@ -18,6 +18,7 @@ namespace BrandLoop.Application
             services.AddScoped<ICloundinaryService, CloundinaryService>();
             services.AddScoped<ICampaignService, CampaignService>();
             services.AddHostedService<AccountCleanupBackgroundService>();
+            services.AddScoped<IProfileService, ProfileService>();
             return services;
         } 
         }

@@ -55,8 +55,8 @@ namespace BrandLoop.API.Controllers
                 Response.Cookies.Append("accessToken", accessToken, new CookieOptions
                 {
                     HttpOnly = false,
-                    Secure = false,
-                    SameSite = SameSiteMode.Strict,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTimeOffset.UtcNow.AddHours(1)
                 });
 

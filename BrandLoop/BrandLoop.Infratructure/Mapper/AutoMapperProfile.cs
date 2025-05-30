@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using AutoMapper;
 using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.Authen;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.UserModel;
 
 
 namespace BrandLoop.Infratructure.Mapper
@@ -33,7 +36,15 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<Campaign, CampaignDto>().ReverseMap();
             CreateMap<CreateCampaignDto, Campaign>();
             CreateMap<UpdateCampaignDto, Campaign>();
-    }
+
+            // Skill mapping
+            CreateMap<Skill, SkillModel>();
+
+            // Content and Style mapping
+            CreateMap<ContentAndStyle, ContentAndStyleModel>();
+
+
+        }
         
     }
 }
