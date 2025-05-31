@@ -1,6 +1,8 @@
-﻿using BrandLoop.API.Response;
+﻿using BrandLoop.API.Models;
+using BrandLoop.API.Response;
 using BrandLoop.Application.Interfaces;
 using BrandLoop.Domain.Entities;
+using BrandLoop.Infratructure.Models.Authen;
 using BrandLoop.Infratructure.Models.News;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,15 +37,27 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<List<News>>> GetAllNews(int pageNumber, int pageSize)
+        public async Task<ActionResult<List<News>>> GetAllNews([FromQuery] PaginationFilter filter)
         {
             try
             {
-                var newsList = await _newsService.GetAllNewsAsync(pageNumber, pageSize);
+                var newsList = await _newsService.GetAllNewsAsync();
+                var totalRecords = newsList.Count;
                 if (newsList == null || !newsList.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("Can not found any news"));
 
-                return Ok(ApiResponse<List<News>>.SuccessResult(newsList));
+                var pagedData = newsList
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<News>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+                );
+                return Ok(ApiResponse<PaginationResponse<News>>.SuccessResult(response));
             }
             catch (Exception ex)
             {
@@ -52,16 +66,27 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpGet("my-news")]
-        public async Task<ActionResult<List<News>>> GetMyNews(int pageNumber, int pageSize)
+        public async Task<ActionResult<List<News>>> GetMyNews([FromQuery] PaginationFilter filter)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var myNews = await _newsService.GetMyNewsAsync(uid, pageNumber, pageSize);
+                var myNews = await _newsService.GetMyNewsAsync(uid);
+                var totalRecords = myNews.Count;
                 if (myNews == null || !myNews.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("No news found for this user"));
 
-                return Ok(ApiResponse<List<News>>.SuccessResult(myNews));
+                var pagedData = myNews
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+                var response = new PaginationResponse<News>(
+                    pagedData,
+                    filter.PageNumber,
+                    filter.PageSize,
+                    totalRecords
+                );
+                return Ok(ApiResponse<PaginationResponse<News>>.SuccessResult(response));
             }
             catch (Exception ex)
             {
@@ -70,15 +95,27 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<List<News>>> SearchNews(string searchTerm, int pageNumber, int pageSize)
+        public async Task<ActionResult<List<News>>> SearchNews([FromQuery]string searchTerm,[FromQuery] PaginationFilter filter)
         {
             try
             {
-                var newsList = await _newsService.SearchNewsAsync(searchTerm, pageNumber, pageSize);
+                var newsList = await _newsService.SearchNewsAsync(searchTerm);
+                var totalRecords = newsList.Count;
                 if (newsList == null || !newsList.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("No news found for this search term"));
 
-                return Ok(ApiResponse<List<News>>.SuccessResult(newsList));
+                var pagedData = newsList
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<News>(
+                    pagedData,
+                    filter.PageNumber,
+                    filter.PageSize,
+                    totalRecords
+                );
+                return Ok(ApiResponse<PaginationResponse<News>>.SuccessResult(response));
             }
             catch (Exception ex)
             {
@@ -104,15 +141,27 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpGet("category/{category}")]
-        public async Task<ActionResult<List<News>>> GetNewsByCategory(string category, int pageNumber, int pageSize)
+        public async Task<ActionResult<List<News>>> GetNewsByCategory([FromQuery]string category, [FromQuery] PaginationFilter filter)
         {
             try
             {
-                var newsList = await _newsService.GetNewsByCategoryAsync(category, pageNumber, pageSize);
+                var newsList = await _newsService.GetNewsByCategoryAsync(category);
+                var totalRecords = newsList.Count;
                 if (newsList == null || !newsList.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("No news found for this category"));
 
-                return Ok(ApiResponse<List<News>>.SuccessResult(newsList));
+                var pagedData = newsList
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<News>(
+                    pagedData,
+                    filter.PageNumber,
+                    filter.PageSize,
+                    totalRecords
+                );
+                return Ok(ApiResponse<PaginationResponse<News>>.SuccessResult(response));
             }
             catch (Exception ex)
             {
@@ -156,14 +205,27 @@ namespace BrandLoop.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpGet("pending")]
-        public async Task<ActionResult<List<News>>> GetAllPendingNews(int pageNumber, int pageSize)
+        public async Task<ActionResult<List<News>>> GetAllPendingNews([FromQuery] PaginationFilter filter)
         {
             try
             {
-                var pendingNews = await _newsService.GetAllPendingNewsAsync(pageNumber, pageSize);
+                var pendingNews = await _newsService.GetAllPendingNewsAsync();
+                var totalRecords = pendingNews.Count;
                 if (pendingNews == null || !pendingNews.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("No pending news found"));
-                return Ok(ApiResponse<List<News>>.SuccessResult(pendingNews));
+
+                var pagedData = pendingNews
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<News>(
+                    pagedData,
+                    filter.PageNumber,
+                    filter.PageSize,
+                    totalRecords
+                );
+                return Ok(ApiResponse<PaginationResponse<News>>.SuccessResult(response));
             }
             catch (Exception ex)
             {

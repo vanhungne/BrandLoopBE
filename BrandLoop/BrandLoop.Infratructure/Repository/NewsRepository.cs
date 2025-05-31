@@ -76,24 +76,20 @@ namespace BrandLoop.Infratructure.Repository
             _context.SaveChanges();
         }
 
-        public async Task<List<News>> GetAllPendingNews(int pageNumber, int pageSize)
+        public async Task<List<News>> GetAllPendingNews()
         {
             var pendingNews = await _context.News
                 .Where(n => n.Status == Domain.Enums.NewsStatus.Draft)
                 .OrderByDescending(n => n.CreatedAt)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
             return pendingNews;
         }
 
-        public async Task<List<News>> GetNewsByCategory(string category, int pageNumber, int pageSize)
+        public async Task<List<News>> GetNewsByCategory(string category)
         {
             var newsByCategory = await _context.News
                 .Where(n => n.Category == category && n.Status == Domain.Enums.NewsStatus.Published)
                 .OrderByDescending(n => n.CreatedAt)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
             return newsByCategory;
         }
@@ -114,13 +110,11 @@ namespace BrandLoop.Infratructure.Repository
             return news;
         }
 
-        public async Task<List<News>> GetsAllNews(int pageNumber, int pageSize)
+        public async Task<List<News>> GetsAllNews()
         {
             var allNews = await _context.News
                 .Where(n => n.Status != Domain.Enums.NewsStatus.Deleted)
                 .OrderByDescending(n => n.CreatedAt)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
             return allNews;
         }
@@ -136,13 +130,11 @@ namespace BrandLoop.Infratructure.Repository
                 _context.SaveChanges();
         }
 
-        public async Task<List<News>> SearchNews(string searchTerm, int pageNumber, int pageSize)
+        public async Task<List<News>> SearchNews(string searchTerm)
         {
             var searchResults = await _context.News
                 .Where(n => n.Title.Contains(searchTerm) || n.AuthorName.Contains(searchTerm))
-                .OrderByDescending(n => n.CreatedAt)    
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                .OrderByDescending(n => n.CreatedAt)
                 .ToListAsync();
             return searchResults;
         }
@@ -171,13 +163,11 @@ namespace BrandLoop.Infratructure.Repository
             return existingNews;
         }
 
-        public Task<List<News>> GetMyNews(string uid, int pageNumber, int pageSize)
+        public Task<List<News>> GetMyNews(string uid)
         {
             var myNews = _context.News
                 .Where(n => n.Author == uid)
                 .OrderByDescending(n => n.CreatedAt)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
                 .ToListAsync();
 
             return myNews;

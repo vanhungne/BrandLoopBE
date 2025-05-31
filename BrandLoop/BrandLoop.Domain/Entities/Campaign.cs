@@ -33,6 +33,7 @@ namespace BrandLoop.Domain.Entities
 
         public decimal? Budget { get; set; }
 
+        public DateTime? StartTime { get; set; }
         public DateTime? Deadline { get; set; }
 
         [StringLength(50)]

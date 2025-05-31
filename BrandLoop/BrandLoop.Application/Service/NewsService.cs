@@ -40,24 +40,24 @@ namespace BrandLoop.Application.Service
             await _newsRepository.DeleteNews(newsId);
         }
 
-        public async Task<List<News>> GetAllNewsAsync(int pageNumber, int pageSize)
+        public async Task<List<News>> GetAllNewsAsync()
         {
-            return await _newsRepository.GetsAllNews(pageNumber, pageSize);
+            return await _newsRepository.GetsAllNews();
         }
 
-        public async Task<List<News>> GetAllPendingNewsAsync(int pageNumber, int pageSize)
+        public async Task<List<News>> GetAllPendingNewsAsync()
         {
-            return await _newsRepository.GetAllPendingNews(pageNumber, pageSize);
+            return await _newsRepository.GetAllPendingNews();
         }
 
-        public async Task<List<News>> GetMyNewsAsync(string uid, int pageNumber, int pageSize)
+        public async Task<List<News>> GetMyNewsAsync(string uid)
         {
-            return await _newsRepository.GetMyNews(uid, pageNumber, pageSize);
+            return await _newsRepository.GetMyNews(uid);
         }
 
-        public async Task<List<News>> GetNewsByCategoryAsync(string category, int pageNumber, int pageSize)
+        public async Task<List<News>> GetNewsByCategoryAsync(string category)
         {
-            return await _newsRepository.GetNewsByCategory(category, pageNumber, pageSize);
+            return await _newsRepository.GetNewsByCategory(category);
         }
 
         public async Task<News> GetNewsByIdAsync(int newsId)
@@ -75,9 +75,9 @@ namespace BrandLoop.Application.Service
             await _newsRepository.RejectNews(newsId);
         }
 
-        public async Task<List<News>> SearchNewsAsync(string searchTerm, int pageNumber, int pageSize)
+        public async Task<List<News>> SearchNewsAsync(string searchTerm)
         {
-            return await _newsRepository.SearchNews(searchTerm, pageNumber, pageSize);
+            return await _newsRepository.SearchNews(searchTerm);
         }
 
         public async Task<News> UpdateNewsAsync(UpdateNews news, IFormFile newsImage, string UID)
