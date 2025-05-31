@@ -38,6 +38,11 @@ namespace BrandLoop.Application.Service
             return _repository.GenerateJwtToken(user);
         }
 
+        public async Task<List<PendingRegistrationDto>> GetApproveRegistrations()
+        {
+            return await _repository.GetApproveRegistrations();
+        }
+
         public async Task<List<PendingRegistrationDto>> GetPendingRegistrations()
         {
             return await _repository.GetPendingRegistrations();

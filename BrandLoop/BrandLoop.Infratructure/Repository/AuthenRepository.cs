@@ -409,7 +409,19 @@ namespace BrandLoop.Infratructure.ReporitorY
                 .Include(u => u.Role)
                 .Include(u => u.BrandProfile)
                 .Include(u => u.InfluenceProfile)
-                .Where(u => u.Status == 0)
+                .Where(u => u.Status == UserStatus.Inactive)
+                .ToListAsync();
+
+            var result = _mapper.Map<List<PendingRegistrationDto>>(users);
+            return result;
+        }
+        public async Task<List<PendingRegistrationDto>> GetApproveRegistrations()
+        {
+            var users = await _context.Users
+                .Include(u => u.Role)
+                .Include(u => u.BrandProfile)
+                .Include(u => u.InfluenceProfile)
+                .Where(u => u.Status == UserStatus.Active)
                 .ToListAsync();
 
             var result = _mapper.Map<List<PendingRegistrationDto>>(users);

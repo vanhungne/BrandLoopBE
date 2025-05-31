@@ -64,6 +64,7 @@ namespace BrandLoop.API.Controllers
                 return Ok(new
                 {
                     code = 200,
+                    accessToken,
                     refreshToken,
                     accessToken,
                     roleid,

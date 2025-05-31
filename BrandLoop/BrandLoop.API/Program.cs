@@ -92,7 +92,7 @@ public class Program
         {
             options.AddPolicy("AllowSpecificOrigin", policy =>
             {
-                policy.WithOrigins("http://localhost:7222")
+                policy.WithOrigins("http://localhost:7222", "http://localhost:5173", "https://brandloop.pages.dev")
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .AllowCredentials();

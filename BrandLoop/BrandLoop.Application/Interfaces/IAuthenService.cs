@@ -20,6 +20,7 @@ namespace BrandLoop.Application.Interfaces
         Task<bool> ApproveRegistration(string uid);
         Task<bool> RejectRegistration(string uid, string reason);
         Task<List<PendingRegistrationDto>> GetPendingRegistrations();
+        Task<List<PendingRegistrationDto>> GetApproveRegistrations();
         string GenerateJwtToken(User user);
         Task<string> ConfirmEmailAsync(string? email);
     }

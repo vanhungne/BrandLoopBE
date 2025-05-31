@@ -9,7 +9,7 @@ namespace BrandLoop.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles ="Brand,KOL")]
+    [Authorize(Roles ="Brand,KOL,Admin")]
     public class ProfileController : ControllerBase
     {
         private readonly IProfileService _profileService;

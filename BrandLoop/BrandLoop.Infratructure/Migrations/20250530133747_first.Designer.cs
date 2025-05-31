@@ -12,8 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    [Migration("20250526212337_tin")]
+<<<<<<<< HEAD:BrandLoop/BrandLoop.Infratructure/Migrations/20250531151523_tin.Designer.cs
+    [Migration("20250531151523_tin")]
     partial class tin
+========
+    [Migration("20250530133747_first")]
+    partial class first
+>>>>>>>> main:BrandLoop/BrandLoop.Infratructure/Migrations/20250530133747_first.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -190,6 +195,9 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("Status")
                         .HasMaxLength(50)
                         .HasColumnType("int");
@@ -224,26 +232,26 @@ namespace BrandLoop.Infratructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("NegotiateMessage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal?>("ProposedRate")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<string>("UID")
                         .IsRequired()
@@ -438,11 +446,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.HasKey("DealId");
 
                     b.HasIndex("InvitationId");
@@ -624,10 +627,9 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<string>("UID")
                         .IsRequired()
@@ -1248,10 +1250,9 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<string>("UserUID")
                         .HasColumnType("nvarchar(32)");
 
-                    b.Property<string>("WalletType")
-                        .IsRequired()
+                    b.Property<int>("WalletType")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.HasKey("WalletId");
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BrandLoop.Infratructure.Migrations
 {
     /// <inheritdoc />
-    public partial class tin : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -458,7 +458,7 @@ namespace BrandLoop.Infratructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    WalletType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    WalletType = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserUID = table.Column<string>(type: "nvarchar(32)", nullable: true)
@@ -493,6 +493,7 @@ namespace BrandLoop.Infratructure.Migrations
                     ContentRequirements = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CampaignGoals = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Budget = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Deadline = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false)
@@ -588,11 +589,12 @@ namespace BrandLoop.Infratructure.Migrations
                     UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NegotiateMessage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProposedRate = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -674,7 +676,7 @@ namespace BrandLoop.Infratructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     AppliedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -703,7 +705,6 @@ namespace BrandLoop.Infratructure.Migrations
                     InvitationId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EditedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     AdminCommissionRate = table.Column<decimal>(type: "decimal(5,2)", nullable: true),

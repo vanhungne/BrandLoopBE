@@ -4,6 +4,7 @@ using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    partial class BLDBContextModelSnapshot : ModelSnapshot
+<<<<<<<< HEAD:BrandLoop/BrandLoop.Infratructure/Migrations/20250531151523_tin.Designer.cs
+    [Migration("20250531151523_tin")]
+    partial class tin
+========
+    [Migration("20250530133747_first")]
+    partial class first
+>>>>>>>> main:BrandLoop/BrandLoop.Infratructure/Migrations/20250530133747_first.Designer.cs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

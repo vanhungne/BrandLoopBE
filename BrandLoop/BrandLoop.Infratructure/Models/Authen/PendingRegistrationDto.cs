@@ -18,6 +18,8 @@ namespace BrandLoop.Infratructure.Models.Authen
         public string Industry { get; set; }
         public string Website { get; set; }
 
+        public string logoUrl { get; set; }
+        public string imageUrl { get; set; }
         public string Nickname { get; set; }
         public string ContentCategory { get; set; }
         public string Facebook { get; set; }
