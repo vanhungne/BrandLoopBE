@@ -66,7 +66,6 @@ namespace BrandLoop.API.Controllers
                     code = 200,
                     accessToken,
                     refreshToken,
-                    accessToken,
                     roleid,
                     message = "Login successful"
                 });
