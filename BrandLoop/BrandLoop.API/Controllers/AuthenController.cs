@@ -66,8 +66,9 @@ namespace BrandLoop.API.Controllers
                     code = 200,
                     accessToken,
                     refreshToken,
+                    accessToken,
                     roleid,
-                    message = "Login successful -- Doan xem token o dau"
+                    message = "Login successful"
                 });
             }
             catch (Exception ex)

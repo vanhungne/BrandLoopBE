@@ -36,6 +36,7 @@ namespace BrandLoop.API.Controllers
         /// <summary>
         /// Lấy thông tin brand profile
         /// </summary>
+        /// 
         [HttpGet("brand")]
         public async Task<IActionResult> GetBrandProfile()
         {
