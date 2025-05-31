@@ -48,7 +48,7 @@ namespace BrandLoop.API.Controllers
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var invitation = await _campaignInvitationService.CreateInvitationAsync(joinCampaign, uid, JoinCampaignType.BrandApplied);
+                var invitation = await _campaignInvitationService.CreateInvitationAsync(joinCampaign, uid, JoinCampaignType.KolApplied);
                 return Ok(invitation);
             }
             catch (AuthenticationException ex)
@@ -63,7 +63,7 @@ namespace BrandLoop.API.Controllers
 
         [HttpGet("campaign/{campaignId}")]
         [Authorize(Roles = "Brand")]
-        public async Task<IActionResult> GetAllInvitationsOfCampaignAsync([FromQuery]int campaignId, [FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetAllInvitationsOfCampaignAsync(int campaignId, [FromQuery] PaginationFilter filter)
         {
             try
             {
@@ -78,7 +78,7 @@ namespace BrandLoop.API.Controllers
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponse<CampaignInvitation>(
+                var response = new PaginationResponse<InvitationDTO>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,
@@ -99,17 +99,15 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        [HttpGet("get-all-kol-invitation/{kolId}")]
+        [HttpGet("get-all-kol-invitation")]
         [Authorize(Roles = "KOL")]
-        public async Task<IActionResult> GetInvitationsByKOLIdAsync([FromQuery]string kolId, [FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetInvitationsByKOLIdAsync([FromQuery] PaginationFilter filter)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (kolId != uid)
-                    return Forbid("You are not authorized to view this KOL's invitations.");
 
-                var invitations = await _campaignInvitationService.GetInvitationsByKOLIdAsync(kolId);
+                var invitations = await _campaignInvitationService.GetInvitationsByKOLIdAsync(uid);
                 if (invitations == null || !invitations.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("Can not found any invitation"));
 
@@ -119,7 +117,7 @@ namespace BrandLoop.API.Controllers
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponse<CampaignInvitation>(
+                var response = new PaginationResponse<InvitationDTO>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,
@@ -217,6 +215,54 @@ namespace BrandLoop.API.Controllers
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var isWaiting = await _campaignInvitationService.IsWaitingForApprove(campaignId, uid);
                 return Ok(isWaiting);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("check-can-approve/{invitationId}")]
+        [Authorize]
+        public async Task<IActionResult> CheckCanApproveAsync(int invitationId)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var canApprove = await _campaignInvitationService.CheckCanApprove(invitationId, uid);
+                return Ok(canApprove);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("check-can-negotiate/{invitationId}")]
+        [Authorize]
+        public async Task<IActionResult> CheckCanNegotiateAsync(int invitationId)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var canNegotiate = await _campaignInvitationService.CheckCanNegotiate(invitationId, uid);
+                return Ok(canNegotiate);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpGet("check-can-reject/{invitationId}")]
+        [Authorize]
+        public async Task<IActionResult> CheckCanRejectAsync(int invitationId)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var canReject = await _campaignInvitationService.CheckCanReject(invitationId, uid);
+                return Ok(canReject);
             }
             catch (Exception ex)
             {

@@ -23,7 +23,9 @@ namespace BrandLoop.Infratructure.Repository
             var deal = new Deal
             {
                 InvitationId = invitation.InvitationId,
-                Description = $"Hợp tác chiến dịch \"{invitation.Campaign.CampaignName}\":\n{invitation.Message}\nThù lao: {invitation.Price}đ",
+                Description =   $"Thoả thuận hợp tác cho chiến dịch \"{invitation.Campaign.CampaignName}\".\n\n" +
+                                $"Nội dung lời mời: {invitation.Message}\n\n" +
+                                $"Thù lao đã thống nhất: {price:N0}đ.",
                 Price = price,
                 CreatedAt = DateTimeHelper.GetVietnamNow(),
                 EditedAt = null,
