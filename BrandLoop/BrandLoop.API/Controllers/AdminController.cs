@@ -39,6 +39,26 @@ namespace BrandLoop.API.Controllers
             
             return Ok(response);
         }
+        [HttpGet("approve-registrations")]
+        public async Task<IActionResult> GetApproveRegistrations([FromQuery] PaginationFilter filter)
+        {
+            var allRegistrations = await _authenService.GetApproveRegistrations();
+            var totalRecords = allRegistrations.Count;
+
+            var pagedData = allRegistrations
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+            var response = new PaginationResponse<PendingRegistrationDto>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+            );
+
+            return Ok(response);
+        }
 
         [HttpPost("approve-registration/{uid}")]
         public async Task<IActionResult> ApproveRegistration(string uid)

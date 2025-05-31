@@ -64,6 +64,7 @@ namespace BrandLoop.API.Controllers
                 return Ok(new
                 {
                     code = 200,
+                    accessToken,
                     refreshToken,
                     roleid,
                     message = "Login successful -- Doan xem token o dau"

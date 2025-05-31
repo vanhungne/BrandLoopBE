@@ -621,10 +621,9 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<string>("UID")
                         .IsRequired()
@@ -1245,10 +1244,9 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<string>("UserUID")
                         .HasColumnType("nvarchar(32)");
 
-                    b.Property<string>("WalletType")
-                        .IsRequired()
+                    b.Property<int>("WalletType")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.HasKey("WalletId");
 

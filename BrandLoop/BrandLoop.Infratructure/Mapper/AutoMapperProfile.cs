@@ -24,6 +24,8 @@ namespace BrandLoop.Infratructure.Mapper
      .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.BrandProfile.CompanyName))
      .ForMember(dest => dest.Industry, opt => opt.MapFrom(src => src.BrandProfile.Industry))
      .ForMember(dest => dest.Website, opt => opt.MapFrom(src => src.BrandProfile.Website))
+     .ForMember(dest =>dest.logoUrl, opt =>opt.MapFrom(src=> src.BrandProfile.Logo))
+     .ForMember(dest=>dest.imageUrl,opt =>opt.MapFrom(src=>src.ProfileImage))
      .ForMember(dest => dest.Nickname, opt => opt.MapFrom(src => src.InfluenceProfile.Nickname))
      .ForMember(dest => dest.ContentCategory, opt => opt.MapFrom(src => src.InfluenceProfile.ContentCategory))
      .ForMember(dest => dest.Facebook, opt => opt.MapFrom(src =>

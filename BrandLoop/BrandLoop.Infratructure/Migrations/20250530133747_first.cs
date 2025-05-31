@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BrandLoop.Infratructure.Migrations
 {
     /// <inheritdoc />
-    public partial class tin : Migration
+    public partial class first : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -458,7 +458,7 @@ namespace BrandLoop.Infratructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     Balance = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    WalletType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    WalletType = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserUID = table.Column<string>(type: "nvarchar(32)", nullable: true)
@@ -674,7 +674,7 @@ namespace BrandLoop.Infratructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
                     UID = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Status = table.Column<int>(type: "int", maxLength: 50, nullable: false),
                     AppliedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
