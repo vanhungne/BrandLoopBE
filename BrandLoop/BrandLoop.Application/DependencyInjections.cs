@@ -19,6 +19,9 @@ namespace BrandLoop.Application
             services.AddScoped<ICampaignService, CampaignService>();
             services.AddHostedService<AccountCleanupBackgroundService>();
             services.AddScoped<IProfileService, ProfileService>();
+            services.AddScoped<INewsService, NewsService>();
+            services.AddScoped<ICampaignInvitationService, CampaignInvitationService>();
+            services.AddScoped<IDealService, DealService>();
             return services;
         } 
         }

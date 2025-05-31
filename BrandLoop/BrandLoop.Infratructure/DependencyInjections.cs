@@ -30,6 +30,9 @@ namespace BrandLoop.Infratructure
             services.AddScoped<ICampaignRepository, CampaignRepository>();
             services.AddScoped<IAccountCleanupRepository, AccountCleanupRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<INewsRepository, NewsRepository>();
+            services.AddScoped<ICampaignInvitationRepository, CampaignInvitationRepository>();
+            services.AddScoped<IDealRepository, DealRepository>();
             return services;
         }
     }

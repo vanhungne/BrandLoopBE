@@ -5,12 +5,14 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrandLoop.Shared.Helper;
 
 namespace BrandLoop.Domain.Entities
 {
     public class Deal
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int DealId { get; set; }
 
         public int InvitationId { get; set; }
@@ -19,10 +21,7 @@ namespace BrandLoop.Domain.Entities
 
         public decimal? Price { get; set; }
 
-        [StringLength(50)]
-        public string Status { get; set; } = "pending"; // pending, accepted, rejected, completed
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
 
         public DateTime? EditedAt { get; set; }
         // Tỷ lệ hoa hồng cho admin
