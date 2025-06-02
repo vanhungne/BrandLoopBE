@@ -75,7 +75,7 @@ namespace BrandLoop.Application.Service
                     }
 
                     else
-                        throw new AuthenticationException("You are not authorized to invite KOLs to this campaign.");
+                        throw new AuthenticationException("You are not authorized to invite Influencer to this campaign.");
 
                 default: // KOLs apply to join the campaign
                     joinCampaign.UID = uid;

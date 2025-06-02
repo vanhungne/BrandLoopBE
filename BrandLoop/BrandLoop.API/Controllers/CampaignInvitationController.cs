@@ -42,7 +42,7 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpPost("kols-applie")]
-        [Authorize(Roles = "KOL")]
+        [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> KolsApplyCampaignAsync([FromBody] JoinCampaign joinCampaign)
         {
             try
@@ -100,7 +100,7 @@ namespace BrandLoop.API.Controllers
             }
         }
         [HttpGet("get-all-kol-invitation")]
-        [Authorize(Roles = "KOL")]
+        [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> GetInvitationsByKOLIdAsync([FromQuery] PaginationFilter filter)
         {
             try

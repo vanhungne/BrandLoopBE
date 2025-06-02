@@ -52,7 +52,7 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpGet("my-deals")]
-        [Authorize(Roles = "KOL")]
+        [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> GetAllKolDeals([FromQuery] PaginationFilter filter)
         {
             try

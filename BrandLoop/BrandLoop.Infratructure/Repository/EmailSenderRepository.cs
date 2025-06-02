@@ -164,7 +164,7 @@ namespace BrandLoop.Infratructure.Reporitory
 
         public string GetMailBody(RegisterBaseModel model, string accountType = "User")
         {
-            if (accountType == "Brand" || accountType == "KOL")
+            if (accountType == "Brand" || accountType == "Influencer")
             {
                 // Custom template for Brand/KOL registration pending approval
                 return string.Format(@"

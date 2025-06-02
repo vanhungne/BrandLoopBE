@@ -133,7 +133,7 @@ namespace BrandLoop.API.Controllers
 
             return BadRequest(new { success = false, message = result });
         }
-        [HttpPost("register/kol")]
+        [HttpPost("register/influencer")]
         public async Task<IActionResult> RegisterKOL([FromForm] RegisterKOLModel model, IFormFile avatarFile)
         {
             var result = await _service.RegisterKOL(model, avatarFile);

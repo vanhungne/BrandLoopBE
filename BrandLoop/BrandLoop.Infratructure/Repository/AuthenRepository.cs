@@ -48,7 +48,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             {
                     new Claim(ClaimTypes.Name, user.FullName ?? string.Empty),
                     new Claim(ClaimTypes.NameIdentifier, user.UID?.ToString() ?? string.Empty),
-                    new Claim(ClaimTypes.Role, user.RoleId == 1 ? "Admin" : user.RoleId == 2 ? "Brand":  user.RoleId == 3 ? "KOL" :"Guest"),
+                    new Claim(ClaimTypes.Role, user.RoleId == 1 ? "Admin" : user.RoleId == 2 ? "Brand":  user.RoleId == 3 ? "Influencer" :"Guest"),
                     new Claim("RoleId", user.RoleId.ToString() ?? string.Empty),
                     new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
                     new Claim("Avatar", user.ProfileImage?.ToString() ?? string.Empty),
@@ -383,7 +383,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                     await _context.SaveChangesAsync();
 
                     // Notify admin about new registration
-                    await NotifyAdminsAboutRegistration(user.Email, "KOL");
+                    await NotifyAdminsAboutRegistration(user.Email, "Influencer");
 
                     await transaction.CommitAsync();
                 }
@@ -394,12 +394,12 @@ namespace BrandLoop.Infratructure.ReporitorY
                 }
             }
 
-            string emailBody = _emailSender.GetMailBody(model, "KOL");
-            bool emailSent = await _emailSender.EmailSendAsync(model.Email, "KOL Registration Submitted", emailBody);
+            string emailBody = _emailSender.GetMailBody(model, "Influencer");
+            bool emailSent = await _emailSender.EmailSendAsync(model.Email, "Influencer Registration Submitted", emailBody);
 
             return emailSent
-                ? "Your KOL registration has been submitted. You will receive an email when your account is approved by an administrator."
-                : "Your KOL registration has been submitted, but there was an error sending the confirmation email.";
+                ? "Your Influencer registration has been submitted. You will receive an email when your account is approved by an administrator."
+                : "Your Influencer registration has been submitted, but there was an error sending the confirmation email.";
         }
 
         // Method to get all pending registrations for admin
@@ -421,7 +421,7 @@ namespace BrandLoop.Infratructure.ReporitorY
                 .Include(u => u.Role)
                 .Include(u => u.BrandProfile)
                 .Include(u => u.InfluenceProfile)
-                .Where(u => u.Status == UserStatus.Active)
+                .Where(u => u.Status == UserStatus.Active || u.Status == UserStatus.Banned)
                 .ToListAsync();
 
             var result = _mapper.Map<List<PendingRegistrationDto>>(users);
@@ -449,7 +449,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             await _emailSender.EmailSendAsync(user.Email, "Registration Approved", emailBody);
 
             // Send notification to user
-            string notificationType = user.RoleId == 2 ? "Brand" : "KOL";
+            string notificationType = user.RoleId == 2 ? "Brand" : "Influencer";
             string notificationMessage = $"Your {notificationType} registration has been approved.";
 
             await _notificationRepository.CreateNotification(
