@@ -9,6 +9,6 @@ namespace BrandLoop.Domain.Enums
     public enum JoinCampaignType
     {
         BrandInvited, // KOL được mời
-        BrandApplied, // KOL tự ứng tuyển
+        KolApplied, // KOL tự ứng tuyển
     }
 }

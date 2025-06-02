@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BrandLoop.Domain.Enums;
+using BrandLoop.Shared.Helper;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Domain.Entities
 {
@@ -25,13 +26,13 @@ namespace BrandLoop.Domain.Entities
         public string Title { get; set; }
 
         public string Message { get; set; }
-        public string NegotiateMessage { get; set; }
+        public string? NegotiateMessage { get; set; }
 
         public decimal? ProposedRate { get; set; } = 0;
 
         public CampaignInvitationStatus Status { get; set; } = CampaignInvitationStatus.pending;
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
 
         public decimal? Price { get; set; } = 0;
 

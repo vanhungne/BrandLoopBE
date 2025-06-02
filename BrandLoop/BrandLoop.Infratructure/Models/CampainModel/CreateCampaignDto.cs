@@ -13,6 +13,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public string ContentRequirements { get; set; }
         public string CampaignGoals { get; set; }
         public decimal? Budget { get; set; }
+        public DateTime? StartTime { get; set; }
         public DateTime? Deadline { get; set; }
     }
 }

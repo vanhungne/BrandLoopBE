@@ -301,7 +301,7 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, RoleName = "Admin", Description = "System Administrator" },
                 new Role { RoleId = 2, RoleName = "Brand", Description = "Brand/Company Account" },
-                new Role { RoleId = 3, RoleName = "KOL", Description = "Key Opinion Leader/Influencer" },
+                new Role { RoleId = 3, RoleName = "Influencer", Description = "Key Opinion Leader/Influencer" },
                 new Role { RoleId = 4, RoleName = "Guest", Description = "Guest User" }
             );
         }

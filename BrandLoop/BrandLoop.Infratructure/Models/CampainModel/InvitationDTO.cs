@@ -1,35 +1,25 @@
-﻿using BrandLoop.Domain.Enums;
-using BrandLoop.Shared.Helper;
+﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace BrandLoop.Infratructure.Models.CampainModel
 {
-    public class JoinCampaign
-    {
-        [Required]
-        public int CampaignId { get; set; }
-
-        [Required]
-        [StringLength(32)]
-        public string UID { get; set; } // KOL được mời
-
-        [StringLength(255)]
-        public string Title { get; set; }
-
-        public string Message { get; set; }
-
-        public decimal? ProposedRate { get; set; }
-    }
-
-    public class InvitationResponse
+    public class InvitationDTO
     {
         public int InvitationId { get; set; }
+        public int CampaignId { get; set; }
+        public string UID { get; set; } // KOL được mời
+        public string Title { get; set; }
         public string Message { get; set; }
+        public string? NegotiateMessage { get; set; }
+        public decimal? ProposedRate { get; set; }
+        public string Status { get; set; } // CampaignInvitationStatus
+        public DateTime CreatedAt { get; set; }
         public decimal? Price { get; set; }
+        public string Type { get; set; } // JoinCampaignType
     }
 }
