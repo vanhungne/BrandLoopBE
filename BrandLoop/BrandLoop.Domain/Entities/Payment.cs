@@ -11,7 +11,7 @@ namespace BrandLoop.Domain.Entities
     public class Payment
     {
         [Key]
-        public int PaymentId { get; set; }
+        public long PaymentId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -25,8 +25,7 @@ namespace BrandLoop.Domain.Entities
 
         public int? SubscriptionRegisterId { get; set; }
 
-        public int? KolsJoinCampaignId { get; set; }
-
+        public int? CampaignId { get; set; }
         [StringLength(50)]
         public string PaymentMethod { get; set; }
 
@@ -37,7 +36,7 @@ namespace BrandLoop.Domain.Entities
         [ForeignKey("SubscriptionRegisterId")]
         public virtual SubscriptionRegister SubscriptionRegister { get; set; }
 
-        [ForeignKey("KolsJoinCampaignId")]
-        public virtual KolsJoinCampaign KolsJoinCampaign { get; set; }
+        [ForeignKey("CampaignId")]
+        public virtual Campaign campaign { get; set; }
     }
 }
