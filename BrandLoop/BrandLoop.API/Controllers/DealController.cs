@@ -2,6 +2,7 @@
 using BrandLoop.API.Response;
 using BrandLoop.Application.Interfaces;
 using BrandLoop.Domain.Entities;
+using BrandLoop.Infratructure.Models.CampainModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -20,7 +21,7 @@ namespace BrandLoop.API.Controllers
 
         [HttpGet("campaign/{campaignId}")]
         [Authorize(Roles = "Brand")]
-        public async Task<IActionResult> GetAllDealsByCampaignId([FromQuery] int campaignId, [FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetAllDealsByCampaignId(int campaignId, [FromQuery] PaginationFilter filter)
         {
             try
             {
@@ -35,7 +36,7 @@ namespace BrandLoop.API.Controllers
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponse<Deal>(
+                var response = new PaginationResponse<DealDTO>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,
@@ -51,7 +52,7 @@ namespace BrandLoop.API.Controllers
         }
 
         [HttpGet("my-deals")]
-        [Authorize(Roles = "KOL")]
+        [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> GetAllKolDeals([FromQuery] PaginationFilter filter)
         {
             try
@@ -67,7 +68,7 @@ namespace BrandLoop.API.Controllers
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponse<Deal>(
+                var response = new PaginationResponse<DealDTO>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,

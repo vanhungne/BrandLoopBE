@@ -119,7 +119,7 @@ namespace BrandLoop.Application.Service
                 var result = await _campaignRepository.CreateCampaignAsync(campaign);
                 var mappedResult = _mapper.Map<CampaignDto>(result);
 
-                _logger.LogInformation("Created new campaign {CampaignId} for brand {BrandId}", result.CampaignId);
+                _logger.LogInformation("Created new campaign {CampaignId} for brand {BrandId}", result.CampaignId, result.BrandId);
                 return mappedResult;
             }
             catch (ArgumentNullException ex)

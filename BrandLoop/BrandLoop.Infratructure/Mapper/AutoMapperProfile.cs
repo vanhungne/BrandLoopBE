@@ -38,6 +38,9 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<Campaign, CampaignDto>().ReverseMap();
             CreateMap<CreateCampaignDto, Campaign>();
             CreateMap<UpdateCampaignDto, Campaign>();
+            // CampaignInvitation mapping
+            CreateMap<CampaignInvitation, InvitationDTO>();
+            CreateMap<Deal, DealDTO>();
 
             // Skill mapping
             CreateMap<Skill, SkillModel>();

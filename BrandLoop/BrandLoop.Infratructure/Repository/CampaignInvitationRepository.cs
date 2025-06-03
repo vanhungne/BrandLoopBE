@@ -49,8 +49,7 @@ namespace BrandLoop.Infratructure.Repository
                 Title = joinCampaign.Title,
                 Message = joinCampaign.Message,
                 ProposedRate = joinCampaign.ProposedRate,
-                CreatedAt = joinCampaign.CreatedAt,
-                Status = Domain.Enums.CampaignInvitationStatus.pending
+                Status = CampaignInvitationStatus.pending
             };
             invitation.Type = type;
              _context.CampaignInvitations.Add(invitation);

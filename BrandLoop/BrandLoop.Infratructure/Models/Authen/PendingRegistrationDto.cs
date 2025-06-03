@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrandLoop.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ namespace BrandLoop.Infratructure.Models.Authen
         public string CompanyName { get; set; }
         public string Industry { get; set; }
         public string Website { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string Status { get; set; }
 
         public string logoUrl { get; set; }
         public string imageUrl { get; set; }
