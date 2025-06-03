@@ -54,5 +54,8 @@ namespace BrandLoop.Domain.Entities
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<CampaignInvitation> CampaignInvitations { get; set; }
         public virtual ICollection<CampaignReport> CampaignReports { get; set; }
+        public virtual ICollection<CampaignImage> CampaignImages { get; set; }
+        public virtual ICollection<Payment> Payments { get; set; }
+
     }
 }

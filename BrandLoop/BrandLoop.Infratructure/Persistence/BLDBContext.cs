@@ -44,6 +44,8 @@ namespace BrandLoop.Infratructure.Persistence
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<RefreshTokens> RefreshTokens { get; set; }
+
+        public DbSet<CampaignImage> CampainImages { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -189,9 +191,9 @@ namespace BrandLoop.Infratructure.Persistence
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Payment>()
-                .HasOne(p => p.KolsJoinCampaign)
+                .HasOne(p => p.campaign)
                 .WithMany(kjc => kjc.Payments)
-                .HasForeignKey(p => p.KolsJoinCampaignId)
+                .HasForeignKey(p => p.CampaignId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Feedback relationships

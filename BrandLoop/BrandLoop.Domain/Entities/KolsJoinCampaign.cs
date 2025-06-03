@@ -32,6 +32,5 @@ namespace BrandLoop.Domain.Entities
         [ForeignKey("UID")]
         public virtual User User { get; set; }
 
-        public virtual ICollection<Payment> Payments { get; set; }
     }
 }
