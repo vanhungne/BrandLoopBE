@@ -1,9 +1,10 @@
-﻿using System;
+﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Infratructure.Models.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrandLoop.Infratructure.Models.UserModel;
 
 namespace BrandLoop.Infratructure.Interface
 {
@@ -16,5 +17,9 @@ namespace BrandLoop.Infratructure.Interface
         Task<string> GetUserRoleAsync(string uid);
         Task<List<SkillModel>> GetUserSkillsAsync(string uid);
         Task<List<ContentAndStyleModel>> GetUserContentAndStylesAsync(string uid);
+        Task<User> GetByIdAsync(string uid);
+        Task<User> GetUserWithProfilesAsync(string uid);
+        Task UpdateAsync(User user);
+        Task SaveChangesAsync();
     }
 }

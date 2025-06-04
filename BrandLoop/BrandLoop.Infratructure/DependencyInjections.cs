@@ -34,6 +34,8 @@ namespace BrandLoop.Infratructure
             services.AddScoped<ICampaignInvitationRepository, CampaignInvitationRepository>();
             services.AddScoped<IDealRepository, DealRepository>();
             services.AddScoped<IImageCampainRepository, ImageCampainRepository>();
+            services.AddScoped<IBrandProfileRepository, BrandProfileRepository>();
+            services.AddScoped<IInfluenceRepository, InfluenceProfileRepository>();
             return services;
         }
     }
