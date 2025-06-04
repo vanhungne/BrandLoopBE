@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrandLoop.Shared.Helper;
+using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Domain.Entities
 {
@@ -20,9 +22,9 @@ namespace BrandLoop.Domain.Entities
         public int SubscriptionId { get; set; }
 
         [StringLength(50)]
-        public string Status { get; set; }
+        public RegisterSubStatus Status { get; set; }
 
-        public DateTime RegistrationDate { get; set; } = DateTime.Now;
+        public DateTime RegistrationDate { get; set; } = DateTimeHelper.GetVietnamNow();
 
         public DateTime? ExpirationDate { get; set; }
 

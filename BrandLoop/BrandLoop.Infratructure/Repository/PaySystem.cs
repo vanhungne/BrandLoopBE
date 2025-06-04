@@ -1,4 +1,8 @@
-﻿using BrandLoop.Infratructure.Interface;
+﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Infratructure.Interface;
+using BrandLoop.Infratructure.Models.UserModel;
+using BrandLoop.Infratructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Net.payOS;
 using Net.payOS.Types;
@@ -7,47 +11,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Infratructure.Repository
 {
     public class PaySystem : IPaySystem
     {
         private readonly PayOS _payOS;
-        private readonly string cancelUrl;
-        private readonly string returnUrl;
-        public PaySystem(IConfiguration configuration)
+        private string cancelUrl;
+        private string returnUrl;
+        private readonly BLDBContext _context;
+        public PaySystem(IConfiguration configuration, BLDBContext context)
         {
             _payOS = new PayOS(configuration["PayOS:ClientID"], configuration["PayOS:ApiKey"], configuration["PayOS:ChecksumKey"]);
             cancelUrl = configuration["Host:https"];
             returnUrl = configuration["Host:https"];
+            _context = context;
         }
-        public Task<PaymentLinkInformation> cancelPaymentLink(long orderID, string reason)
+        public async Task<PaymentLinkInformation> cancelPaymentLink(long orderID, string reason)
         {
-            throw new NotImplementedException();
+            return await _payOS.cancelPaymentLink(orderID, reason);
         }
 
         public Task<string> confirmWebhook(string webhookUrl)
         {
-            throw new NotImplementedException();
+            return _payOS.confirmWebhook(webhookUrl);
         }
 
-        public async Task<CreatePaymentResult> CreatePaymentAsync(long orderCode, List<ItemData> itemDatas)
+        public async Task<CreatePaymentResult> CreatePaymentAsync(BasicAccountProfileModel user, string description,long orderCode, List<ItemData> itemDatas)
         {
-            PaymentData paymentData = new PaymentData(orderCode, 1000, "Thanh toan don hang",
-                itemDatas,cancelUrl, returnUrl);
+            var payment = await _context.Payments.FirstOrDefaultAsync(p => p.PaymentId == orderCode);
+            if (payment == null)
+                throw new Exception("Payment not found");
+
+            if(payment.Type == PaymentType.subscription)
+            {
+                returnUrl = $"{returnUrl}/api/Subscription/confirm";
+                cancelUrl = $"{cancelUrl}/api/Subscription/cancel";
+            } else if(payment.Type == PaymentType.campaign)
+            {
+                returnUrl = $"{returnUrl}/api/Campaign/confirm";
+                cancelUrl = $"{cancelUrl}/api/Campaign/cancel";
+            }
+
+            PaymentData paymentData = new PaymentData(
+                orderCode,
+                payment.Amount,
+                description,
+                itemDatas,
+                cancelUrl, returnUrl,
+                user.FullName, user.Email, user.Phone
+                );
 
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
             return createPayment;
         }
 
-        public Task<PaymentLinkInformation> getPaymentLinkInformation(long orderID)
+        public async Task<PaymentLinkInformation> getPaymentLinkInformation(long orderID)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<WebhookType> verifyPaymentWebhookData(WebhookData data)
-        {
-            throw new NotImplementedException();
+            return await _payOS.getPaymentLinkInformation(orderID);
         }
     }
 }

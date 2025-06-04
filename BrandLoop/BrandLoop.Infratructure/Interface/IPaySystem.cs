@@ -1,4 +1,6 @@
-﻿using Net.payOS.Types;
+﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Infratructure.Models.UserModel;
+using Net.payOS.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +11,10 @@ namespace BrandLoop.Infratructure.Interface
 {
     public interface IPaySystem
     {
-        
-        Task<CreatePaymentResult> CreatePaymentAsync(long orderCode, List<ItemData> listItem);
+
+        Task<CreatePaymentResult> CreatePaymentAsync(BasicAccountProfileModel user, string description, long orderCode, List<ItemData> itemDatas);
         Task<PaymentLinkInformation> getPaymentLinkInformation(long orderID);
         Task<PaymentLinkInformation> cancelPaymentLink(long orderID, string reason);
         Task<string> confirmWebhook(string webhookUrl);
-        Task<WebhookType> verifyPaymentWebhookData(WebhookData data);
     }
 }

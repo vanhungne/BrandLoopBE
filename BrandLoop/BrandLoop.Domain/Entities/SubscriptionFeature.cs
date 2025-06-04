@@ -11,6 +11,7 @@ namespace BrandLoop.Domain.Entities
     public class SubscriptionFeature
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         public int SubscriptionId { get; set; }
