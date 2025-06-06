@@ -26,6 +26,7 @@ namespace BrandLoop.Domain.Entities
         public string Description { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
+        public bool isDeleted { get; set; } = false;
 
         // Navigation properties
         public virtual ICollection<SubscriptionFeature> SubscriptionFeatures { get; set; }

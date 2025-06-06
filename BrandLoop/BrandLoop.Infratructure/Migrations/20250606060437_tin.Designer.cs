@@ -4,6 +4,7 @@ using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    partial class BLDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250606060437_tin")]
+    partial class tin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -841,7 +844,10 @@ namespace BrandLoop.Infratructure.Migrations
             modelBuilder.Entity("BrandLoop.Domain.Entities.Payment", b =>
                 {
                     b.Property<long>("PaymentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PaymentId"));
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
@@ -1050,9 +1056,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("SubscriptionId");
 

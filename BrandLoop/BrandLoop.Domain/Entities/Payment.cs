@@ -13,6 +13,7 @@ namespace BrandLoop.Domain.Entities
     public class Payment
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long PaymentId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();

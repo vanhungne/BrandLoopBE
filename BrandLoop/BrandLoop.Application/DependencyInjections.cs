@@ -23,6 +23,7 @@ namespace BrandLoop.Application
             services.AddScoped<ICampaignInvitationService, CampaignInvitationService>();
             services.AddScoped<IDealService, DealService>();
             services.AddScoped<ICampaignImageService, CampaignImageService>();
+            services.AddScoped<ISubscriptionService, SubscriptionService>();
             return services;
         } 
         }

@@ -18,7 +18,7 @@ namespace BrandLoop.API.Controllers
             _subscriptionService = subscriptionService;
         }
         [HttpGet("all-subscription")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Influencer")]
         public async Task<IActionResult> GetAllSubscriptions()
         {
             try
@@ -72,7 +72,7 @@ namespace BrandLoop.API.Controllers
         {
             try
             {
-                if (subscription == null || subscription.SubscriptionId != subscriptionId)
+                if (subscription == null)
                     return BadRequest("Invalid subscription data.");
 
                 var updatedSubscription = await _subscriptionService.UpdateSubscriptionAsync(subscription);
@@ -102,9 +102,9 @@ namespace BrandLoop.API.Controllers
         }
 
         // User subscription registation methods
-        [HttpGet("my-subscription/{userId}")]
+        [HttpGet("my-registed-subscription")]
         [Authorize(Roles = "Influencer")]
-        public async Task<IActionResult> GetSubscriptionRegistersOfUser(string userId)
+        public async Task<IActionResult> GetSubscriptionRegistersOfUser()
         {
             try
             {
@@ -120,7 +120,7 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-        [HttpGet("my-subscription-register/{id}")]
+        [HttpGet("my-registed-subscription/{id}")]
         [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> GetSubscriptionRegisterById(int id)
         {
@@ -169,8 +169,14 @@ namespace BrandLoop.API.Controllers
             }
         }
 
-        [HttpPut("confirm")]
-        public async Task<IActionResult> ConfirmPayment([FromQuery] long orderCode)
+        [HttpPut("confirm-payment")]
+        public async Task<IActionResult> ConfirmPayment(
+            [FromQuery] long orderCode,
+            [FromQuery] string code,
+            [FromQuery] string id,
+            [FromQuery] bool? cancel,
+            [FromQuery] string status
+            )
         {
             try
             {
@@ -183,8 +189,13 @@ namespace BrandLoop.API.Controllers
             }
         }
 
-        [HttpPut("cancel")]
-        public async Task<IActionResult> CancelPayment([FromQuery] long orderCode)
+        [HttpPut("cancel-payment")]
+        public async Task<IActionResult> CancelPayment(
+            [FromQuery] long orderCode,
+            [FromQuery] string code,
+            [FromQuery] string id,
+            [FromQuery] bool? cancel,
+            [FromQuery] string status)
         {
             try
             {
@@ -196,4 +207,5 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+    }
 }

@@ -31,7 +31,9 @@ namespace BrandLoop.Infratructure.Repository
             var subscription = await _context.Subscriptions.FindAsync(subscriptionId);
             if (subscription != null)
             {
-                _context.Subscriptions.Remove(subscription);
+                subscription.isDeleted = true; // Soft delete
+                _context.Subscriptions.Update(subscription);
+                _context.SaveChanges();
                 await _context.SaveChangesAsync();
             }
             else
@@ -40,13 +42,13 @@ namespace BrandLoop.Infratructure.Repository
 
         public async Task<List<Subscription>> GetAllSubscriptionsAsync()
         {
-            var subscriptions = await _context.Subscriptions.ToListAsync();
+            var subscriptions = await _context.Subscriptions.Where(s => s.isDeleted == false).ToListAsync();
             return subscriptions;
         }
 
         public async Task<Subscription> GetSubscriptionByIdAsync(int subscriptionId)
         {
-            return await _context.Subscriptions.FirstOrDefaultAsync(s => s.SubscriptionId == subscriptionId);
+            return await _context.Subscriptions.FirstOrDefaultAsync(s => s.SubscriptionId == subscriptionId && s.isDeleted == false);
         }
 
         public async Task<Subscription> UpdateSubscriptionAsync(SubscriptionDTO subscription)

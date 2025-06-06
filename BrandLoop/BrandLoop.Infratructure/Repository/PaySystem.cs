@@ -55,13 +55,16 @@ namespace BrandLoop.Infratructure.Repository
             }
 
             PaymentData paymentData = new PaymentData(
-                orderCode,
-                payment.Amount,
-                description,
-                itemDatas,
-                cancelUrl, returnUrl,
-                user.FullName, user.Email, user.Phone
-                );
+                orderCode: orderCode,
+                amount: payment.Amount,
+                description: description,
+                items: itemDatas,
+                cancelUrl: cancelUrl,
+                returnUrl: returnUrl,
+                buyerName: user.FullName,
+                buyerEmail: user.Email,
+                buyerPhone: user.Phone
+            );
 
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
             return createPayment;

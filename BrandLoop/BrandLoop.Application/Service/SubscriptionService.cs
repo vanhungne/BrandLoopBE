@@ -7,6 +7,7 @@ using BrandLoop.Infratructure.Models.SubcriptionModel;
 using BrandLoop.Shared.Helper;
 using IdGen;
 using Net.payOS.Types;
+using System.Threading.Tasks;
 
 namespace BrandLoop.Application.Service
 {
@@ -73,6 +74,9 @@ namespace BrandLoop.Application.Service
             var subscription = await _subscriptionRepository.GetSubscriptionByIdAsync(subscriptionId);
             if (subscription == null)
                 throw new Exception($"Subscription with ID {subscriptionId} not found.");
+            if (subscription.isDeleted)
+                throw new Exception($"Subscription {subscription.SubscriptionName} is not availabe now.");
+
             var user = await _userRepository.GetBasicAccountProfileAsync(userID);
             if (user == null)
                 throw new Exception($"User with ID {userID} not found.");
@@ -87,10 +91,12 @@ namespace BrandLoop.Application.Service
             };
             var registeredSub = await _subscriptionRepository.RegisterSubscription(subscriptionRegister);
 
-            var generator = new IdGenerator(0);
+            // Tạo mã thanh toán
+            var orderCode = await GenerateOrderCode();
+            
             var payment = new Payment
             {
-                PaymentId = generator.CreateId(),
+                PaymentId = orderCode,
                 CreatedAt = DateTimeHelper.GetVietnamNow(),
                 Amount = (int)subscription.Price,
                 Status = PaymentStatus.pending,
@@ -125,7 +131,7 @@ namespace BrandLoop.Application.Service
 
             var paymentInfo = await _paySystem.CreatePaymentAsync(
                 user,
-                $"Payment for subscription {subscriptionRegister.Subscription.SubscriptionName}",
+                $"Payment for subscription",
                 orderCode,
                 items
             );
@@ -160,5 +166,21 @@ namespace BrandLoop.Application.Service
             await _paymentRepository.UpdatePaymentStatus(orderCode, PaymentStatus.Canceled);
             await _subscriptionRepository.UpdateRegisterStatus(payment.SubscriptionRegister.Id, RegisterSubStatus.Cancelled);
         }
+        public async Task<long> GenerateOrderCode()
+        {
+            // Time-based + random số nhỏ, đảm bảo trong giới hạn Int64
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); // 13 chữ số
+            var random = new Random().Next(100, 999); // 3 chữ số
+            var combined = $"{timestamp}{random}"; // Tổng: 16 chữ số
+
+            var result = long.Parse(combined);
+            var checkExistingPayment = await _paymentRepository.GetPaymentByOrderCodeAsync(result);
+            if (checkExistingPayment != null)
+                // Nếu đã tồn tại, gọi lại hàm để tạo mã mới
+                return await GenerateOrderCode();
+
+            return result;
+        }
+
     }
 }
