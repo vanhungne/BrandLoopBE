@@ -46,6 +46,7 @@ namespace BrandLoop.Infratructure.Persistence
         public DbSet<RefreshTokens> RefreshTokens { get; set; }
 
         public DbSet<CampaignImage> CampainImages { get; set; }
+        public DbSet<InfluencerType> InfluencerTypes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -270,6 +271,12 @@ namespace BrandLoop.Infratructure.Persistence
                 .HasForeignKey(t => t.ToWalletId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<InfluenceProfile>()
+                .HasOne(ip => ip.InfluencerType)
+                .WithMany(it => it.InfluenceProfiles)
+                .HasForeignKey(ip => ip.InfluencerTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Configure decimal precision for money fields
             modelBuilder.Entity<Wallet>()
                 .Property(w => w.Balance)
@@ -305,6 +312,13 @@ namespace BrandLoop.Infratructure.Persistence
                 new Role { RoleId = 2, RoleName = "Brand", Description = "Brand/Company Account" },
                 new Role { RoleId = 3, RoleName = "Influencer", Description = "Key Opinion Leader/Influencer" },
                 new Role { RoleId = 4, RoleName = "Guest", Description = "Guest User" }
+            );
+            modelBuilder.Entity<InfluencerType>().HasData(
+                new InfluencerType { Id = 1, Name = "Norman", MinFollower = 0, MaxFollower = 10000, PlatformFee = 10000 },
+                new InfluencerType { Id = 2, Name = "Nano Influencers", MinFollower = 10000, MaxFollower = 50000, PlatformFee = 100000 },
+                new InfluencerType { Id = 3, Name = "Micro Influencers", MinFollower = 50000, MaxFollower = 100000, PlatformFee = 200000 },
+                new InfluencerType { Id = 4, Name = "Mid-Tier Influencers", MinFollower = 100000, MaxFollower = 500000, PlatformFee = 300000 },
+                new InfluencerType { Id = 5, Name = "Macro Influencers", MinFollower = 500000, MaxFollower = 1000000, PlatformFee = 500000 }
             );
         }
     }

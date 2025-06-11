@@ -332,6 +332,19 @@ namespace BrandLoop.Infratructure.ReporitorY
                 avatarUrl = await cloudinaryService.UploadImage(avatarFile);
             }
 
+            // Tìm phân khúc influencer phù hợp dua vào số lượng người theo dõi
+            int? typeId = 5;
+            if (model.FollowerCount.HasValue)
+            {
+                var type = await _context.InfluencerTypes
+                    .FirstOrDefaultAsync(p =>
+                        model.FollowerCount >= p.MinFollower &&
+                        model.FollowerCount < p.MaxFollower);
+
+                typeId = type?.Id;
+            }
+
+
             // Create user with pending status (Status = 0)
             var id = GenerateCompactUid();
             id = await _context.Users.FirstOrDefaultAsync(u => u.UID == id) != null ? GenerateCompactUid() : id;
@@ -369,7 +382,8 @@ namespace BrandLoop.Infratructure.ReporitorY
                 Gender = model.Gender,
                 DayOfBirth = model.DateOfBirth,
                 CreatedAt = DateTimeHelper.GetVietnamNow(),
-                UpdatedAt = DateTimeHelper.GetVietnamNow()
+                UpdatedAt = DateTimeHelper.GetVietnamNow(),
+                InfluencerTypeId = typeId
             };
 
             using (var transaction = await _context.Database.BeginTransactionAsync())
