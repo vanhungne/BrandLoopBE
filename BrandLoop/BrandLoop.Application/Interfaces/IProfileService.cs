@@ -15,5 +15,9 @@ namespace BrandLoop.Application.Interfaces
         Task GetUserProfileAsync(string uid);
         Task<List<SkillModel>> GetUserSkillsAsync(string uid);
         Task<List<ContentAndStyleModel>> GetUserContentAndStylesAsync(string uid);
+        Task<ProfileResponseDto> GetProfileAsync(string uid);
+        Task<ProfileResponseDto> UpdateUserProfileAsync(string uid, UpdateUserProfileDto updateDto);
+        Task<ProfileResponseDto> UpdateBrandProfileAsync(string uid, UpdateBrandProfileDto updateDto);
+        Task<ProfileResponseDto> UpdateInfluenceProfileAsync(string uid, UpdateInfluenceProfileDto updateDto);
     }
 }

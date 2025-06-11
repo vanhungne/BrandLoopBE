@@ -1,9 +1,10 @@
-﻿using BrandLoop.Application.Interfaces;
-using BrandLoop.API.Response;
+﻿using BrandLoop.API.Response;
+using BrandLoop.Application.Interfaces;
+using BrandLoop.Infratructure.Models.UserModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 
 namespace BrandLoop.API.Controllers
 {
@@ -14,10 +15,16 @@ namespace BrandLoop.API.Controllers
     {
         private readonly IProfileService _profileService;
 
+
         public ProfileController(IProfileService profileService)
         {
             _profileService = profileService;
         }
+
+        private string GetCurrentUserId()
+        {
+            return User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }   
 
         /// <summary>
         /// Lấy thông tin basic profile của user
@@ -93,6 +100,62 @@ namespace BrandLoop.API.Controllers
         {
             var result = await _profileService.GetUserContentAndStylesAsync(uid);
             return Ok(ApiResponse<object>.SuccessResult(result));
+        }
+        [HttpPut("user")]
+        public async Task<ActionResult<ProfileResponseDto>> UpdateUserProfile([FromBody] UpdateUserProfileDto updateDto)
+        {
+            try
+            {
+                var uid = GetCurrentUserId();
+                var updatedProfile = await _profileService.UpdateUserProfileAsync(uid, updateDto);
+                return Ok(updatedProfile);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPut("brand")]
+        public async Task<ActionResult<ProfileResponseDto>> UpdateBrandProfile([FromBody] UpdateBrandProfileDto updateDto)
+        {
+            try
+            {
+                var uid = GetCurrentUserId();
+                var updatedProfile = await _profileService.UpdateBrandProfileAsync(uid, updateDto);
+                return Ok(updatedProfile);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpPut("influence")]
+        public async Task<ActionResult<ProfileResponseDto>> UpdateInfluenceProfile([FromBody] UpdateInfluenceProfileDto updateDto)
+        {
+            try
+            {
+                var uid = GetCurrentUserId();
+                var updatedProfile = await _profileService.UpdateInfluenceProfileAsync(uid, updateDto);
+                return Ok(updatedProfile);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
     }
 }

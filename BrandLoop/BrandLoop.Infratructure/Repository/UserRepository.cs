@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using AutoMapper;
+﻿using AutoMapper;
+using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.UserModel;
 using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Transactions;
 
 namespace BrandLoop.Infratructure.Repository
 {
@@ -222,6 +223,28 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<bool> UserExistsAsync(string uid)
         {
             return await _context.Users.AnyAsync(u => u.UID == uid);
+        }
+        public async Task<User> GetByIdAsync(string uid)
+        {
+            return await _context.Users.FindAsync(uid);
+        }
+
+        public async Task<User> GetUserWithProfilesAsync(string uid)
+        {
+            return await _context.Users
+                .Include(u => u.BrandProfile)
+                .Include(u => u.InfluenceProfile)
+                .FirstOrDefaultAsync(u => u.UID == uid);
+        }
+
+        public async Task UpdateAsync(User user)
+        {
+            _context.Users.Update(user);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }
