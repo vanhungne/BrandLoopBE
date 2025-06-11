@@ -1,6 +1,7 @@
 ﻿using BrandLoop.API.Models;
 using BrandLoop.API.Response;
 using BrandLoop.Application.Interfaces;
+using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Models.SubcriptionModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,11 @@ namespace BrandLoop.API.Controllers
         {
             _subscriptionService = subscriptionService;
         }
+
+        /// <summary>
+        /// Lấy tất cả các gói đăng ký.
+        /// </summary>
+        /// <returns>Trả vè toàn bộ các gói</returns>
         [HttpGet("all-subscription")]
         [Authorize(Roles = "Admin, Influencer")]
         public async Task<IActionResult> GetAllSubscriptions()
@@ -33,7 +39,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
+        /// <summary>
+        /// Láy thông tin gói đăng ký theo ID.
+        /// </summary>
+        /// <returns>Trả vè thông tin của gói đăng ký đó</returns>
         [HttpGet("{subscriptionId}")]
         public async Task<IActionResult> GetSubscriptionById(int subscriptionId)
         {
@@ -49,7 +58,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
-
+        /// <summary>
+        /// Admin thêm mới gói đăng ký.
+        /// </summary>
+        /// <returns>Trả vè thông tin gói đăng ký đó</returns>
         [HttpPost("add-subscription")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddSubscription([FromBody] AddSubcription subscription)
@@ -66,6 +78,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Admin cập nhật thông tin gói đăng ký.
+        /// </summary>
+        /// <returns>Trả vè thông tin gói đăng ký đã được cập nhật</returns>
         [HttpPut("update-subscription/{subscriptionId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateSubscription(int subscriptionId, [FromBody] SubscriptionDTO subscription)
@@ -86,6 +102,11 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Admin xóa gói đăng ký theo ID.(chỉ set trạng thái là xóa, những người đã đăng ký có thể sử dụng đến hết hạn)
+        /// </summary>
+        /// <returns>Trả vè thông báo</returns>
         [HttpDelete("delete-subscription/{subscriptionId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteSubscription(int subscriptionId)
@@ -102,9 +123,14 @@ namespace BrandLoop.API.Controllers
         }
 
         // User subscription registation methods
+
+        /// <summary>
+        /// Lấy tất cả các gói đăng ký đã đăng ký của người dùng.
+        /// </summary>
+        /// <returns>Trả vè thông tin các gói đăng ký đã được đăng ký</returns>
         [HttpGet("my-registed-subscription")]
         [Authorize(Roles = "Influencer")]
-        public async Task<IActionResult> GetSubscriptionRegistersOfUser()
+        public async Task<IActionResult> GetSubscriptionRegistersOfUser([FromQuery] PaginationFilter filter)
         {
             try
             {
@@ -113,13 +139,29 @@ namespace BrandLoop.API.Controllers
                 if (subscriptions == null || !subscriptions.Any())
                     return NotFound("No subscriptions found for this user.");
 
-                return Ok(subscriptions);
+                var totalRecords = subscriptions.Count;
+                var pagedData = subscriptions
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<SubscriptionRegisterDTO>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+                );
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Lấy thông tin gói đăng ký đã đăng ký theo ID.
+        /// </summary>
+        /// <returns>Trả vè thông tin gói đăng ký đã được đăng ký</returns>
         [HttpGet("my-registed-subscription/{id}")]
         [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> GetSubscriptionRegisterById(int id)
@@ -137,6 +179,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Đang ký gói đăng ký cho người dùng. (Muốn hiển thị gì thì nhắn t)
+        /// </summary>
+        /// <returns>Trả vè thông tin các gói đăng ký đã được đăng ký</returns>
         [HttpPost("register-subscription/{subscriptionId}")]
         [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> RegisterSubscription(int subscriptionId)
@@ -153,6 +199,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Lấy liên kết thanh toán cho gói đăng ký đã đăng ký.
+        /// </summary>
+        /// <returns>Trả vè thông tin liên quan đến PayOS</returns>
         [HttpPost("payment-link/{orderCode}")]
         [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> CreatePaymentLink(long orderCode)
@@ -169,6 +219,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Cập nhật lại trạng thái thanh toán cho gói đăng ký đã đăng ký.
+        /// </summary>
+        /// <returns>Trả vè thông báo</returns>
         [HttpPut("confirm-payment")]
         public async Task<IActionResult> ConfirmPayment(
             [FromQuery] long orderCode,
@@ -189,6 +243,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Cập nhật lại trạng thái thanh toán cho gói đăng ký đã đăng ký.
+        /// </summary>
+        /// <returns>Trả vè thông báo</returns>
         [HttpPut("cancel-payment")]
         public async Task<IActionResult> CancelPayment(
             [FromQuery] long orderCode,

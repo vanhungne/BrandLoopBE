@@ -16,6 +16,8 @@ namespace BrandLoop.Infratructure.Models.SubcriptionModel
         public string UID { get; set; }
 
         public int SubscriptionId { get; set; }
+        public string SubscriptionName { get; set; }
+        public string Description { get; set; }
 
         [StringLength(50)]
         public RegisterSubStatus Status { get; set; }
