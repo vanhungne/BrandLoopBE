@@ -15,5 +15,9 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public decimal? Budget { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? Deadline { get; set; }
+
+        public List<string> ImageUrls { get; set; } = new List<string>();
+
+        public List<string> ImageDescriptions { get; set; } = new List<string>();
     }
 }

@@ -16,17 +16,20 @@ namespace BrandLoop.Application.Service
     public class CampaignService : ICampaignService
     {
         private readonly ICampaignRepository _campaignRepository;
+        private readonly IImageCampainRepository _imageCampaignRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<CampaignService> _logger;
 
         public CampaignService(
             ICampaignRepository campaignRepository,
             IMapper mapper,
-            ILogger<CampaignService> logger)
+            ILogger<CampaignService> logger,
+            IImageCampainRepository imageCampaignRepository)
         {
             _campaignRepository = campaignRepository ?? throw new ArgumentNullException(nameof(campaignRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _imageCampaignRepository = imageCampaignRepository;
         }
 
         public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(int brandId)
@@ -109,6 +112,15 @@ namespace BrandLoop.Application.Service
                     throw new ArgumentException("Deadline phải lớn hơn thời gian hiện tại");
                 }
 
+                if (dto.ImageUrls != null && dto.ImageUrls.Any())
+                {
+                    var invalidUrls = dto.ImageUrls.Where(url => string.IsNullOrWhiteSpace(url)).ToList();
+                    if (invalidUrls.Any())
+                    {
+                        throw new ArgumentException("Các URL hình ảnh không được để trống");
+                    }
+                }
+
                 var campaign = _mapper.Map<Campaign>(dto);
                 campaign.UploadedDate = DateTime.Now;
                 campaign.LastUpdate = DateTime.Now;
@@ -117,6 +129,27 @@ namespace BrandLoop.Application.Service
                 campaign.BrandId = branid;
 
                 var result = await _campaignRepository.CreateCampaignAsync(campaign);
+
+                // Upload images nếu có
+                if (dto.ImageUrls != null && dto.ImageUrls.Any())
+                {
+                    try
+                    {
+                        await _imageCampaignRepository.AddMultipleImagesToCampaignAsync(
+                            result.CampaignId,
+                            dto.ImageUrls,
+                            dto.ImageDescriptions);
+
+                        _logger.LogInformation("Added {Count} images to campaign {CampaignId}",
+                            dto.ImageUrls.Count, result.CampaignId);
+                    }
+                    catch (Exception imageEx)
+                    {
+                        _logger.LogError(imageEx, "Error uploading images for campaign {CampaignId}. Campaign created but without images.",
+                            result.CampaignId);
+                        // Không throw exception để campaign vẫn được tạo thành công
+                    }
+                }
                 var mappedResult = _mapper.Map<CampaignDto>(result);
 
                 _logger.LogInformation("Created new campaign {CampaignId} for brand {BrandId}", result.CampaignId, result.BrandId);

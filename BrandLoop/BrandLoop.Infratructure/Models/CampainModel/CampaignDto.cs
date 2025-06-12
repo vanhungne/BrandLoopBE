@@ -22,5 +22,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public DateTime? Deadline { get; set; }
         public CampainStatus Status { get; set; }
         public string CreatedBy { get; set; }
+
+        public List<CampaignImageDto> Images { get; set; } = new List<CampaignImageDto>();
     }
 }
