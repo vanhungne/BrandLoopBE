@@ -64,7 +64,12 @@
 
             public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
+            public int? InfluencerTypeId { get; set; }
+
             // Navigation properties
+            [ForeignKey("InfluencerTypeId")]
+            public InfluencerType InfluencerType { get; set; }
+            
             [ForeignKey("UID")]
             public virtual User User { get; set; }
         }

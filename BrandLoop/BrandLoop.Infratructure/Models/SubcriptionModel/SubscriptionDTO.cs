@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrandLoop.Shared.Helper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,16 +8,18 @@ using System.Threading.Tasks;
 
 namespace BrandLoop.Infratructure.Models.SubcriptionModel
 {
-    public class AddSubcription
+    public class SubscriptionDTO
     {
-        [Required]
-        [StringLength(255)]
+        public int SubscriptionId { get; set; }
+
         public string SubscriptionName { get; set; }
 
-        public int? Duration { get; set; } 
+        public int? Duration { get; set; } // số ngày
 
         public decimal? Price { get; set; }
 
         public string Description { get; set; }
+
+        public DateTime CreatedAt { get; set; }
     }
 }

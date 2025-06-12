@@ -5,23 +5,26 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BrandLoop.Shared.Helper;
+using BrandLoop.Domain.Enums;
 
 namespace BrandLoop.Domain.Entities
 {
     public class Payment
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public long PaymentId { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
 
-        public decimal? Amount { get; set; }
-
-        [StringLength(50)]
-        public string Status { get; set; }
+        public int Amount { get; set; }
 
         [StringLength(50)]
-        public string Type { get; set; } // subscription, campaign
+        public PaymentStatus Status { get; set; }
+
+        [StringLength(50)]
+        public PaymentType Type { get; set; }
 
         public int? SubscriptionRegisterId { get; set; }
 

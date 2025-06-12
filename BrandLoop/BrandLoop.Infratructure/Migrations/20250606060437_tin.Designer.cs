@@ -4,6 +4,7 @@ using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    partial class BLDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250606060437_tin")]
+    partial class tin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -577,9 +580,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<int?>("InfluencerTypeId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Instagram")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -628,81 +628,10 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasKey("InfluenceId");
 
-                    b.HasIndex("InfluencerTypeId");
-
                     b.HasIndex("UID")
                         .IsUnique();
 
                     b.ToTable("InfluenceProfiles");
-                });
-
-            modelBuilder.Entity("BrandLoop.Domain.Entities.InfluencerType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("MaxFollower")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinFollower")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("PlatformFee")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("InfluencerTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            MaxFollower = 10000,
-                            MinFollower = 0,
-                            Name = "Norman",
-                            PlatformFee = 10000
-                        },
-                        new
-                        {
-                            Id = 2,
-                            MaxFollower = 50000,
-                            MinFollower = 10000,
-                            Name = "Nano Influencers",
-                            PlatformFee = 100000
-                        },
-                        new
-                        {
-                            Id = 3,
-                            MaxFollower = 100000,
-                            MinFollower = 50000,
-                            Name = "Micro Influencers",
-                            PlatformFee = 200000
-                        },
-                        new
-                        {
-                            Id = 4,
-                            MaxFollower = 500000,
-                            MinFollower = 100000,
-                            Name = "Mid-Tier Influencers",
-                            PlatformFee = 300000
-                        },
-                        new
-                        {
-                            Id = 5,
-                            MaxFollower = 1000000,
-                            MinFollower = 500000,
-                            Name = "Macro Influencers",
-                            PlatformFee = 500000
-                        });
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.KolsJoinCampaign", b =>
@@ -915,7 +844,10 @@ namespace BrandLoop.Infratructure.Migrations
             modelBuilder.Entity("BrandLoop.Domain.Entities.Payment", b =>
                 {
                     b.Property<long>("PaymentId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("PaymentId"));
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
@@ -1124,9 +1056,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("isDeleted")
-                        .HasColumnType("bit");
 
                     b.HasKey("SubscriptionId");
 
@@ -1491,18 +1420,11 @@ namespace BrandLoop.Infratructure.Migrations
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.InfluenceProfile", b =>
                 {
-                    b.HasOne("BrandLoop.Domain.Entities.InfluencerType", "InfluencerType")
-                        .WithMany("InfluenceProfiles")
-                        .HasForeignKey("InfluencerTypeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithOne("InfluenceProfile")
                         .HasForeignKey("BrandLoop.Domain.Entities.InfluenceProfile", "UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("InfluencerType");
 
                     b.Navigation("User");
                 });
@@ -1741,11 +1663,6 @@ namespace BrandLoop.Infratructure.Migrations
             modelBuilder.Entity("BrandLoop.Domain.Entities.Feature", b =>
                 {
                     b.Navigation("SubscriptionFeatures");
-                });
-
-            modelBuilder.Entity("BrandLoop.Domain.Entities.InfluencerType", b =>
-                {
-                    b.Navigation("InfluenceProfiles");
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.Message", b =>

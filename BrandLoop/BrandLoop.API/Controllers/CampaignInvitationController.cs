@@ -21,6 +21,10 @@ namespace BrandLoop.API.Controllers
             _campaignInvitationService = campaignInvitationService;
         }
 
+        /// <summary>
+        /// Brand mời KOL tham gia chiến dịch
+        /// </summary>
+        /// <returns>Trả vè thông tin của invitation đó</returns>
         [HttpPost("brand-invite")]
         [Authorize(Roles = "Brand")]
         public async Task<IActionResult> BrandInviteKolsAsync([FromBody] JoinCampaign joinCampaign)
@@ -41,6 +45,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// KOL xin tham gia vào chiến dịch
+        /// </summary>
+        /// <returns>Trả vè thông tin của invitation đó</returns>
         [HttpPost("kols-applie")]
         [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> KolsApplyCampaignAsync([FromBody] JoinCampaign joinCampaign)
@@ -61,6 +69,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Láy tất cả các invitation của một chiến dịch
+        /// </summary>
+        /// <returns>Trả vè list các invitation của chiến dịch đó</returns>
         [HttpGet("campaign/{campaignId}")]
         [Authorize(Roles = "Brand")]
         public async Task<IActionResult> GetAllInvitationsOfCampaignAsync(int campaignId, [FromQuery] PaginationFilter filter)
@@ -99,6 +111,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Láy tất cả các invitation của KOL (nếu đang là KOL)
+        /// </summary>
+        /// <returns>Trả vè list các invitation</returns>
         [HttpGet("get-all-kol-invitation")]
         [Authorize(Roles = "Influencer")]
         public async Task<IActionResult> GetInvitationsByKOLIdAsync([FromQuery] PaginationFilter filter)
@@ -130,6 +146,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Lấy thông tin của một invitation theo ID
+        /// </summary>
+        /// <returns>Trả vè thông tin của invitation đó</returns>
         [HttpGet("invitation/{invitationId}")]
         [Authorize]
         public async Task<IActionResult> GetInvitationByIdAsync(int invitationId)
@@ -149,6 +169,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Accapt một invitation
+        /// </summary>
+        /// <returns> Tin nhắn</returns>
         [HttpPost("approve/{invitationId}")]
         [Authorize]
         public async Task<IActionResult> ApproveInvitationAsync(int invitationId)
@@ -168,6 +192,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Trả lời một invitation (thương lượng giá cả, thời gian, ...)
+        /// </summary>
+        /// <returns>Trả vè thông báo</returns>
         [HttpPost("negotiate")]
         [Authorize]
         public async Task<IActionResult> NegotiateInvitationAsync([FromBody] InvitationResponse response)
@@ -187,6 +215,10 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        /// <summary>
+        /// Từ chối một invitation
+        /// </summary>
+        /// <returns>Trả vè thông báo</returns>
         [HttpPost("reject/{invitationId}")]
         [Authorize]
         public async Task<IActionResult> RejectInvitationAsync(int invitationId)
@@ -207,6 +239,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// API bị thừa, k biết có cần không, nhưng để lại cho chắc
+        /// </summary>
+        /// <returns>Trả vè True/False</returns>
         [HttpGet("is-waiting-for-approve/{campaignId}")]
         public async Task<IActionResult> IsWaitingForApproveAsync(int campaignId)
         {
@@ -222,6 +258,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Kiểm tra xem có thể approve được invitation đó hay không
+        /// </summary>
+        /// <returns>Trả vè True/False</returns>
         [HttpGet("check-can-approve/{invitationId}")]
         [Authorize]
         public async Task<IActionResult> CheckCanApproveAsync(int invitationId)
@@ -238,6 +278,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Kiem tra xem có thể thương lượng được invitation đó hay không
+        /// </summary>
+        /// <returns>Trả vè True/False</returns>
         [HttpGet("check-can-negotiate/{invitationId}")]
         [Authorize]
         public async Task<IActionResult> CheckCanNegotiateAsync(int invitationId)
@@ -254,6 +298,10 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Kiểm tra xem có thể reject được invitation đó hay không
+        /// </summary>
+        /// <returns>Trả vè True/False</returns>
         [HttpGet("check-can-reject/{invitationId}")]
         [Authorize]
         public async Task<IActionResult> CheckCanRejectAsync(int invitationId)

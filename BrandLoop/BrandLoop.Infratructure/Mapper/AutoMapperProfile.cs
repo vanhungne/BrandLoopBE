@@ -9,6 +9,7 @@ using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.Authen;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.SubcriptionModel;
 using BrandLoop.Infratructure.Models.UserModel;
 
 
@@ -66,6 +67,13 @@ namespace BrandLoop.Infratructure.Mapper
 
             // Content and Style mapping
             CreateMap<ContentAndStyle, ContentAndStyleModel>();
+
+            //Subscription mapping
+            CreateMap<Subscription, SubscriptionDTO>();
+            CreateMap<SubscriptionRegister, SubscriptionRegisterDTO>()
+                .ForMember(dest => dest.SubscriptionName, opt => opt.MapFrom(src => src.Subscription.SubscriptionName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Subscription.Description));
+
         }
     }
 }

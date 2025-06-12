@@ -108,6 +108,11 @@ public class Program
                 Version = "v1.0"
             });
 
+            //
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            c.IncludeXmlComments(xmlPath);
+
             c.AddSecurityDefinition("Cookie", new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Cookie,
