@@ -289,6 +289,16 @@ namespace BrandLoop.Application.Service
                 throw new InvalidOperationException("Lỗi khi nhân bản campaign", ex);
             }
         }
+
+        public async Task<List<CampaignDto>> GetAllCampaignByUid(string uid)
+        {
+            var campaigns = await _campaignRepository.GetAllCampaignByUid(uid);
+            if (campaigns == null || !campaigns.Any())
+            {
+                _logger.LogWarning("No campaigns found for user {Uid}", uid);
+            }
+            return _mapper.Map<List<CampaignDto>>(campaigns);
+        }
     }
 
 }

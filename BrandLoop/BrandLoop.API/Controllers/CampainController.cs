@@ -1,7 +1,10 @@
-﻿using BrandLoop.API.Response;
+﻿using BrandLoop.API.Models;
+using BrandLoop.API.Response;
 using BrandLoop.Application.Interfaces;
+using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.SubcriptionModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +22,43 @@ namespace BrandLoop.API.Controllers
         public CampaignController(ICampaignService campaignService)
         {
             _campaignService = campaignService ?? throw new ArgumentNullException(nameof(campaignService));
+        }
+        /// <summary>
+        /// Lấy danh sách campaigns cua brand
+        /// </summary>
+        /// <returns>Danh sách campaigns</returns>
+        [HttpGet("brand/my-brand")]
+        [Authorize (Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<CampaignDto>>>> GetMyCampaigns([FromQuery] PaginationFilter filter)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var campaigns = await _campaignService.GetAllCampaignByUid(uid);
+                if (campaigns == null || !campaigns.Any())
+                {
+                    return NotFound(ApiResponse<List<CampaignDto>>.ErrorResult("Không tìm thấy campaigns cho brand này"));
+                }
+                var totalRecords = campaigns.Count;
+                var pagedData = campaigns
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<CampaignDto>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+                );
+                return Ok(ApiResponse<PaginationResponse<CampaignDto>>.SuccessResult(response, "Lấy danh sách campaigns thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<IEnumerable<CampaignDto>>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
         }
 
         /// <summary>

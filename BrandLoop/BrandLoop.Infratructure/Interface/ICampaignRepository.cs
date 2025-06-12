@@ -19,5 +19,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<Campaign> UpdateCampaignStatusAsync(int campaignId, CampainStatus status);
         Task<Campaign> DuplicateCampaignAsync(int campaignId);
         Task<int> getIdBrand(string uid);
+        Task<List<Campaign>> GetAllCampaignByUid(string uid);
     }
 }

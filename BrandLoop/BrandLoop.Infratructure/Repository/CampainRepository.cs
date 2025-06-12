@@ -114,6 +114,17 @@ namespace BrandLoop.Infratructure.Repository
             await _context.SaveChangesAsync();
             return duplicatedCampaign;
         }
+
+        public async Task<List<Campaign>> GetAllCampaignByUid(string uid)
+        {
+            var camaigns = await _context.Campaigns
+                .Include(c => c.Brand)
+                .Include(c => c.Creator)
+                .Where(c => c.CreatedBy == uid)
+                .OrderByDescending(c => c.LastUpdate)
+                .ToListAsync();
+            return camaigns;
+        }
     }
 
 }
