@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
+using BrandLoop.Infratructure.Models.CampainModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrandLoop.Domain.Enums;
-using BrandLoop.Infratructure.Models.CampainModel;
 
 namespace BrandLoop.Application.Interfaces
 {
@@ -17,6 +18,7 @@ namespace BrandLoop.Application.Interfaces
         Task<bool> DeleteCampaignAsync(int campaignId);
         Task<CampaignDto> UpdateCampaignStatusAsync(int campaignId, CampainStatus status);
         Task<CampaignDto> DuplicateCampaignAsync(int campaignId);
+        Task<List<CampaignDto>> GetAllCampaignByUid(string uid);
     }
 
 }

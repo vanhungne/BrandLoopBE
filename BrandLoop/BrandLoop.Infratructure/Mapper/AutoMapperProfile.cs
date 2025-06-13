@@ -110,7 +110,12 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<SubscriptionRegister, SubscriptionRegisterDTO>()
                 .ForMember(dest => dest.SubscriptionName, opt => opt.MapFrom(src => src.Subscription.SubscriptionName))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Subscription.Description));
-
+            CreateMap<SubscriptionRegister, PaymentSubscription>()
+                .ForMember(dest => dest.SubscriptionName, opt => opt.MapFrom(src => src.Subscription.SubscriptionName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Subscription.Description))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Subscription.Price))
+                .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().PaymentId))
+                .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type));
         }
     }
 }
