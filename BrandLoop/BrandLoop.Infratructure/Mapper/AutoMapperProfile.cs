@@ -55,6 +55,10 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<InfluenceProfile, InfluenceProfileResponseDto>();
 
+            CreateMap<Campaign, CampaignDto>().ReverseMap();
+            CreateMap<Campaign, CampaignDto>()
+           .ForMember(dest => dest.campaignImageDtos,
+                      opt => opt.MapFrom(src => src.CampaignImages));
             // Campaign mappings
             CreateMap<Campaign, CampaignDto>()
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.CampaignImages));
@@ -94,7 +98,6 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<CampaignImage, CampaignImageDto>();
             CreateMap<CampaignImageDto, CampaignImage>()
                 .ForMember(dest => dest.Campaign, opt => opt.Ignore());
-
             // CampaignInvitation mapping
             CreateMap<CampaignInvitation, InvitationDTO>();
             CreateMap<Deal, DealDTO>();

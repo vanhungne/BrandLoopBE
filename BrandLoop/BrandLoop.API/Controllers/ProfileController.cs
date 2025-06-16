@@ -44,10 +44,9 @@ namespace BrandLoop.API.Controllers
         /// Lấy thông tin brand profile
         /// </summary>
         /// 
-        [HttpGet("brand")]
-        public async Task<IActionResult> GetBrandProfile()
+        [HttpGet("brand/{uid}")]
+        public async Task<IActionResult> GetBrandProfile(string uid)
         {
-            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _profileService.GetBrandProfileAsync(uid);
             if (result == null)
                 return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy thông tin thương hiệu"));
@@ -70,12 +69,24 @@ namespace BrandLoop.API.Controllers
         }
 
         /// <summary>
+        /// Search thong tin influencer tu uid
+        /// </summary>
+        [HttpGet("influence/{uid}")]
+        public async Task<IActionResult> GetInfluenceProfile(string uid)
+        {
+            var result = await _profileService.GetInfluenceProfileAsync(uid);
+            if (result == null)
+                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy thông tin influencer"));
+
+            return Ok(ApiResponse<object>.SuccessResult(result));
+        }
+        /// <summary>
         /// Lấy thông tin profile của user (tự động detect role)
         /// </summary>
         [HttpGet("{uid}")]
         public async Task<IActionResult> GetUserProfile(string uid)
         {
-            var result =  _profileService.GetUserProfileAsync(uid);
+            var result =  _profileService.GetBasicAccountProfileAsync(uid);
             if (result == null)
                 return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy thông tin người dùng"));
 
