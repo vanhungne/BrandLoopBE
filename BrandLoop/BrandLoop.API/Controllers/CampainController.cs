@@ -27,18 +27,19 @@ namespace BrandLoop.API.Controllers
         /// </summary>
         /// <param name="brandId">ID của brand</param>
         /// <returns>Danh sách campaigns</returns>
-        [HttpGet("brand/{brandId}")]
+        [HttpGet("brand")]
         public async Task<ActionResult<ApiResponse<PaginationResponse<CampaignDto>>>> GetBrandCampaigns(
-            int brandId, int pageNumber = 1, int pageSize = 10)
+            int pageNumber = 1, int pageSize = 10)
         {
             try
             {
-                if (brandId <= 0)
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (uid == null)
                 {
                     return BadRequest(ApiResponse<PaginationResponse<CampaignDto>>.ErrorResult("Brand ID phải lớn hơn 0"));
                 }
 
-                var allCampaigns = await _campaignService.GetBrandCampaignsAsync(brandId);
+                var allCampaigns = await _campaignService.GetBrandCampaignsAsync(uid);
                 var totalRecords = allCampaigns.Count();
 
                 var pagedData = allCampaigns

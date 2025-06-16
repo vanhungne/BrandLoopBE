@@ -32,20 +32,20 @@ namespace BrandLoop.Application.Service
             _imageCampaignRepository = imageCampaignRepository;
         }
 
-        public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(int brandId)
+        public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(string uid)
         {
             try
             {
-                if (brandId <= 0)
+                if (uid == null)
                 {
-                    _logger.LogWarning("Invalid brandId: {BrandId}", brandId);
-                    throw new ArgumentException("Brand ID phải lớn hơn 0", nameof(brandId));
+                    _logger.LogWarning("Invalid brandId: {BrandId}", uid);
+                    throw new ArgumentException("Brand ID phải lớn hơn 0", nameof(uid));
                 }
 
-                var campaigns = await _campaignRepository.GetBrandCampaignsAsync(brandId);
+                var campaigns = await _campaignRepository.GetBrandCampaignsAsync(uid);
                 var result = _mapper.Map<IEnumerable<CampaignDto>>(campaigns);
 
-                _logger.LogInformation("Retrieved {Count} campaigns for brand {BrandId}", result.Count(), brandId);
+                _logger.LogInformation("Retrieved {Count} campaigns for brand {BrandId}", result.Count(), uid);
                 return result;
             }
             catch (ArgumentException)
@@ -54,7 +54,7 @@ namespace BrandLoop.Application.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting campaigns for brand {BrandId}", brandId);
+                _logger.LogError(ex, "Error occurred while getting campaigns for brand {BrandId}", uid);
                 throw new InvalidOperationException("Lỗi khi lấy danh sách campaigns", ex);
             }
         }

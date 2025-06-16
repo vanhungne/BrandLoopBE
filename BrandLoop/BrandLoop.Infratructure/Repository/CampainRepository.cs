@@ -28,12 +28,12 @@ namespace BrandLoop.Infratructure.Repository
 
         }
 
-        public async Task<IEnumerable<Campaign>> GetBrandCampaignsAsync(int brandId)
+        public async Task<IEnumerable<Campaign>> GetBrandCampaignsAsync(string uid)
         {
             return await _context.Campaigns
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
-                .Where(c => c.BrandId == brandId)
+                .Where(c => c.Brand.UID == uid)
                 .OrderByDescending(c => c.LastUpdate)
                 .ToListAsync();
         }

@@ -55,9 +55,14 @@ namespace BrandLoop.Application.Service
             return  _profileRepository.GetUserContentAndStylesAsync(uid);
         }
 
-        public Task GetUserProfileAsync(string uid)
+        public async Task<ProfileResponseDto> GetUserProfileAsync(string uid)
         {
-            return  _profileRepository.UserExistsAsync(uid);
+            var _ = await _profileRepository.GetByIdAsync(uid);
+            if (_ == null)
+                throw new ArgumentException("User not found");
+            var profileResponse = _mapper.Map<ProfileResponseDto>(_);
+
+            return profileResponse;
         }
 
         public Task<List<SkillModel>> GetUserSkillsAsync(string uid)

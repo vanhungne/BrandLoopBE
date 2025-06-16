@@ -11,7 +11,7 @@ namespace BrandLoop.Infratructure.Interface
 {
     public interface ICampaignRepository : IRepository<Campaign>
     {
-        Task<IEnumerable<Campaign>> GetBrandCampaignsAsync(int brandId);
+        Task<IEnumerable<Campaign>> GetBrandCampaignsAsync(string uid);
         Task<Campaign> GetCampaignDetailAsync(int campaignId);
         Task<Campaign> CreateCampaignAsync(Campaign campaign);
         Task<Campaign> UpdateCampaignAsync(Campaign campaign);

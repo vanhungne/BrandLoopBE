@@ -75,12 +75,13 @@ namespace BrandLoop.API.Controllers
         [HttpGet("{uid}")]
         public async Task<IActionResult> GetUserProfile(string uid)
         {
-            var result =  _profileService.GetUserProfileAsync(uid);
+            var result = await _profileService.GetUserProfileAsync(uid);
             if (result == null)
                 return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy thông tin người dùng"));
 
             return Ok(ApiResponse<object>.SuccessResult(result));
         }
+
 
         /// <summary>
         /// Lấy danh sách skills của user
