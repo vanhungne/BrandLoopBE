@@ -57,7 +57,7 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<Campaign, CampaignDto>().ReverseMap();
             CreateMap<Campaign, CampaignDto>()
-           .ForMember(dest => dest.campaignImageDtos,
+           .ForMember(dest => dest.Images,
                       opt => opt.MapFrom(src => src.CampaignImages));
             // Campaign mappings
             CreateMap<Campaign, CampaignDto>()
