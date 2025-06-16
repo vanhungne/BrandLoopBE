@@ -59,8 +59,45 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<Campaign, CampaignDto>()
            .ForMember(dest => dest.campaignImageDtos,
                       opt => opt.MapFrom(src => src.CampaignImages));
-            CreateMap<CreateCampaignDto, Campaign>();
-            CreateMap<UpdateCampaignDto, Campaign>();
+            // Campaign mappings
+            CreateMap<Campaign, CampaignDto>()
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.CampaignImages));
+
+            CreateMap<CreateCampaignDto, Campaign>()
+                .ForMember(dest => dest.CampaignId, opt => opt.Ignore())
+                .ForMember(dest => dest.BrandId, opt => opt.Ignore())
+                .ForMember(dest => dest.UploadedDate, opt => opt.Ignore())
+                .ForMember(dest => dest.LastUpdate, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.Brand, opt => opt.Ignore())
+                .ForMember(dest => dest.Creator, opt => opt.Ignore())
+                .ForMember(dest => dest.KolsJoinCampaigns, opt => opt.Ignore())
+                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignInvitations, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignReports, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignImages, opt => opt.Ignore())
+                .ForMember(dest => dest.Payments, opt => opt.Ignore());
+
+            CreateMap<UpdateCampaignDto, Campaign>()
+                .ForMember(dest => dest.CampaignId, opt => opt.Ignore())
+                .ForMember(dest => dest.BrandId, opt => opt.Ignore())
+                .ForMember(dest => dest.UploadedDate, opt => opt.Ignore())
+                .ForMember(dest => dest.LastUpdate, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.Brand, opt => opt.Ignore())
+                .ForMember(dest => dest.Creator, opt => opt.Ignore())
+                .ForMember(dest => dest.KolsJoinCampaigns, opt => opt.Ignore())
+                .ForMember(dest => dest.Feedbacks, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignInvitations, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignReports, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignImages, opt => opt.Ignore())
+                .ForMember(dest => dest.Payments, opt => opt.Ignore());
+
+            // CampaignImage mappings
+            CreateMap<CampaignImage, CampaignImageDto>();
+            CreateMap<CampaignImageDto, CampaignImage>()
+                .ForMember(dest => dest.Campaign, opt => opt.Ignore());
             // CampaignInvitation mapping
             CreateMap<CampaignInvitation, InvitationDTO>();
             CreateMap<Deal, DealDTO>();
