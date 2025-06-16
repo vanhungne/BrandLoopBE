@@ -55,6 +55,10 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<InfluenceProfile, InfluenceProfileResponseDto>();
 
+            CreateMap<Campaign, CampaignDto>().ReverseMap();
+            CreateMap<Campaign, CampaignDto>()
+           .ForMember(dest => dest.campaignImageDtos,
+                      opt => opt.MapFrom(src => src.CampaignImages));
             // Campaign mappings
             CreateMap<Campaign, CampaignDto>()
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.CampaignImages));
@@ -94,7 +98,6 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<CampaignImage, CampaignImageDto>();
             CreateMap<CampaignImageDto, CampaignImage>()
                 .ForMember(dest => dest.Campaign, opt => opt.Ignore());
-
             // CampaignInvitation mapping
             CreateMap<CampaignInvitation, InvitationDTO>();
             CreateMap<Deal, DealDTO>();
@@ -110,7 +113,12 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<SubscriptionRegister, SubscriptionRegisterDTO>()
                 .ForMember(dest => dest.SubscriptionName, opt => opt.MapFrom(src => src.Subscription.SubscriptionName))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Subscription.Description));
-
+            CreateMap<SubscriptionRegister, PaymentSubscription>()
+                .ForMember(dest => dest.SubscriptionName, opt => opt.MapFrom(src => src.Subscription.SubscriptionName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Subscription.Description))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Subscription.Price))
+                .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().PaymentId))
+                .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type));
         }
     }
 }

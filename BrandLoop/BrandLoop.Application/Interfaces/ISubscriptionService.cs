@@ -19,7 +19,7 @@ namespace BrandLoop.Application.Interfaces
         // Register subscription methods
         Task<List<SubscriptionRegisterDTO>> GetSubscriptionRegistersOfUser(string userId);
         Task<SubscriptionRegisterDTO> GetSubscriptionRegisterByIdAsync(int id);
-        Task<SubscriptionRegisterDTO> RegisterSubscription(string userID, int subscriptionId);
+        Task<PaymentSubscription> RegisterSubscription(string userID, int subscriptionId);
         Task<CreatePaymentResult> CreatePaymentLink(string userID, long orderCode);
         Task ConfirmPayment(long orderCode);
         Task CancelPayment(long orderCode);

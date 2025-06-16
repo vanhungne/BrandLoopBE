@@ -68,14 +68,14 @@ namespace BrandLoop.Application.Service
             var subscriptionRegisters = await _subscriptionRepository.GetSubscriptionRegisterByIdAsync(id);
             return _mapper.Map<SubscriptionRegisterDTO>(subscriptionRegisters);
         }
-        public async Task<SubscriptionRegisterDTO> RegisterSubscription(string userID, int subscriptionId)
+        public async Task<PaymentSubscription> RegisterSubscription(string userID, int subscriptionId)
         {
             var now = DateTimeHelper.GetVietnamNow();
             var subscription = await _subscriptionRepository.GetSubscriptionByIdAsync(subscriptionId);
             if (subscription == null)
                 throw new Exception($"Subscription with ID {subscriptionId} not found.");
             if (subscription.isDeleted)
-                throw new Exception($"Subscription {subscription.SubscriptionName} is not availabe now.");
+                throw new Exception($"Subscription {subscription.SubscriptionName} is not available now.");
 
             var user = await _userRepository.GetBasicAccountProfileAsync(userID);
             if (user == null)
@@ -106,7 +106,7 @@ namespace BrandLoop.Application.Service
                 TransactionCode = "Not bank yet"
             };
             await _paymentRepository.CreatePaymentAsync(payment);
-            return _mapper.Map<SubscriptionRegisterDTO>(registeredSub);
+            return _mapper.Map<PaymentSubscription>(registeredSub);
         }
 
         public async Task<CreatePaymentResult> CreatePaymentLink(string userID, long orderCode)
