@@ -8,6 +8,7 @@ using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Configurations;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Persistence;
+using BrandLoop.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
 
 namespace BrandLoop.Infratructure.Repository
@@ -124,6 +125,105 @@ namespace BrandLoop.Infratructure.Repository
                 .OrderByDescending(c => c.LastUpdate)
                 .ToListAsync();
             return camaigns;
+        }
+
+        public async Task<Campaign> StartCampaign(int campaignId)
+        {
+            var campaign = await GetCampaignDetailAsync(campaignId);
+            if (campaign == null) return null;
+
+            if (campaign.Status != CampainStatus.Approved)
+                throw new InvalidOperationException("Campaign can only be started if it is in Approved status.");
+
+            campaign.Status = CampainStatus.Pending;
+            campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
+            campaign.StartTime = DateTimeHelper.GetVietnamNow();
+            _context.Campaigns.Update(campaign);
+            await _context.SaveChangesAsync();
+            return campaign;
+        }
+        public async Task ConfirmPaymentToStartCampaign(int campaignId)
+        {
+            var campaign = await GetCampaignDetailAsync(campaignId);
+            if (campaign == null) return;
+            if (campaign.Status != CampainStatus.Pending)
+                throw new InvalidOperationException("Campaign can only be started if it is in Pending status.");
+
+            campaign.Status = CampainStatus.InProgress;
+            campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
+            _context.Campaigns.Update(campaign);
+
+            // Update KolsJoinCampaigns status to Active
+            var kolJoinCampaigns = await _context.KolsJoinCampaigns
+                .Where(k => k.CampaignId == campaignId && k.Status == KolJoinCampaignStatus.Pending)
+                .ToListAsync();
+            foreach (var kolJoinCampaign in kolJoinCampaigns)
+            {
+                kolJoinCampaign.Status = KolJoinCampaignStatus.Active;
+                _context.KolsJoinCampaigns.Update(kolJoinCampaign);
+            }
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Campaign> EndCampaign(int campaignId)
+        {
+            var campaign = await GetCampaignDetailAsync(campaignId);
+            if (campaign == null) return null;
+
+            if (campaign.Status != CampainStatus.InProgress)
+                throw new InvalidOperationException("Campaign can only be ended if it is in InProgress status.");
+
+            campaign.Status = CampainStatus.Completed;
+            campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
+            _context.Campaigns.Update(campaign);
+
+            // Update KolsJoinCampaigns status to Completed
+            var kolJoinCampaigns = await _context.KolsJoinCampaigns
+                .Where(k => k.CampaignId == campaignId && k.Status == KolJoinCampaignStatus.Active)
+                .ToListAsync();
+            foreach (var kolJoinCampaign in kolJoinCampaigns)
+            {
+                kolJoinCampaign.Status = KolJoinCampaignStatus.Completed;
+                _context.KolsJoinCampaigns.Update(kolJoinCampaign);
+            }
+            await _context.SaveChangesAsync();
+            return campaign;
+        }
+
+        public async Task<Campaign> CancelCampaign(int campaignId)
+        {
+            var campaign = await GetCampaignDetailAsync(campaignId);
+            if (campaign == null) return null;
+
+            if (campaign.Status != CampainStatus.Pending)
+                throw new InvalidOperationException("Campaign can only be cancel if it is in Pending status.");
+
+            campaign.Status = CampainStatus.Completed;
+            campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
+            _context.Campaigns.Update(campaign);
+
+            // Update KolsJoinCampaigns status to Cancelled
+            var kolJoinCampaigns = await _context.KolsJoinCampaigns
+                .Where(k => k.CampaignId == campaignId && k.Status == KolJoinCampaignStatus.Active)
+                .ToListAsync();
+            foreach (var kolJoinCampaign in kolJoinCampaigns)
+            {
+                kolJoinCampaign.Status = KolJoinCampaignStatus.Cancelled;
+                _context.KolsJoinCampaigns.Update(kolJoinCampaign);
+            }
+            await _context.SaveChangesAsync();
+            return campaign;
+        }
+
+        public async Task<List<KolsJoinCampaign>> GetKolsJoinCampaigns(int campaignId)
+        {
+            var kolsJoinCampaigns = await _context.KolsJoinCampaigns
+                .Include(k => k.User)
+                .ThenInclude(u => u.InfluenceProfile)
+                .ThenInclude(ip => ip.InfluencerType)
+                .Where(k => k.CampaignId == campaignId)
+                .ToListAsync();
+            return kolsJoinCampaigns;
         }
     }
 

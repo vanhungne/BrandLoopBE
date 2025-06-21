@@ -25,4 +25,17 @@ namespace BrandLoop.Infratructure.Models.CampainModel
 
         public List<CampaignImageDto> Images { get; set; } = new List<CampaignImageDto>();
     }
+    public class PaymentCampaign
+    {
+        public string PaymentId { get; set; }
+        public int Amount { get; set; }
+        public string paymentType { get; set; }
+        public int CampaignId { get; set; }
+        public int BrandId { get; set; }
+        public string CampaignName { get; set; }
+        public string Description { get; set; }
+        public DateTime? StartTime { get; set; }
+        public DateTime? Deadline { get; set; }
+        public string Status { get; set; }
+    }
 }

@@ -37,7 +37,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime? Deadline { get; set; }
 
         [StringLength(50)]
-        public CampainStatus Status { get; set; } = CampainStatus.Pending;
+        public CampainStatus Status { get; set; } = CampainStatus.Approved;
 
         [Required]
         [StringLength(32)]

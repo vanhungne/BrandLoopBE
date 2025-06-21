@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BrandLoop.Domain.Enums;
+using BrandLoop.Shared.Helper;
 
 namespace BrandLoop.Domain.Entities
 {
@@ -23,7 +24,7 @@ namespace BrandLoop.Domain.Entities
         [StringLength(50)]
         public KolJoinCampaignStatus Status { get; set; } = KolJoinCampaignStatus.Pending;
 
-        public DateTime AppliedAt { get; set; } = DateTime.Now;
+        public DateTime AppliedAt { get; set; } = DateTimeHelper.GetVietnamNow();
 
         // Navigation properties
         [ForeignKey("CampaignId")]

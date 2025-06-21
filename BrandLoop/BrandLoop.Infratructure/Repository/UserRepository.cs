@@ -118,6 +118,7 @@ namespace BrandLoop.Infratructure.Repository
                   .Include(ip => ip.User.KolsJoinCampaigns)
                   .ThenInclude(kjc => kjc.Campaign)
                   .Include(ip => ip.User.Wallets)
+                  .Include(ip => ip.InfluencerType)
                   .FirstOrDefaultAsync(ip => ip.UID == uid);
 
             if (influenceProfile == null) return null;
@@ -151,6 +152,7 @@ namespace BrandLoop.Infratructure.Repository
                 Tiktok = influenceProfile.Tiktok,
                 Youtube = influenceProfile.Youtube,
                 FollowerCount = influenceProfile.FollowerCount,
+                Type = influenceProfile.InfluencerType.Name,
                 EngagementRate = influenceProfile.EngagementRate,
                 Gender = influenceProfile.Gender,
                 DayOfBirth = influenceProfile.DayOfBirth,

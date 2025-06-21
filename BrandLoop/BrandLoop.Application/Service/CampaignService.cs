@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using BrandLoop.Application.Interfaces;
 using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Repository;
+using BrandLoop.Shared.Helper;
 using Microsoft.Extensions.Logging;
+using Net.payOS.Types;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BrandLoop.Application.Service
 {
@@ -19,17 +22,26 @@ namespace BrandLoop.Application.Service
         private readonly IImageCampainRepository _imageCampaignRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<CampaignService> _logger;
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IPaySystem _paySystem;
+        private readonly IUserRepository _userRepository;
 
         public CampaignService(
             ICampaignRepository campaignRepository,
             IMapper mapper,
             ILogger<CampaignService> logger,
-            IImageCampainRepository imageCampaignRepository)
+            IImageCampainRepository imageCampaignRepository,
+            IPaymentRepository paymentRepository,
+            IPaySystem paySystem,
+            IUserRepository userRepository)
         {
             _campaignRepository = campaignRepository ?? throw new ArgumentNullException(nameof(campaignRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _imageCampaignRepository = imageCampaignRepository;
+            _paymentRepository = paymentRepository;
+            _paySystem = paySystem;
+            _userRepository = userRepository;
         }
 
         public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(int brandId)
@@ -124,7 +136,7 @@ namespace BrandLoop.Application.Service
                 var campaign = _mapper.Map<Campaign>(dto);
                 campaign.UploadedDate = DateTime.Now;
                 campaign.LastUpdate = DateTime.Now;
-                campaign.Status = CampainStatus.Pending;
+                campaign.Status = CampainStatus.Approved;
                 campaign.CreatedBy = uid ?? throw new ArgumentNullException(nameof(uid), "User ID không được để trống");
                 campaign.BrandId = branid;
 
@@ -331,6 +343,147 @@ namespace BrandLoop.Application.Service
                 _logger.LogWarning("No campaigns found for user {Uid}", uid);
             }
             return _mapper.Map<List<CampaignDto>>(campaigns);
+        }
+
+        public async Task<PaymentCampaign> StartCampaign(string creatorId,int campaignId)
+        {
+            var totalAmount = 0;
+            var now = DateTimeHelper.GetVietnamNow();
+            
+            var checkcampaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
+            if (checkcampaign == null)
+                throw new InvalidOperationException($"Campaign with ID {campaignId} not found or cannot be started.");
+            if (checkcampaign.CreatedBy != creatorId)
+                throw new UnauthorizedAccessException($"User {creatorId} is not authorized to start this campaign.");
+
+            var campaign = await _campaignRepository.StartCampaign(campaignId);
+
+            var orderCode = await GenerateOrderCode();
+            var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(campaignId);
+            if (kolJoinCampaigns == null || !kolJoinCampaigns.Any())
+                throw new Exception($"No KOLs joined the campaign with ID {campaignId}.");
+
+            foreach (var kol in kolJoinCampaigns)
+            {
+                totalAmount += kol.User.InfluenceProfile.InfluencerType.PlatformFee;
+            }
+
+            var payment = new Payment
+            {
+                PaymentId = orderCode,
+                CreatedAt = DateTimeHelper.GetVietnamNow(),
+                Amount = totalAmount,
+                Status = PaymentStatus.pending,
+                Type = PaymentType.campaign,
+                CampaignId = campaignId,
+                PaymentMethod = "Bank Transfer",
+                TransactionCode = "Not bank yet"
+            };
+            await _paymentRepository.CreatePaymentAsync(payment);
+            return _mapper.Map<PaymentCampaign>(campaign);
+        }
+
+        public async Task<CreatePaymentResult> CreatePaymentLink(long orderCode)
+        {
+            List<ItemData> items = new List<ItemData>();
+            ItemData item;
+
+            var payment = await _paymentRepository.GetPaymentByIdAsync(orderCode);
+            if (payment == null)
+                throw new Exception($"Payment with ID {orderCode} not found.");
+
+            if (payment.Status != PaymentStatus.pending)
+                throw new Exception("Payment is not in pending status.");
+            if (payment.Type != PaymentType.campaign)
+                throw new Exception("Payment type is not campaign.");
+
+            var campaign = await _campaignRepository.GetCampaignDetailAsync((int) payment.CampaignId);
+            if (campaign.Creator == null)
+                throw new Exception($"Campaign with ID {(int)payment.CampaignId} not found.");
+
+            var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(campaign.CampaignId);
+            if (kolJoinCampaigns == null || !kolJoinCampaigns.Any())
+                throw new Exception($"No KOLs joined the campaign with ID {campaign.CampaignId}.");
+
+            foreach (var kol in kolJoinCampaigns)
+            {
+                if (kol.User == null || kol.User.InfluenceProfile == null)
+                    throw new Exception($"KOL with ID {kol.UID} does not have a valid profile.");
+                item = new ItemData(
+                    $"{kol.User.InfluenceProfile.InfluencerType.Name} Fee for {kol.User.FullName}",
+                    kol.User.InfluenceProfile.InfluencerType.PlatformFee,
+                    1
+                );
+                items.Add(item);
+            }
+            var creator = await _userRepository.GetBasicAccountProfileAsync(campaign.CreatedBy);
+            if (creator == null)
+                throw new Exception($"User with ID {campaign.CreatedBy} not found.");
+
+            var paymentInfo = await _paySystem.CreatePaymentAsync(
+                creator,
+                "Payment start campaign",
+                orderCode,
+                items
+            );
+            await _paymentRepository.UpdatePaymentTransactionCode(orderCode, paymentInfo.paymentLinkId);
+            return paymentInfo;
+        }
+
+        public async Task ConfirmPayment(long orderCode)
+        {
+            var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(orderCode);
+            if (payment == null)
+                throw new Exception($"Payment with order code {orderCode} not found.");
+            if (payment.Status != PaymentStatus.pending)
+                throw new Exception("Payment is not in pending status.");
+
+            var paymentLinkInfo = await _paySystem.getPaymentLinkInformation(orderCode);
+            if (paymentLinkInfo.status != "PAID")
+                throw new Exception($"Payment is not paid yet: {paymentLinkInfo.status}");
+
+            await _paymentRepository.UpdatePaymentStatus(orderCode, PaymentStatus.Succeeded);
+            await _campaignRepository.ConfirmPaymentToStartCampaign((int) payment.CampaignId);
+        }
+
+        public async Task<CampaignDto> EndCampaign(string creatorId, int campaignId)
+        {
+            var checkCampaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
+            if (checkCampaign == null)
+                throw new InvalidOperationException($"Campaign with ID {campaignId} not found.");
+
+            if (checkCampaign.CreatedBy != creatorId)
+                throw new UnauthorizedAccessException($"User {creatorId} is not authorized to end this campaign.");
+
+            return _mapper.Map<CampaignDto>(await _campaignRepository.EndCampaign(campaignId));
+        }
+
+        public async Task<CampaignDto> CancelCampaign(string creatorId, int campaignId)
+        {
+            var checkCampaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
+            if (checkCampaign == null)
+                throw new InvalidOperationException($"Campaign with ID {campaignId} not found.");
+
+            if (checkCampaign.CreatedBy != creatorId)
+                throw new UnauthorizedAccessException($"User {creatorId} is not authorized to cancel this campaign.");
+
+            return _mapper.Map<CampaignDto>(await _campaignRepository.CancelCampaign(campaignId));
+        }
+
+        public async Task<long> GenerateOrderCode()
+        {
+            // Time-based + random số nhỏ, đảm bảo trong giới hạn Int64
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(); // 13 chữ số
+            var random = new Random().Next(100, 999); // 3 chữ số
+            var combined = $"{timestamp}{random}"; // Tổng: 16 chữ số
+
+            var result = long.Parse(combined);
+            var checkExistingPayment = await _paymentRepository.GetPaymentByOrderCodeAsync(result);
+            if (checkExistingPayment != null)
+                // Nếu đã tồn tại, gọi lại hàm để tạo mã mới
+                return await GenerateOrderCode();
+
+            return result;
         }
     }
 

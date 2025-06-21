@@ -55,9 +55,11 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<InfluenceProfile, InfluenceProfileResponseDto>();
 
+            CreateMap<InfluencerType, InfluTypeModel>().ReverseMap();
+
             CreateMap<Campaign, CampaignDto>().ReverseMap();
             CreateMap<Campaign, CampaignDto>()
-           .ForMember(dest => dest.campaignImageDtos,
+           .ForMember(dest => dest.Images,
                       opt => opt.MapFrom(src => src.CampaignImages));
             // Campaign mappings
             CreateMap<Campaign, CampaignDto>()
@@ -93,6 +95,16 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.CampaignReports, opt => opt.Ignore())
                 .ForMember(dest => dest.CampaignImages, opt => opt.Ignore())
                 .ForMember(dest => dest.Payments, opt => opt.Ignore());
+
+            CreateMap<Campaign, PaymentCampaign>()
+                .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().PaymentId))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Amount))
+                .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type))
+                .ForMember(dest => dest.CampaignName, opt => opt.MapFrom(src => src.CampaignName))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
+                .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
+                .ForMember(dest => dest.Deadline, opt => opt.MapFrom(src => src.Deadline))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
 
             // CampaignImage mappings
             CreateMap<CampaignImage, CampaignImageDto>();

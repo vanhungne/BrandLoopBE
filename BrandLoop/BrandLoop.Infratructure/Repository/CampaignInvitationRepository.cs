@@ -3,6 +3,7 @@ using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Persistence;
+using BrandLoop.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,17 @@ namespace BrandLoop.Infratructure.Repository
                 throw new Exception("Invitation not found");
             invitation.Status = Domain.Enums.CampaignInvitationStatus.accepted;
             _context.CampaignInvitations.Update(invitation);
+
+            // Create kol join campaign
+            var kolJoinCampaign = new KolsJoinCampaign
+            {
+                CampaignId = invitation.CampaignId,
+                UID = invitation.UID,
+                Status = KolJoinCampaignStatus.Pending,
+                AppliedAt = DateTimeHelper.GetVietnamNow()
+            };
+            _context.KolsJoinCampaigns.Add(kolJoinCampaign);
+
             await _context.SaveChangesAsync();
         }
 

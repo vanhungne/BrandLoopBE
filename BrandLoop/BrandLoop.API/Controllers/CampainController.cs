@@ -8,6 +8,7 @@ using BrandLoop.Infratructure.Models.SubcriptionModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Net.payOS.Types;
 using System.Security.Claims;
 
 namespace BrandLoop.API.Controllers
@@ -28,7 +29,7 @@ namespace BrandLoop.API.Controllers
         /// </summary>
         /// <returns>Danh sách campaigns</returns>
         [HttpGet("brand/my-brand")]
-        [Authorize (Roles = "Brand")]
+        [Authorize(Roles = "Brand")]
         public async Task<ActionResult<ApiResponse<IEnumerable<CampaignDto>>>> GetMyCampaigns([FromQuery] PaginationFilter filter)
         {
             try
@@ -151,7 +152,7 @@ namespace BrandLoop.API.Controllers
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult($"Dữ liệu không hợp lệ: {errors}"));
                 }
 
-                var result = await _campaignService.CreateCampaignAsync(dto,uid);
+                var result = await _campaignService.CreateCampaignAsync(dto, uid);
                 if (result == null)
                 {
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Không thể tạo campaign"));
@@ -305,6 +306,98 @@ namespace BrandLoop.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
+        }
+
+        /// <summary>
+        /// Start campaign
+        /// </summary>
+        [HttpPost("{campaignId}/start")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<PaymentCampaign>>> StartCampaign(int campaignId)
+        {
+            try
+            {
+                var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(creatorId))
+                    return BadRequest(ApiResponse<PaymentCampaign>.ErrorResult("Không tìm thấy thông tin người dùng"));
+
+                var result = await _campaignService.StartCampaign(creatorId, campaignId);
+                if (result == null)
+                    return NotFound(ApiResponse<PaymentCampaign>.ErrorResult("Không tìm thấy campaign để bắt đầu"));
+
+                return Ok(ApiResponse<PaymentCampaign>.SuccessResult(result, "Bắt đầu campaign thành công"));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ApiResponse<PaymentCampaign>.ErrorResult($"Lỗi: {ex.Message}"));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    ApiResponse<PaymentCampaign>.ErrorResult($"Truy cập bị từ chối: {ex.Message}"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<PaymentCampaign>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
+        }
+
+        /// <summary>
+        /// End campaign
+        /// </summary>
+        [HttpPost("{campaignId}/end")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<CampaignDto>>> EndCampaign(int campaignId)
+        {
+            try
+            {
+                var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(creatorId))
+                    return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Không tìm thấy thông tin người dùng"));
+
+                var result = await _campaignService.EndCampaign(creatorId, campaignId);
+                if (result == null)
+                    return NotFound(ApiResponse<CampaignDto>.ErrorResult("Không tìm thấy campaign để kết thúc"));
+
+                return Ok(ApiResponse<CampaignDto>.SuccessResult(result, "Kết thúc campaign thành công"));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ApiResponse<CampaignDto>.ErrorResult($"Lỗi: {ex.Message}"));
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden,
+                    ApiResponse<CampaignDto>.ErrorResult($"Truy cập bị từ chối: {ex.Message}"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
+        }
+
+        /// <summary>
+        /// Get payment link for campaign
+        /// </summary>
+        [HttpPost("payment-link/{orderCode}")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<CreatePaymentResult>>> CreatePaymentLink(long orderCode)
+        {
+            try
+            {
+                var result = await _campaignService.CreatePaymentLink(orderCode);
+                if (result == null)
+                    return NotFound(ApiResponse<CreatePaymentResult>.ErrorResult("Không tìm thấy campaign để tạo payment link"));
+
+                return Ok(ApiResponse<CreatePaymentResult>.SuccessResult(result, "Tạo payment link thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<CreatePaymentResult>.ErrorResult($"Lỗi server: {ex.Message}"));
             }
         }
     }

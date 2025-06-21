@@ -46,11 +46,11 @@ namespace BrandLoop.Infratructure.Repository
 
             if(payment.Type == PaymentType.subscription)
             {
-                returnUrl = $"{returnUrl}/api/Subscription/confirm";
-                cancelUrl = $"{cancelUrl}/api/Subscription/cancel";
+                returnUrl = $"{returnUrl}/api/Subscription/confirm-payment";
+                cancelUrl = $"{cancelUrl}/api/Subscription/cancel-payment";
             } else if(payment.Type == PaymentType.campaign)
             {
-                returnUrl = $"{returnUrl}/api/Campaign/confirm";
+                returnUrl = $"{returnUrl}/api/Subscription/confirm-payment";
                 cancelUrl = $"{cancelUrl}/api/Campaign/cancel";
             }
 

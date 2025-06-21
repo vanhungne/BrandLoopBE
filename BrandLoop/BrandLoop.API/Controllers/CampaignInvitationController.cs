@@ -37,7 +37,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (AuthenticationException ex)
             {
-                return Forbid(ex.Message);
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -61,7 +61,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (AuthenticationException ex)
             {
-                return Forbid(ex.Message);
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (AuthenticationException ex)
             {
-                return Forbid(ex.Message);
+                return Forbid();
             }
             catch (KeyNotFoundException ex)
             {
@@ -162,7 +162,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (AuthenticationException ex)
             {
-                return Forbid(ex.Message);
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -185,7 +185,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (AuthenticationException ex)
             {
-                return Forbid(ex.Message);
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -208,7 +208,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (AuthenticationException ex)
             {
-                return Forbid(ex.Message);
+                return Forbid();
             }
             catch (Exception ex)
             {
@@ -231,7 +231,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (AuthenticationException ex)
             {
-                return Forbid(ex.Message);
+                return Forbid();
             }
             catch (Exception ex)
             {

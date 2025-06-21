@@ -23,6 +23,7 @@ namespace BrandLoop.Infratructure.Models.UserModel
         public string Tiktok { get; set; }
         public string Youtube { get; set; }
         public int? FollowerCount { get; set; }
+        public string Type { get; set; }
         public decimal? EngagementRate { get; set; }
         public string Gender { get; set; }
         public DateOnly? DayOfBirth { get; set; }

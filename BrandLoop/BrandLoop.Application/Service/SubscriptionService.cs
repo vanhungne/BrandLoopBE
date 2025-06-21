@@ -166,6 +166,14 @@ namespace BrandLoop.Application.Service
             await _paymentRepository.UpdatePaymentStatus(orderCode, PaymentStatus.Canceled);
             await _subscriptionRepository.UpdateRegisterStatus(payment.SubscriptionRegister.Id, RegisterSubStatus.Cancelled);
         }
+
+        public async Task<Payment> GetPaymentByOrderCodeAsync(long orderCode)
+        {
+            var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(orderCode);
+            if (payment == null)
+                throw new Exception($"Payment with order code {orderCode} not found.");
+            return payment;
+        }
         public async Task<long> GenerateOrderCode()
         {
             // Time-based + random số nhỏ, đảm bảo trong giới hạn Int64

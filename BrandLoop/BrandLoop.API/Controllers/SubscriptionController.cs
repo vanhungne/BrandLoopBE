@@ -14,9 +14,11 @@ namespace BrandLoop.API.Controllers
     public class SubscriptionController : ControllerBase
     {
         private readonly ISubscriptionService _subscriptionService;
-        public SubscriptionController(ISubscriptionService subscriptionService)
+        private readonly ICampaignService _campaignService;
+        public SubscriptionController(ISubscriptionService subscriptionService, ICampaignService campaignService)
         {
             _subscriptionService = subscriptionService;
+            _campaignService = campaignService;
         }
 
         /// <summary>
@@ -43,7 +45,7 @@ namespace BrandLoop.API.Controllers
         /// Láy thông tin gói đăng ký theo ID.
         /// </summary>
         /// <returns>Trả vè thông tin của gói đăng ký đó</returns>
-        [HttpGet("{subscriptionId}")]
+        [HttpGet("get-detail/{subscriptionId}")]
         public async Task<IActionResult> GetSubscriptionById(int subscriptionId)
         {
             try
@@ -225,16 +227,21 @@ namespace BrandLoop.API.Controllers
         /// <returns>Trả vè thông báo</returns>
         [HttpPut("confirm-payment")]
         public async Task<IActionResult> ConfirmPayment(
-            [FromQuery] long orderCode,
             [FromQuery] string code,
             [FromQuery] string id,
             [FromQuery] bool? cancel,
-            [FromQuery] string status
+            [FromQuery] string status,
+            [FromQuery] long orderCode
             )
         {
             try
             {
-                await _subscriptionService.ConfirmPayment(orderCode);
+                var payment = await _subscriptionService.GetPaymentByOrderCodeAsync(orderCode);
+                if (payment.Type == Domain.Enums.PaymentType.subscription)
+                    await _subscriptionService.ConfirmPayment(orderCode);
+                else
+                    await _campaignService.ConfirmPayment(orderCode);
+
                 return Ok("Thanh toan thanh cong");
             }
             catch (Exception ex)
@@ -257,7 +264,9 @@ namespace BrandLoop.API.Controllers
         {
             try
             {
-                await _subscriptionService.CancelPayment(orderCode);
+                var payment = await _subscriptionService.GetPaymentByOrderCodeAsync(orderCode);
+                if (payment.Type == Domain.Enums.PaymentType.subscription)
+                    await _subscriptionService.CancelPayment(orderCode);
                 return Ok("Thanh toan da huy");
             }
             catch (Exception ex)

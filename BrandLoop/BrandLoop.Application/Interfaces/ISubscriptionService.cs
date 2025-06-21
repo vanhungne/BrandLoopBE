@@ -23,5 +23,6 @@ namespace BrandLoop.Application.Interfaces
         Task<CreatePaymentResult> CreatePaymentLink(string userID, long orderCode);
         Task ConfirmPayment(long orderCode);
         Task CancelPayment(long orderCode);
+        Task<Payment> GetPaymentByOrderCodeAsync(long orderCode);
     }
 }
