@@ -19,6 +19,8 @@ namespace BrandLoop.Application.Interfaces
         Task<CampaignDto> UpdateCampaignStatusAsync(int campaignId, CampainStatus status);
         Task<CampaignDto> DuplicateCampaignAsync(int campaignId);
         Task<List<CampaignDto>> GetAllCampaignByUid(string uid);
+        Task<List<CampaignDto>> GetAllCampaignsAsync(CampaignFilterModel filter);
+
     }
 
 }

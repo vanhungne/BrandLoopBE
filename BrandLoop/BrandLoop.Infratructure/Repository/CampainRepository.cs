@@ -127,6 +127,16 @@ namespace BrandLoop.Infratructure.Repository
                 .ToListAsync();
             return camaigns;
         }
+
+        public async Task<List<Campaign>> GetAllCampaignsAsync()
+        {
+            return await _context.Campaigns
+                .Include(c => c.CampaignImages)
+                .Include(c => c.Brand)
+                .Include(c => c.Creator)
+                .OrderByDescending(c => c.LastUpdate)
+                .ToListAsync();
+        }
     }
 
 }

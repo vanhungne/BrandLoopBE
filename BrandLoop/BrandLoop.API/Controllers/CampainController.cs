@@ -23,6 +23,15 @@ namespace BrandLoop.API.Controllers
         {
             _campaignService = campaignService ?? throw new ArgumentNullException(nameof(campaignService));
         }
+
+        [HttpGet("all")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ApiResponse<List<CampaignDto>>>> GetAllCampaigns([FromQuery] CampaignFilterModel filter)
+        {
+            var result = await _campaignService.GetAllCampaignsAsync(filter);
+            return Ok(ApiResponse<List<CampaignDto>>.SuccessResult(result, "Lấy tất cả campaign thành công"));
+        }
+
         /// <summary>
         /// Lấy danh sách campaigns cua brand
         /// </summary>

@@ -9,6 +9,7 @@ using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.CampainModel;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace BrandLoop.Application.Service
@@ -330,6 +331,48 @@ namespace BrandLoop.Application.Service
             {
                 _logger.LogWarning("No campaigns found for user {Uid}", uid);
             }
+            return _mapper.Map<List<CampaignDto>>(campaigns);
+        }
+        public async Task<List<CampaignDto>> GetAllCampaignsAsync(CampaignFilterModel filter)
+        {
+            var query = _campaignRepository.GetAll()
+                .Include(c => c.CampaignImages)
+                .Include(c => c.Brand)
+                .Include(c => c.Creator)
+                .AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+                query = query.Where(c => c.CampaignName.Contains(filter.Search) || c.Description.Contains(filter.Search));
+
+            // Filter by status
+            if (filter.Status.HasValue)
+                query = query.Where(c => c.Status == filter.Status.Value);
+
+            // Filter by date
+            if (filter.FromDate.HasValue)
+                query = query.Where(c => c.LastUpdate >= filter.FromDate.Value);
+            if (filter.ToDate.HasValue)
+                query = query.Where(c => c.LastUpdate <= filter.ToDate.Value);
+
+            // Sort
+            switch (filter.SortBy)
+            {
+                case "CampaignName":
+                    query = filter.SortDesc ? query.OrderByDescending(c => c.CampaignName) : query.OrderBy(c => c.CampaignName);
+                    break;
+                case "UploadedDate":
+                    query = filter.SortDesc ? query.OrderByDescending(c => c.UploadedDate) : query.OrderBy(c => c.UploadedDate);
+                    break;
+                default:
+                    query = filter.SortDesc ? query.OrderByDescending(c => c.LastUpdate) : query.OrderBy(c => c.LastUpdate);
+                    break;
+            }
+
+            // Paging
+            var skip = (filter.PageNumber - 1) * filter.PageSize;
+            var campaigns = await query.Skip(skip).Take(filter.PageSize).ToListAsync();
+
             return _mapper.Map<List<CampaignDto>>(campaigns);
         }
     }
