@@ -92,7 +92,7 @@ public class Program
         {
             options.AddPolicy("AllowSpecificOrigin", policy =>
             {
-                policy.WithOrigins("http://localhost:7222", "http://localhost:5173", "https://brandloop.pages.dev")
+                policy.WithOrigins("http://localhost:7222", "https://localhost:7443", "https://139.59.226.2:7443", "http://localhost:5173", "https://brandloop.pages.dev")
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .AllowCredentials();
@@ -147,6 +147,17 @@ public class Program
                 }
             });
         });
+
+        // config ure Kestrel server to listen on specific ports
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(7222); // HTTP
+            options.ListenAnyIP(7443, listenOptions =>
+            {
+                listenOptions.UseHttps("/app/https/brandloop.pfx", "1234");
+            });
+        });
+
 
         // Set default time zone
         TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
