@@ -9,6 +9,7 @@ using BrandLoop.Infratructure.Persistence;
 using BrandLoop.Application;
 using BrandLoop.Application.Background;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json.Serialization;
 
 public class Program
 {
@@ -87,6 +88,12 @@ public class Program
             };
         });
 
+        builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
         // CORS
         builder.Services.AddCors(options =>
         {
@@ -149,14 +156,14 @@ public class Program
         });
 
         // config ure Kestrel server to listen on specific ports
-        //builder.WebHost.ConfigureKestrel(options =>
-        //{
-        //    options.ListenAnyIP(7222); // HTTP
-        //    options.ListenAnyIP(7443, listenOptions =>
-        //    {
-        //        listenOptions.UseHttps("/app/https/brandloop.pfx", "1234");
-        //    });
-        //});
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(7222); // HTTP
+            options.ListenAnyIP(7443, listenOptions =>
+            {
+                listenOptions.UseHttps("/app/https/brandloop.pfx", "1234");
+            });
+        });
 
 
         // Set default time zone
