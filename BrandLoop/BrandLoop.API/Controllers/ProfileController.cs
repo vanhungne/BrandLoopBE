@@ -53,7 +53,16 @@ namespace BrandLoop.API.Controllers
 
             return Ok(ApiResponse<object>.SuccessResult(result));
         }
+        [HttpGet("brand")]
+        public async Task<IActionResult> GetBrandProfile()
+        {
+            var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _profileService.GetBrandProfileAsync(uid);
+            if (result == null)
+                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy thông tin thương hiệu"));
 
+            return Ok(ApiResponse<object>.SuccessResult(result));
+        }
         /// <summary>
         /// Lấy thông tin influence profile
         /// </summary>
