@@ -6,6 +6,7 @@ using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Repository;
 using BrandLoop.Shared.Helper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Net.payOS.Types;
 using System;
@@ -44,20 +45,20 @@ namespace BrandLoop.Application.Service
             _userRepository = userRepository;
         }
 
-        public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(int brandId)
+        public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(string uid)
         {
             try
             {
-                if (brandId <= 0)
+                if (uid == null)
                 {
-                    _logger.LogWarning("Invalid brandId: {BrandId}", brandId);
-                    throw new ArgumentException("Brand ID phải lớn hơn 0", nameof(brandId));
+                    _logger.LogWarning("Invalid brandId: {BrandId}", uid);
+                    throw new ArgumentException("Brand ID phải lớn hơn 0", nameof(uid));
                 }
 
-                var campaigns = await _campaignRepository.GetBrandCampaignsAsync(brandId);
+                var campaigns = await _campaignRepository.GetBrandCampaignsAsync(uid);
                 var result = _mapper.Map<IEnumerable<CampaignDto>>(campaigns);
 
-                _logger.LogInformation("Retrieved {Count} campaigns for brand {BrandId}", result.Count(), brandId);
+                _logger.LogInformation("Retrieved {Count} campaigns for brand {BrandId}", result.Count(), uid);
                 return result;
             }
             catch (ArgumentException)
@@ -66,7 +67,7 @@ namespace BrandLoop.Application.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting campaigns for brand {BrandId}", brandId);
+                _logger.LogError(ex, "Error occurred while getting campaigns for brand {BrandId}", uid);
                 throw new InvalidOperationException("Lỗi khi lấy danh sách campaigns", ex);
             }
         }
@@ -342,6 +343,48 @@ namespace BrandLoop.Application.Service
             {
                 _logger.LogWarning("No campaigns found for user {Uid}", uid);
             }
+            return _mapper.Map<List<CampaignDto>>(campaigns);
+        }
+        public async Task<List<CampaignDto>> GetAllCampaignsAsync(CampaignFilterModel filter)
+        {
+            var query = _campaignRepository.GetAll()
+                .Include(c => c.CampaignImages)
+                .Include(c => c.Brand)
+                .Include(c => c.Creator)
+                .AsQueryable();
+
+            // Search
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+                query = query.Where(c => c.CampaignName.Contains(filter.Search) || c.Description.Contains(filter.Search));
+
+            // Filter by status
+            if (filter.Status.HasValue)
+                query = query.Where(c => c.Status == filter.Status.Value);
+
+            // Filter by date
+            if (filter.FromDate.HasValue)
+                query = query.Where(c => c.LastUpdate >= filter.FromDate.Value);
+            if (filter.ToDate.HasValue)
+                query = query.Where(c => c.LastUpdate <= filter.ToDate.Value);
+
+            // Sort
+            switch (filter.SortBy)
+            {
+                case "CampaignName":
+                    query = filter.SortDesc ? query.OrderByDescending(c => c.CampaignName) : query.OrderBy(c => c.CampaignName);
+                    break;
+                case "UploadedDate":
+                    query = filter.SortDesc ? query.OrderByDescending(c => c.UploadedDate) : query.OrderBy(c => c.UploadedDate);
+                    break;
+                default:
+                    query = filter.SortDesc ? query.OrderByDescending(c => c.LastUpdate) : query.OrderBy(c => c.LastUpdate);
+                    break;
+            }
+
+            // Paging
+            var skip = (filter.PageNumber - 1) * filter.PageSize;
+            var campaigns = await query.Skip(skip).Take(filter.PageSize).ToListAsync();
+
             return _mapper.Map<List<CampaignDto>>(campaigns);
         }
 

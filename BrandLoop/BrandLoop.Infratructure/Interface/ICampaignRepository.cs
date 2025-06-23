@@ -11,7 +11,7 @@ namespace BrandLoop.Infratructure.Interface
 {
     public interface ICampaignRepository : IRepository<Campaign>
     {
-        Task<IEnumerable<Campaign>> GetBrandCampaignsAsync(int brandId);
+        Task<IEnumerable<Campaign>> GetBrandCampaignsAsync(string uid);
         Task<Campaign> GetCampaignDetailAsync(int campaignId);
         Task<Campaign> CreateCampaignAsync(Campaign campaign);
         Task<Campaign> UpdateCampaignAsync(Campaign campaign);
@@ -25,5 +25,7 @@ namespace BrandLoop.Infratructure.Interface
         Task<Campaign> EndCampaign(int campaignId);
         Task<Campaign> CancelCampaign(int campaignId);
         Task<List<KolsJoinCampaign>> GetKolsJoinCampaigns(int campaignId);
+        Task<List<Campaign>> GetAllCampaignsAsync();
+
     }
 }
