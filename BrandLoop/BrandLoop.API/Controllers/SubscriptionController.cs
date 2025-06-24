@@ -193,7 +193,7 @@ namespace BrandLoop.API.Controllers
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var subscriptionRegister = await _subscriptionService.RegisterSubscription(uid, subscriptionId);
-                var payment = await _subscriptionService.CreatePaymentLink(uid,short.Parse(subscriptionRegister.PaymentId));
+                var payment = await _subscriptionService.CreatePaymentLink(uid, subscriptionRegister.PaymentId);
                 return Ok(payment.checkoutUrl);
             }
             catch (Exception ex)
