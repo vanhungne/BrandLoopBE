@@ -29,7 +29,7 @@ namespace BrandLoop.Infratructure.Models.SubcriptionModel
 
     public class PaymentSubscription : SubscriptionRegisterDTO
     {
-        public string PaymentId { get; set; }
+        public long PaymentId { get; set; }
         public int Amount { get; set; }
         public string paymentType { get; set; }
     }
