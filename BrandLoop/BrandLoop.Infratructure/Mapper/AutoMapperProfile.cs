@@ -97,9 +97,10 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.Payments, opt => opt.Ignore());
 
             CreateMap<Campaign, PaymentCampaign>()
-                .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().PaymentId))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Amount))
+                .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault(p => p.Status != PaymentStatus.Canceled).PaymentId))
+                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Payments.FirstOrDefault(p => p.Status != PaymentStatus.Canceled).Amount))
                 .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type))
+                .ForMember(dest => dest.PaymentLink, opt => opt.MapFrom(src => src.Payments.FirstOrDefault(p => p.Status != PaymentStatus.Canceled).PaymentLink))
                 .ForMember(dest => dest.CampaignName, opt => opt.MapFrom(src => src.CampaignName))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))

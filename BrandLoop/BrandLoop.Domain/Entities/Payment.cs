@@ -35,6 +35,8 @@ namespace BrandLoop.Domain.Entities
         [StringLength(100)]
         public string TransactionCode { get; set; }
 
+        public string? PaymentLink { get; set; }
+
         // Navigation properties
         [ForeignKey("SubscriptionRegisterId")]
         public virtual SubscriptionRegister SubscriptionRegister { get; set; }

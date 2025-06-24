@@ -392,24 +392,34 @@ namespace BrandLoop.Application.Service
         {
             var totalAmount = 0;
             var now = DateTimeHelper.GetVietnamNow();
-            
+
+            // Kiểm tra campaign tồn tại và quyền người dùng
             var checkcampaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
             if (checkcampaign == null)
                 throw new InvalidOperationException($"Campaign with ID {campaignId} not found or cannot be started.");
             if (checkcampaign.CreatedBy != creatorId)
                 throw new UnauthorizedAccessException($"User {creatorId} is not authorized to start this campaign.");
 
-            var campaign = await _campaignRepository.StartCampaign(campaignId);
-
-            var orderCode = await GenerateOrderCode();
+            // Kiểm tra KOL đã join
             var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(campaignId);
             if (kolJoinCampaigns == null || !kolJoinCampaigns.Any())
                 throw new Exception($"No KOLs joined the campaign with ID {campaignId}.");
+            var existPayment = await _paymentRepository.GetPaymentByCamaignId(campaignId);
+
+            // Kiểm tra payment đã tồn tại và trạng thái
+            if (existPayment != null && existPayment.Status != PaymentStatus.Canceled)
+            {
+                return _mapper.Map<PaymentCampaign>(checkcampaign);
+            }
 
             foreach (var kol in kolJoinCampaigns)
             {
                 totalAmount += kol.User.InfluenceProfile.InfluencerType.PlatformFee;
             }
+
+            var campaign = await _campaignRepository.StartCampaign(campaignId);
+
+            var orderCode = await GenerateOrderCode();
 
             var payment = new Payment
             {
@@ -423,6 +433,7 @@ namespace BrandLoop.Application.Service
                 TransactionCode = "Not bank yet"
             };
             await _paymentRepository.CreatePaymentAsync(payment);
+            var paymentLink = await CreatePaymentLink(orderCode);
             return _mapper.Map<PaymentCampaign>(campaign);
         }
 
@@ -470,6 +481,7 @@ namespace BrandLoop.Application.Service
                 items
             );
             await _paymentRepository.UpdatePaymentTransactionCode(orderCode, paymentInfo.paymentLinkId);
+            await _paymentRepository.UpdatePaymentLink(orderCode, paymentInfo.checkoutUrl);
             return paymentInfo;
         }
 
@@ -511,6 +523,16 @@ namespace BrandLoop.Application.Service
                 throw new UnauthorizedAccessException($"User {creatorId} is not authorized to cancel this campaign.");
 
             return _mapper.Map<CampaignDto>(await _campaignRepository.CancelCampaign(campaignId));
+        }
+
+        public async Task Cancelayment(long orderCode)
+        {
+            var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(orderCode);
+            if (payment == null)
+                throw new Exception($"Payment with order code {orderCode} not found.");
+            if (payment.Status != PaymentStatus.pending)
+                throw new Exception("Payment is not in pending status.");
+            await _paymentRepository.UpdatePaymentStatus(orderCode, PaymentStatus.Canceled);
         }
 
         public async Task<long> GenerateOrderCode()

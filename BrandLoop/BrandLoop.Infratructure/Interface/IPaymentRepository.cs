@@ -17,5 +17,7 @@ namespace BrandLoop.Infratructure.Interface
         Task<Payment> GetPaymentByOrderCodeAsync(long orderCode);
         Task UpdatePaymentTransactionCode(long orderCode, string transactionCode);
         Task UpdatePaymentStatus(long orderCode, PaymentStatus status);
+        Task UpdatePaymentLink(long orderCode, string paymentLink);
+        Task<Payment> GetPaymentByCamaignId(int campaignId);
     }
 }

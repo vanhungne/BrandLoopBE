@@ -19,6 +19,12 @@ namespace BrandLoop.API.Controllers
         {
             _influencerTypeService = influencerTypeService;
         }
+
+        /// <summary>
+        /// Lấy hết tất cả các loại Influencer với phân trang
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAllInfluencerTypes([FromQuery] PaginationFilter filter)
         {
@@ -48,6 +54,11 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Lấy thông tin loại Influencer theo ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInfluencerTypeById(int id)
         {
@@ -67,12 +78,24 @@ namespace BrandLoop.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        /// <summary>
+        /// Thêm một loại Influencer mới
+        /// </summary>
+        /// <param name="influencerType"></param>
+        /// <returns></returns>
         [HttpPost("add")]
         public async Task<IActionResult> AddInfluencerType([FromBody] InfluTypeModel influencerType)
         {
             var addedInfluencerType = await _influencerTypeService.AddInfluencerTypeAsync(influencerType);
             return CreatedAtAction(nameof(GetInfluencerTypeById), new { id = addedInfluencerType.Id }, addedInfluencerType);
         }
+
+        /// <summary>
+        /// Câp nhật thông tin loại Influencer
+        /// </summary>
+        /// <param name="influencerType"></param>
+        /// <returns></returns>
         [HttpPut("update")]
         public async Task<IActionResult> UpdateInfluencerType([FromBody] InfluTypeModel influencerType)
         {

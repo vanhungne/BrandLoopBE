@@ -26,6 +26,7 @@ namespace BrandLoop.Application.Interfaces
         Task<CampaignDto> EndCampaign(string creatorId, int campaignId);
         Task<CampaignDto> CancelCampaign(string creatorId, int campaignId);
         Task<List<CampaignDto>> GetAllCampaignsAsync(CampaignFilterModel filter);
+        Task Cancelayment(long orderCode);
 
     }
 

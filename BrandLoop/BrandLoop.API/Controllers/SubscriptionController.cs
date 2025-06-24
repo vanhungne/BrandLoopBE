@@ -84,9 +84,9 @@ namespace BrandLoop.API.Controllers
         /// Admin cập nhật thông tin gói đăng ký.
         /// </summary>
         /// <returns>Trả vè thông tin gói đăng ký đã được cập nhật</returns>
-        [HttpPut("update-subscription/{subscriptionId}")]
+        [HttpPut("update-subscription")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateSubscription(int subscriptionId, [FromBody] SubscriptionDTO subscription)
+        public async Task<IActionResult> UpdateSubscription([FromBody] SubscriptionDTO subscription)
         {
             try
             {
@@ -182,7 +182,7 @@ namespace BrandLoop.API.Controllers
             }
         }
         /// <summary>
-        /// Đang ký gói đăng ký cho người dùng. (Muốn hiển thị gì thì nhắn t)
+        /// Đang ký gói đăng ký cho người dùng.
         /// </summary>
         /// <returns>Trả vè thông tin các gói đăng ký đã được đăng ký</returns>
         [HttpPost("register-subscription/{subscriptionId}")]
@@ -193,7 +193,8 @@ namespace BrandLoop.API.Controllers
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var subscriptionRegister = await _subscriptionService.RegisterSubscription(uid, subscriptionId);
-                return Ok(subscriptionRegister);
+                var payment = await _subscriptionService.CreatePaymentLink(uid,short.Parse(subscriptionRegister.PaymentId));
+                return Ok(payment.checkoutUrl);
             }
             catch (Exception ex)
             {
@@ -201,25 +202,25 @@ namespace BrandLoop.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Lấy liên kết thanh toán cho gói đăng ký đã đăng ký.
-        /// </summary>
-        /// <returns>Trả vè thông tin liên quan đến PayOS</returns>
-        [HttpPost("payment-link/{orderCode}")]
-        [Authorize(Roles = "Influencer")]
-        public async Task<IActionResult> CreatePaymentLink(long orderCode)
-        {
-            try
-            {
-                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var paymentLink = await _subscriptionService.CreatePaymentLink(uid, orderCode);
-                return Ok(paymentLink);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
+        ///// <summary>
+        ///// Lấy liên kết thanh toán cho gói đăng ký đã đăng ký.
+        ///// </summary>
+        ///// <returns>Trả vè thông tin liên quan đến PayOS</returns>
+        //[HttpPost("payment-link/{orderCode}")]
+        //[Authorize(Roles = "Influencer")]
+        //public async Task<IActionResult> CreatePaymentLink(long orderCode)
+        //{
+        //    try
+        //    {
+        //        var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //        var paymentLink = await _subscriptionService.CreatePaymentLink(uid, orderCode);
+        //        return Ok(paymentLink);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { message = ex.Message });
+        //    }
+        //}
 
         /// <summary>
         /// Cập nhật lại trạng thái thanh toán cho gói đăng ký đã đăng ký.
@@ -267,6 +268,8 @@ namespace BrandLoop.API.Controllers
                 var payment = await _subscriptionService.GetPaymentByOrderCodeAsync(orderCode);
                 if (payment.Type == Domain.Enums.PaymentType.subscription)
                     await _subscriptionService.CancelPayment(orderCode);
+                else
+                    await _campaignService.Cancelayment(orderCode);
                 return Ok("Thanh toan da huy");
             }
             catch (Exception ex)
