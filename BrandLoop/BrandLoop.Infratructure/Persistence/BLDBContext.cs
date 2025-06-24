@@ -44,6 +44,7 @@ namespace BrandLoop.Infratructure.Persistence
         public DbSet<Wallet> Wallets { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<RefreshTokens> RefreshTokens { get; set; }
+        public DbSet<InfluencerReport> InfluencerReports { get; set; }
 
         public DbSet<CampaignImage> CampainImages { get; set; }
         public DbSet<InfluencerType> InfluencerTypes { get; set; }
@@ -275,6 +276,12 @@ namespace BrandLoop.Infratructure.Persistence
                 .HasOne(ip => ip.InfluencerType)
                 .WithMany(it => it.InfluenceProfiles)
                 .HasForeignKey(ip => ip.InfluencerTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+            // Influencer report relationships
+            modelBuilder.Entity<KolsJoinCampaign>()
+                .HasOne(k => k.InfluencerReport)
+                .WithOne()
+                .HasForeignKey<KolsJoinCampaign>(k => k.InfluencerReportId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Configure decimal precision for money fields
