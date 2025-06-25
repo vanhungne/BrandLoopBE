@@ -26,6 +26,7 @@ namespace BrandLoop.Application
             services.AddScoped<ICampaignImageService, CampaignImageService>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<IInfluencerTypeService, InfluencerTypeService>();
+            services.AddScoped<IInfluReportService, InfluReportService>();
             services.AddScoped<IChatAiService, GroqAiService>();
             services.AddScoped<IChatService, ChatService>();
             // Ensure the HttpClient extension method is available

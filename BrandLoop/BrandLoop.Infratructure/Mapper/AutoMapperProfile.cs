@@ -6,6 +6,7 @@ using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Models.ChatDTO;
 using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.Report;
+using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.SubcriptionModel;
 using BrandLoop.Infratructure.Models.UserModel;
 using System;
@@ -143,6 +144,9 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<UserOnlineStatus, UserOnlineStatusDto>();
 
+
+            // Feedback mapping
+            CreateMap<Feedback, FeedbackDTO>().ReverseMap();
 
             // Feedback mapping
             CreateMap<Feedback, FeedbackDTO>().ReverseMap();
