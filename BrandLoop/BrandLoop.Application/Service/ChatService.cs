@@ -147,6 +147,11 @@ namespace BrandLoop.Application.Service
         {
             return _chatRepository.MarkChatAsReadAsync(userId, otherUserId);
         }
+
+        public async Task<Message> GetMessageByIdAsync(int messageId)
+        {
+            return await _chatRepository.GetMessageByIdAsync(messageId);
+        }
     }
 }
 

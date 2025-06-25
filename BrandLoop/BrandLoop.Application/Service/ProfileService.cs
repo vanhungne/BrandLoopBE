@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
 using BrandLoop.Application.Interfaces;
+using BrandLoop.Domain.Entities;
 using BrandLoop.Infratructure.Interface;
+using BrandLoop.Infratructure.Models.BannerDTO;
+using BrandLoop.Infratructure.Models.FeartureDTO;
+using BrandLoop.Infratructure.Models.Influence;
 using BrandLoop.Infratructure.Models.UserModel;
 using BrandLoop.Infratructure.Repository;
 using Microsoft.Extensions.Logging;
@@ -17,17 +21,18 @@ namespace BrandLoop.Application.Service
         private readonly IUserRepository _profileRepository;
         private readonly IBrandProfileRepository _brandProfileRepository;
         private readonly IInfluenceRepository _influenceProfileRepository;
+        private readonly IBannerRepository _bannerRepo;
         private readonly ILogger<ProfileService> _logger;
         private readonly IMapper _mapper;
 
-        public ProfileService(IUserRepository profileRepository, ILogger<ProfileService> logger,IBrandProfileRepository brandProfileRepository,IInfluenceRepository influenceRepository,IMapper mapper)
+        public ProfileService(IUserRepository profileRepository, ILogger<ProfileService> logger,IBrandProfileRepository brandProfileRepository,IInfluenceRepository influenceRepository,IMapper mapper, IBannerRepository bannerRepo)
         {
             _profileRepository = profileRepository;
             _logger = logger;
             _brandProfileRepository = brandProfileRepository;
             _influenceProfileRepository = influenceRepository;
             _mapper = mapper;
-
+            _bannerRepo = bannerRepo;
         }
 
         public async Task<BasicAccountProfileModel> GetBasicAccountProfileAsync(string uid)
@@ -107,6 +112,30 @@ namespace BrandLoop.Application.Service
             await _influenceProfileRepository.SaveChangesAsync();
 
             return await GetProfileAsync(uid);
+        }
+        public async Task<List<InfluenceProfile>> SearchInfluencersAsync(InfluenceSearchOptions opts)
+        {
+            return await _influenceProfileRepository.SearchAsync(opts);
+        }
+
+        public async Task<List<InfluenceProfile>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts)
+        {
+            return await _influenceProfileRepository.SearchHomeFeaturedAsync(opts);
+        }
+
+        public async Task<List<BannerDto>> GetActiveBannersAsync()
+        {
+            var banners = await _bannerRepo.GetActiveBannersAsync();
+            return banners.Select(b => new BannerDto
+            {
+                BannerId = b.BannerId,
+                InfluenceId = b.InfluenceId,
+                ImageUrl = b.ImageUrl,
+                TargetUrl = b.TargetUrl,
+                StartDate = b.StartDate,
+                EndDate = b.EndDate,
+                Nickname = b.InfluenceProfile.Nickname
+            }).ToList();
         }
     }
 }

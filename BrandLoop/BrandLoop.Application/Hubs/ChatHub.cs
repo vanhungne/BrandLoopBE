@@ -412,7 +412,17 @@ namespace BrandLoop.Application.Hubs
                 var success = await _chatService.DeleteMessageAsync(messageId, userId);
                 if (success)
                 {
-                    await Clients.Caller.SendAsync("MessageDeleted", new { messageId });
+                    // Lấy thông tin tin nhắn (trước khi xóa, hoặc từ service trả về)
+                    var message = await _chatService.GetMessageByIdAsync(messageId);
+                    var receiverId = message?.ReceiverId;
+                    var senderId = message?.SenderId;
+
+                    // Gửi cho cả 2 phía
+                    var senderConnections = await _chatService.GetUserConnectionsAsync(senderId);
+                    var receiverConnections = await _chatService.GetUserConnectionsAsync(receiverId);
+
+                    var allConnections = senderConnections.Concat(receiverConnections).Distinct().ToList();
+                    await Clients.Clients(allConnections).SendAsync("MessageDeleted", new { messageId });
                 }
                 else
                 {
@@ -424,6 +434,7 @@ namespace BrandLoop.Application.Hubs
                 await Clients.Caller.SendAsync("DeleteMessageError", new { error = ex.Message });
             }
         }
+
 
         // Get user online status
         public async Task GetUserOnlineStatus(string targetUserId)

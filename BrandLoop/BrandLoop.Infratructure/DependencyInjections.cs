@@ -41,6 +41,7 @@ namespace BrandLoop.Infratructure
             services.AddScoped<IInfluenceRepository, InfluenceProfileRepository>();
             services.AddScoped<IInfluencerTypeRepository, InfluencerTypeRepository>();
             services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IBannerRepository, BannerRepository>();
             return services;
         }
     }

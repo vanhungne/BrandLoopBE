@@ -1,9 +1,13 @@
-﻿using System;
+﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Infratructure.Models.BannerDTO;
+using BrandLoop.Infratructure.Models.FeartureDTO;
+using BrandLoop.Infratructure.Models.Influence;
+using BrandLoop.Infratructure.Models.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BrandLoop.Infratructure.Models.UserModel;
 
 namespace BrandLoop.Application.Interfaces
 {
@@ -19,5 +23,8 @@ namespace BrandLoop.Application.Interfaces
         Task<ProfileResponseDto> UpdateUserProfileAsync(string uid, UpdateUserProfileDto updateDto);
         Task<ProfileResponseDto> UpdateBrandProfileAsync(string uid, UpdateBrandProfileDto updateDto);
         Task<ProfileResponseDto> UpdateInfluenceProfileAsync(string uid, UpdateInfluenceProfileDto updateDto);
+        Task<List<InfluenceProfile>> SearchInfluencersAsync(InfluenceSearchOptions opts);
+        Task<List<InfluenceProfile>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts);
+        Task<List<BannerDto>> GetActiveBannersAsync();
     }
 }

@@ -66,8 +66,13 @@
 
             public int? InfluencerTypeId { get; set; }
 
-            // Navigation properties
-            [ForeignKey("InfluencerTypeId")]
+            public bool IsPriorityListed { get; set; } = false;        // ưu tiên search KOC // gói 1
+            public bool IsFeaturedOnHome { get; set; } = false;        // hiển thị "đề xuất" trên home 24h // gói 2
+            public bool HasExclusiveBanner { get; set; } = false;      // banner độc quyền 3 ngày // gói 3
+            public bool IsInSpotlight { get; set; } = false;           // spotlight chuyên môn // gói 4
+
+        // Navigation properties
+        [ForeignKey("InfluencerTypeId")]
             public InfluencerType InfluencerType { get; set; }
             
             [ForeignKey("UID")]

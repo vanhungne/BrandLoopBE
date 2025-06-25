@@ -26,5 +26,6 @@ namespace BrandLoop.Application.Interfaces
         Task<IEnumerable<dynamic>> GetRecentChatsWithOnlineStatusAsync(string userId);
         Task<int> GetOnlineUsersCountAsync(string currentUserId = null);
         Task<bool> MarkChatAsReadAsync(string userId, string otherUserId);
-    }
+        Task<Message> GetMessageByIdAsync(int messageId);
+        }
 }

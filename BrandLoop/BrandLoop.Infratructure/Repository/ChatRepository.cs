@@ -310,43 +310,37 @@ namespace BrandLoop.Infratructure.Repository
         }
         public async Task<bool> MarkChatAsReadAsync(string userId, string otherUserId)
         {
-            try
-            {
-                // Get all unread messages from otherUserId to userId
-                var unreadMessages = await _context.Messages
-                    .Where(m => m.SenderId == otherUserId &&
-                               m.ReceiverId == userId &&
-                               !m.ReadStatuses.Any(rs => rs.UserId == userId && rs.ReadAt != null))
-                    .ToListAsync();
+            // Lấy TẤT CẢ tin nhắn chưa đọc từ otherUserId gửi cho userId
+            var unreadMessages = await _context.Messages
+                .Where(m => m.SenderId == otherUserId &&
+                           m.ReceiverId == userId &&
+                           !m.ReadStatuses.Any(rs => rs.UserId == userId && rs.ReadAt != null))
+                .ToListAsync();
 
-                foreach (var message in unreadMessages)
+            // Update ReadAt = DateTime.UtcNow cho TẤT CẢ
+            foreach (var message in unreadMessages)
+            {
+                var readStatus = await _context.MessageReadStatuses
+                    .FirstOrDefaultAsync(rs => rs.MessageId == message.MessageId && rs.UserId == userId);
+
+                if (readStatus != null)
                 {
-                    var readStatus = await _context.MessageReadStatuses
-                        .FirstOrDefaultAsync(rs => rs.MessageId == message.MessageId && rs.UserId == userId);
-
-                    if (readStatus != null)
-                    {
-                        readStatus.ReadAt = DateTime.UtcNow;
-                    }
-                    else
-                    {
-                        _context.MessageReadStatuses.Add(new MessageReadStatus
-                        {
-                            MessageId = message.MessageId,
-                            UserId = userId,
-                            DeliveredAt = DateTime.UtcNow,
-                            ReadAt = DateTime.UtcNow
-                        });
-                    }
+                    readStatus.ReadAt = DateTime.UtcNow; // ✅ UPDATE READAT
                 }
+                else
+                {
+                    _context.MessageReadStatuses.Add(new MessageReadStatus
+                    {
+                        MessageId = message.MessageId,
+                        UserId = userId,
+                        DeliveredAt = DateTime.UtcNow,
+                        ReadAt = DateTime.UtcNow // ✅ TẠO MỚI VỚI READAT
+                    });
+                }
+            }
 
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> MarkAsReadAsync(int messageId, string userId)

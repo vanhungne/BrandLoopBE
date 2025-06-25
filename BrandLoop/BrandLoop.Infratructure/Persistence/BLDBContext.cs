@@ -48,6 +48,7 @@ namespace BrandLoop.Infratructure.Persistence
         public DbSet<InfluencerType> InfluencerTypes { get; set; }
 
         public DbSet<UserOnlineStatus> UserOnlineStatuses { get; set; }
+        public DbSet<Banner> Banners { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -295,6 +296,36 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<Deal>()
                 .Property(d => d.PaidAmount)
                 .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Banner>(entity =>
+            {
+                // Khóa chính
+                entity.HasKey(b => b.BannerId);
+
+                // InfluenceId là FK bắt buộc
+                entity.Property(b => b.InfluenceId)
+                      .IsRequired();
+
+                // ImageUrl bắt buộc, độ dài tối đa 500
+                entity.Property(b => b.ImageUrl)
+                      .IsRequired()
+                      .HasMaxLength(500);
+
+                // TargetUrl không bắt buộc, độ dài tối đa 500
+                entity.Property(b => b.TargetUrl)
+                      .HasMaxLength(500);
+
+                // StartDate, EndDate bắt buộc
+                entity.Property(b => b.StartDate)
+                      .IsRequired();
+                entity.Property(b => b.EndDate)
+                      .IsRequired();
+
+                // Quan hệ 1-N với InfluenceProfile
+                entity.HasOne(b => b.InfluenceProfile)
+                      .WithMany() // nếu bạn thêm ICollection<Banner> Banners trong InfluenceProfile thì đổi thành .WithMany(ip => ip.Banners)
+                      .HasForeignKey(b => b.InfluenceId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
             // UserOnlineStatus configuration
             modelBuilder.Entity<UserOnlineStatus>(entity =>
             {
