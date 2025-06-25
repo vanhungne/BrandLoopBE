@@ -174,15 +174,15 @@ public class Program
             });
         });
 
-        // config ure Kestrel server to listen on specific ports
-        //builder.WebHost.ConfigureKestrel(options =>
-        //{
-        //    options.ListenAnyIP(7222); // HTTP
-        //    options.ListenAnyIP(7443, listenOptions =>
-        //    {
-        //        listenOptions.UseHttps("/app/https/brandloop.pfx", "1234");
-        //    });
-        //});
+        //config ure Kestrel server to listen on specific ports
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(7222); // HTTP
+            options.ListenAnyIP(7443, listenOptions =>
+            {
+                listenOptions.UseHttps("/app/https/brandloop.pfx", "1234");
+            });
+        });
 
 
         // Set default time zone
