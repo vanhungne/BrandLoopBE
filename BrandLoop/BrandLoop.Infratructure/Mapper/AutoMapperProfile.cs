@@ -1,16 +1,17 @@
-﻿using System;
+﻿using AutoMapper;
+using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
+using BrandLoop.Infratructure.Models.Authen;
+using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.ChatDTO;
+using BrandLoop.Infratructure.Models.SubcriptionModel;
+using BrandLoop.Infratructure.Models.UserModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
-using AutoMapper;
-using BrandLoop.Domain.Entities;
-using BrandLoop.Domain.Enums;
-using BrandLoop.Infratructure.Models.Authen;
-using BrandLoop.Infratructure.Models.CampainModel;
-using BrandLoop.Infratructure.Models.SubcriptionModel;
-using BrandLoop.Infratructure.Models.UserModel;
 
 
 namespace BrandLoop.Infratructure.Mapper
@@ -131,6 +132,11 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Subscription.Price))
                 .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().PaymentId))
                 .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type));
+
+
+
+            CreateMap<UserOnlineStatus, UserOnlineStatusDto>();
+
         }
     }
 }

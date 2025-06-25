@@ -87,32 +87,6 @@ namespace BrandLoop.Infratructure.Service
                 _context.Skills.RemoveRange(skills);
             }
 
-            // Xóa ConversationParticipants
-            var conversationParticipants = await _context.ConversationParticipants
-                .Where(cp => cp.UID == user.UID)
-                .ToListAsync();
-            if (conversationParticipants.Any())
-            {
-                _context.ConversationParticipants.RemoveRange(conversationParticipants);
-            }
-
-            // Xóa Messages
-            var messages = await _context.Messages
-                .Where(m => m.Sender == user.UID)
-                .ToListAsync();
-            if (messages.Any())
-            {
-                _context.Messages.RemoveRange(messages);
-            }
-
-            // Xóa MessageReadStatuses
-            var messageReadStatuses = await _context.MessageReadStatuses
-                .Where(mrs => mrs.UID == user.UID)
-                .ToListAsync();
-            if (messageReadStatuses.Any())
-            {
-                _context.MessageReadStatuses.RemoveRange(messageReadStatuses);
-            }
 
             // Xóa SubscriptionRegisters
             var subscriptionRegisters = await _context.SubscriptionRegisters

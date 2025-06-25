@@ -16,15 +16,16 @@ namespace BrandLoop.Domain.Entities
         public int MessageId { get; set; }
 
         [StringLength(32)]
-        public string UID { get; set; }
+        public string UserId { get; set; } // Only receiver needs read status
 
+        public DateTime? DeliveredAt { get; set; }
         public DateTime? ReadAt { get; set; }
 
         // Navigation properties
         [ForeignKey("MessageId")]
         public virtual Message Message { get; set; }
 
-        [ForeignKey("UID")]
+        [ForeignKey("UserId")]
         public virtual User User { get; set; }
     }
 }

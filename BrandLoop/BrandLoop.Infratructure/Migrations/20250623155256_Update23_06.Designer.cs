@@ -4,6 +4,7 @@ using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    partial class BLDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250623155256_Update23_06")]
+    partial class Update23_06
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -365,6 +368,40 @@ namespace BrandLoop.Infratructure.Migrations
                     b.ToTable("ContentAndStyles");
                 });
 
+            modelBuilder.Entity("BrandLoop.Domain.Entities.ConversationParticipant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LeftAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UID")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("UID");
+
+                    b.ToTable("ConversationParticipants");
+                });
+
             modelBuilder.Entity("BrandLoop.Domain.Entities.Deal", b =>
                 {
                     b.Property<int>("DealId")
@@ -676,73 +713,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.ToTable("KolsJoinCampaigns");
                 });
 
-            modelBuilder.Entity("BrandLoop.Domain.Entities.Message", b =>
-                {
-                    b.Property<int>("MessageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
-
-                    b.Property<string>("AttachmentName")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<long?>("AttachmentSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("AttachmentUrl")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("MessageType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<int?>("ReplyToMessageId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserUID")
-                        .HasColumnType("nvarchar(32)");
-
-                    b.HasKey("MessageId");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("ReplyToMessageId");
-
-                    b.HasIndex("SenderId");
-
-                    b.HasIndex("UserUID");
-
-                    b.ToTable("Messages");
-                });
-
             modelBuilder.Entity("BrandLoop.Domain.Entities.MessageReadStatus", b =>
                 {
                     b.Property<int>("Id")
@@ -760,7 +730,7 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Property<DateTime?>("ReadAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
+                    b.Property<string>("UID")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
@@ -769,7 +739,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasIndex("MessageId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UID");
 
                     b.ToTable("MessageReadStatuses");
                 });
@@ -1277,7 +1247,7 @@ namespace BrandLoop.Infratructure.Migrations
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.UserOnlineStatus", b =>
                 {
-                    b.Property<string>("UserId")
+                    b.Property<string>("UID")
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
 
@@ -1286,18 +1256,13 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("DeviceType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<bool>("IsOnline")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("LastSeen")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UID");
 
                     b.ToTable("UserOnlineStatuses");
                 });
@@ -1338,6 +1303,113 @@ namespace BrandLoop.Infratructure.Migrations
                     b.HasIndex("UserUID");
 
                     b.ToTable("Wallets");
+                });
+
+            modelBuilder.Entity("Conversation", b =>
+                {
+                    b.Property<int>("ConversationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConversationId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<DateTime?>("LastActivityAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastMessageId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ConversationId");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("LastMessageId");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<string>("AttachmentName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long?>("AttachmentSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AttachmentUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReplyToMessageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Sender")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("ReplyToMessageId");
+
+                    b.HasIndex("Sender");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.AuditLog", b =>
@@ -1433,6 +1505,25 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BrandLoop.Domain.Entities.ConversationParticipant", b =>
+                {
+                    b.HasOne("Conversation", "Conversation")
+                        .WithMany("Participants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BrandLoop.Domain.Entities.User", "User")
+                        .WithMany("ConversationParticipants")
+                        .HasForeignKey("UID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BrandLoop.Domain.Entities.Deal", b =>
                 {
                     b.HasOne("BrandLoop.Domain.Entities.CampaignInvitation", "Invitation")
@@ -1500,38 +1591,9 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BrandLoop.Domain.Entities.Message", b =>
-                {
-                    b.HasOne("BrandLoop.Domain.Entities.User", "Receiver")
-                        .WithMany("ReceivedMessages")
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BrandLoop.Domain.Entities.Message", "ReplyToMessage")
-                        .WithMany("Replies")
-                        .HasForeignKey("ReplyToMessageId");
-
-                    b.HasOne("BrandLoop.Domain.Entities.User", "Sender")
-                        .WithMany("SentMessages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("BrandLoop.Domain.Entities.User", null)
-                        .WithMany("Messages")
-                        .HasForeignKey("UserUID");
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("ReplyToMessage");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("BrandLoop.Domain.Entities.MessageReadStatus", b =>
                 {
-                    b.HasOne("BrandLoop.Domain.Entities.Message", "Message")
+                    b.HasOne("Message", "Message")
                         .WithMany("ReadStatuses")
                         .HasForeignKey("MessageId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1539,8 +1601,8 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("MessageReadStatuses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UID")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Message");
@@ -1678,8 +1740,8 @@ namespace BrandLoop.Infratructure.Migrations
             modelBuilder.Entity("BrandLoop.Domain.Entities.UserOnlineStatus", b =>
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
-                        .WithOne("OnlineStatus")
-                        .HasForeignKey("BrandLoop.Domain.Entities.UserOnlineStatus", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1699,6 +1761,48 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasForeignKey("UserUID");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Conversation", b =>
+                {
+                    b.HasOne("BrandLoop.Domain.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Message", "LastMessage")
+                        .WithMany()
+                        .HasForeignKey("LastMessageId");
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("LastMessage");
+                });
+
+            modelBuilder.Entity("Message", b =>
+                {
+                    b.HasOne("Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Message", "ReplyToMessage")
+                        .WithMany("Replies")
+                        .HasForeignKey("ReplyToMessageId");
+
+                    b.HasOne("BrandLoop.Domain.Entities.User", "SenderUser")
+                        .WithMany("Messages")
+                        .HasForeignKey("Sender")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("ReplyToMessage");
+
+                    b.Navigation("SenderUser");
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.BrandProfile", b =>
@@ -1736,13 +1840,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Navigation("InfluenceProfiles");
                 });
 
-            modelBuilder.Entity("BrandLoop.Domain.Entities.Message", b =>
-                {
-                    b.Navigation("ReadStatuses");
-
-                    b.Navigation("Replies");
-                });
-
             modelBuilder.Entity("BrandLoop.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
@@ -1771,6 +1868,8 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.Navigation("ContentAndStyles");
 
+                    b.Navigation("ConversationParticipants");
+
                     b.Navigation("CreatedCampaigns");
 
                     b.Navigation("Feedbacks");
@@ -1788,14 +1887,7 @@ namespace BrandLoop.Infratructure.Migrations
 
                     b.Navigation("Notifications");
 
-                    b.Navigation("OnlineStatus")
-                        .IsRequired();
-
-                    b.Navigation("ReceivedMessages");
-
                     b.Navigation("RefreshTokens");
-
-                    b.Navigation("SentMessages");
 
                     b.Navigation("Skills");
 
@@ -1809,6 +1901,20 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Navigation("FromTransactions");
 
                     b.Navigation("ToTransactions");
+                });
+
+            modelBuilder.Entity("Conversation", b =>
+                {
+                    b.Navigation("Messages");
+
+                    b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("Message", b =>
+                {
+                    b.Navigation("ReadStatuses");
+
+                    b.Navigation("Replies");
                 });
 #pragma warning restore 612, 618
         }

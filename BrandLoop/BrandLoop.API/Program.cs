@@ -1,14 +1,16 @@
+﻿using BrandLoop.Application;
+using BrandLoop.Application.Background;
+using BrandLoop.Application.Hubs;
+using BrandLoop.Infratructure;
+using BrandLoop.Infratructure.Config;
+using BrandLoop.Infratructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using BrandLoop.Infratructure;
-using BrandLoop.Infratructure.Persistence;
-using BrandLoop.Application;
-using BrandLoop.Application.Background;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json.Serialization;
 
 public class Program
@@ -24,11 +26,19 @@ public class Program
 
         // Configuration
         builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
+        builder.Services.Configure<GroqOptions>(
+        builder.Configuration.GetSection(GroqOptions.SectionName));
         // Logging
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
-
+        // Cấu hình SignalR
+        builder.Services.AddSignalR(options =>
+        {
+            options.EnableDetailedErrors = true;
+            options.HandshakeTimeout = TimeSpan.FromSeconds(30);
+            options.KeepAliveInterval = TimeSpan.FromSeconds(15);
+            options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+        });
         // Services
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -77,7 +87,15 @@ public class Program
                 },
                 OnMessageReceived = context =>
                 {
-                    var accessToken = context.Request.Cookies["accessToken"];
+                    // 1. Ưu tiên lấy từ query string (dành cho SignalR)
+                    var accessToken = context.Request.Query["access_token"];
+
+                    // 2. Nếu không có, lấy từ cookie (cho các API HTTP bình thường)
+                    if (string.IsNullOrEmpty(accessToken))
+                    {
+                        accessToken = context.Request.Cookies["accessToken"];
+                    }
+
                     if (!string.IsNullOrEmpty(accessToken))
                     {
                         context.Token = accessToken;
@@ -85,6 +103,7 @@ public class Program
 
                     return Task.CompletedTask;
                 }
+
             };
         });
 
@@ -194,10 +213,11 @@ public class Program
         app.UseRouting();
 
         app.UseCors("AllowSpecificOrigin");
-
         app.UseAuthentication();
         app.UseAuthorization();
 
+        app.MapHub<ChatAiHub>("/ChatAiHub");
+        app.MapHub<ChatHub>("/chathub");
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

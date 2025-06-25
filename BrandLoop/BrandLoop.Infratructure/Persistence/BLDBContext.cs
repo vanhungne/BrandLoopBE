@@ -23,8 +23,6 @@ namespace BrandLoop.Infratructure.Persistence
         public DbSet<ContentAndStyle> ContentAndStyles { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-        public DbSet<Conversation> Conversations { get; set; }
-        public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<MessageReadStatus> MessageReadStatuses { get; set; }
         public DbSet<Feature> Features { get; set; }
@@ -47,6 +45,9 @@ namespace BrandLoop.Infratructure.Persistence
 
         public DbSet<CampaignImage> CampainImages { get; set; }
         public DbSet<InfluencerType> InfluencerTypes { get; set; }
+
+        public DbSet<UserOnlineStatus> UserOnlineStatuses { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -93,31 +94,6 @@ namespace BrandLoop.Infratructure.Persistence
                 .HasForeignKey(n => n.UID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Conversation setup
-            modelBuilder.Entity<ConversationParticipant>()
-                .HasOne(cp => cp.Conversation)
-                .WithMany(c => c.Participants)
-                .HasForeignKey(cp => cp.ConversationId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<ConversationParticipant>()
-                .HasOne(cp => cp.User)
-                .WithMany(u => u.ConversationParticipants)
-                .HasForeignKey(cp => cp.UID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            // Message relationships
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.Conversation)
-                .WithMany(c => c.Messages)
-                .HasForeignKey(m => m.ConversationId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<Message>()
-                .HasOne(m => m.SenderUser)
-                .WithMany(u => u.Messages)
-                .HasForeignKey(m => m.Sender)
-                .OnDelete(DeleteBehavior.Restrict);
 
             // MessageReadStatus relationships
             modelBuilder.Entity<MessageReadStatus>()
@@ -125,12 +101,19 @@ namespace BrandLoop.Infratructure.Persistence
                 .WithMany(m => m.ReadStatuses)
                 .HasForeignKey(mrs => mrs.MessageId)
                 .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Message>()
+                    .HasOne(m => m.Sender)
+                    .WithMany(u => u.SentMessages)
+                    .HasForeignKey(m => m.SenderId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<MessageReadStatus>()
-                .HasOne(mrs => mrs.User)
-                .WithMany(u => u.MessageReadStatuses)
-                .HasForeignKey(mrs => mrs.UID)
-                .OnDelete(DeleteBehavior.Restrict);
+                            modelBuilder.Entity<Message>()
+                                .HasOne(m => m.Receiver)
+                                .WithMany(u => u.ReceivedMessages)
+                                .HasForeignKey(m => m.ReceiverId)
+                                .OnDelete(DeleteBehavior.Restrict);
+
+
 
             // Subscription and Feature relationship (many-to-many)
             modelBuilder.Entity<SubscriptionFeature>()
@@ -305,7 +288,18 @@ namespace BrandLoop.Infratructure.Persistence
             modelBuilder.Entity<Deal>()
                 .Property(d => d.PaidAmount)
                 .HasColumnType("decimal(18,2)");
+            // UserOnlineStatus configuration
+            modelBuilder.Entity<UserOnlineStatus>(entity =>
+            {
+                entity.Property(e => e.IsOnline)
+                    .IsRequired();
 
+                entity.Property(e => e.LastSeen)
+                    .IsRequired();
+
+                entity.Property(e => e.ConnectionId)
+                    .HasMaxLength(100);
+            });
             // Default data seeding
             modelBuilder.Entity<Role>().HasData(
                 new Role { RoleId = 1, RoleName = "Admin", Description = "System Administrator" },

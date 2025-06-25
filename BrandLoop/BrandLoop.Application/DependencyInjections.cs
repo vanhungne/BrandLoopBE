@@ -7,6 +7,7 @@ using BrandLoop.Application.Background;
 using BrandLoop.Application.Interfaces;
 using BrandLoop.Application.Service;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Http;
 
 namespace BrandLoop.Application
 {
@@ -25,7 +26,12 @@ namespace BrandLoop.Application
             services.AddScoped<ICampaignImageService, CampaignImageService>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
             services.AddScoped<IInfluencerTypeService, InfluencerTypeService>();
+            services.AddScoped<IChatAiService, GroqAiService>();
+            services.AddScoped<IChatService, ChatService>();
+            // Ensure the HttpClient extension method is available
+            services.AddHttpClient<IChatAiService, GroqAiService>();
+
             return services;
-        } 
         }
+    }
 }

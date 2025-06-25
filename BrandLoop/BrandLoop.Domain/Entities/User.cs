@@ -52,9 +52,11 @@ namespace BrandLoop.Domain.Entities
         public virtual ICollection<ContentAndStyle> ContentAndStyles { get; set; }
         public virtual ICollection<Skill> Skills { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
-        public virtual ICollection<ConversationParticipant> ConversationParticipants { get; set; }
         public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<Message> SentMessages { get; set; }
+        public virtual ICollection<Message> ReceivedMessages { get; set; }
         public virtual ICollection<MessageReadStatus> MessageReadStatuses { get; set; }
+        public virtual UserOnlineStatus OnlineStatus { get; set; }
         public virtual ICollection<SubscriptionRegister> SubscriptionRegisters { get; set; }
         public virtual ICollection<Campaign> CreatedCampaigns { get; set; }
         public virtual ICollection<KolsJoinCampaign> KolsJoinCampaigns { get; set; }

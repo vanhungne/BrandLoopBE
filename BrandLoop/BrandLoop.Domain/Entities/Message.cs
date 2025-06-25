@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.ComponentModel.DataAnnotations.Schema;
 namespace BrandLoop.Domain.Entities
 {
     public class Message
@@ -13,31 +9,48 @@ namespace BrandLoop.Domain.Entities
         [Key]
         public int MessageId { get; set; }
 
-        public int ConversationId { get; set; }
+        [Required]
+        [StringLength(32)]
+        public string SenderId { get; set; }
 
         [Required]
         [StringLength(32)]
-        public string Sender { get; set; }
+        public string ReceiverId { get; set; }
 
         [Required]
         public string Content { get; set; }
 
-        public bool IsRead { get; set; } = false;
+        // Message type and status
+        public MessageType MessageType { get; set; } = MessageType.Text;
+        public MessageStatus Status { get; set; } = MessageStatus.Sent;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        // Reply functionality
+        public int? ReplyToMessageId { get; set; }
 
+        // Timestamps
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; } // Soft delete
 
+        // Attachment info
         [StringLength(255)]
-        public string AttachmentUrl { get; set; }
+        public string? AttachmentUrl { get; set; }
+        [StringLength(255)]
+        public string? AttachmentName { get; set; }
+        public long? AttachmentSize { get; set; }
 
         // Navigation properties
-        [ForeignKey("ConversationId")]
-        public virtual Conversation Conversation { get; set; }
+        [ForeignKey("SenderId")]
+        public virtual User Sender { get; set; }
 
-        [ForeignKey("Sender")]
-        public virtual User SenderUser { get; set; }
+        [ForeignKey("ReceiverId")]
+        public virtual User Receiver { get; set; }
 
+        [ForeignKey("ReplyToMessageId")]
+        public virtual Message ReplyToMessage { get; set; }
+
+        public virtual ICollection<Message> Replies { get; set; }
         public virtual ICollection<MessageReadStatus> ReadStatuses { get; set; }
+
     }
 }
