@@ -415,7 +415,7 @@ namespace BrandLoop.API.Controllers
         //    }
         //}
 
-        //// <summary>
+        /// <summary>
         /// Brand feedback cho influencer
         /// </summary>
         [HttpPut("give-feedback")]
@@ -461,6 +461,33 @@ namespace BrandLoop.API.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     ApiResponse<InfluencerReport>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
+        }
+
+        /// <summary>
+        /// Lay chi tiết campaign bao gồm các thông tin tracking
+        /// </summary>
+        [HttpGet("tracking/{campaignId}")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<CampaignTracking>>> GetCampaignDetailWithTracking(int campaignId)
+        {
+            try
+            {
+                if (campaignId <= 0)
+                {
+                    return BadRequest(ApiResponse<CampaignTracking>.ErrorResult("Campaign ID phải lớn hơn 0"));
+                }
+                var result = await _campaignService.GetCampaignDetail(campaignId);
+                if (result == null)
+                {
+                    return NotFound(ApiResponse<CampaignTracking>.ErrorResult("Không tìm thấy campaign để lấy thông tin tracking"));
+                }
+                return Ok(ApiResponse<CampaignTracking>.SuccessResult(result, "Lấy chi tiết campaign thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<CampaignTracking>.ErrorResult($"Lỗi server: {ex.Message}"));
             }
         }
     }

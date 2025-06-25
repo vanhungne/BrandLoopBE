@@ -520,8 +520,8 @@ namespace BrandLoop.Application.Service
             foreach (var kol in kolJoinCampaigns)
             {
                 if (kol.Status != KolJoinCampaignStatus.Completed)
-                    throw new InvalidOperationException($"KOL {kol.UID} is not completed in this campaign yet.");
-                var feedback = _feedbackRepository.GetFeedbackFromKolOfCampaignAsync(brandReport.CampaignId, kol.UID);
+                    throw new InvalidOperationException($"KOL {kol.User.FullName} is not completed in this campaign yet.");
+                var feedback = _feedbackRepository.GetFeedbackForKolOfCampaignAsync(brandReport.CampaignId, kol.UID);
                 if (feedback == null)
                     throw new InvalidOperationException($"You need to give feedback to all influencer before end this campaign.");
             }
@@ -602,6 +602,27 @@ namespace BrandLoop.Application.Service
             feedback.CreatedAt = DateTimeHelper.GetVietnamNow();
             feedback.FeedbackFrom = Domain.Enums.FeedbackType.Brand;
             await _feedbackRepository.AddFeedbackAsync(feedback);
+        }
+
+        public async Task<CampaignTracking> GetCampaignDetail(int campaignId)
+        {
+            try
+            {
+                var campaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
+                if (campaign == null)
+                {
+                    _logger.LogWarning("Campaign not found: {CampaignId}", campaignId);
+                    return null;
+                }
+                var result = _mapper.Map<CampaignTracking>(campaign);
+                _logger.LogInformation("Retrieved campaign detail for {CampaignId}", campaignId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting campaign detail {CampaignId}", campaignId);
+                throw new InvalidOperationException("Lỗi khi lấy chi tiết campaign", ex);
+            }
         }
     }
 

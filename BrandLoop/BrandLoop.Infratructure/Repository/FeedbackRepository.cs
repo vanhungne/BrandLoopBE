@@ -47,10 +47,10 @@ namespace BrandLoop.Infratructure.Repository
                 .FirstOrDefaultAsync(f => f.FeedbackId == feedbackId);
             return feedback;
         }
-        public async Task<Feedback> GetFeedbackFromKolOfCampaignAsync(int campaignId, string kolId)
+        public async Task<Feedback> GetFeedbackForKolOfCampaignAsync(int campaignId, string kolId)
         {
             var feedback = await _context.Feedbacks
-                .FirstOrDefaultAsync(f => f.CampaignId == campaignId && f.FromUserId == kolId && f.FeedbackFrom == Domain.Enums.FeedbackType.Influencer);
+                .FirstOrDefaultAsync(f => f.CampaignId == campaignId && f.ToUserId == kolId && f.FeedbackFrom == Domain.Enums.FeedbackType.Brand);
             return feedback;
         }
     }

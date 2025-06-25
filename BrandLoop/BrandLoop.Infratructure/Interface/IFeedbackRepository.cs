@@ -13,6 +13,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<List<Feedback>> GetFeedbacksByCampaignIdAsync(int campaignId);
         Task<List<Feedback>> GetFeedbackOfUser(string userId);
         Task<Feedback> GetFeedbackByIdAsync(int feedbackId);
-        Task<Feedback> GetFeedbackFromKolOfCampaignAsync(int campaignId, string kolId);
+        Task<Feedback> GetFeedbackForKolOfCampaignAsync(int campaignId, string kolId);
     }
 }

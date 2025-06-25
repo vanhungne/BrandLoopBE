@@ -29,6 +29,7 @@ namespace BrandLoop.Application.Interfaces
         Task<List<CampaignDto>> GetAllCampaignsAsync(CampaignFilterModel filter);
         Task Cancelayment(long orderCode);
         Task GiveFeedback(CreateFeedback createFeedback, string userId);
+        Task<CampaignTracking> GetCampaignDetail(int campaignId);
     }
 
 }
