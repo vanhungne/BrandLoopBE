@@ -31,6 +31,8 @@ namespace BrandLoop.Application
             // Ensure the HttpClient extension method is available
             services.AddHttpClient<IChatAiService, GroqAiService>();
 
+            services.AddScoped<IInfluReportService, InfluReportService>();
+            services.AddScoped<IInfluReportService, InfluReportService>();
             return services;
         }
     }

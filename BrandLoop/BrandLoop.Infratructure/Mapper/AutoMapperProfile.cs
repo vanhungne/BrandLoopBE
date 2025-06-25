@@ -4,6 +4,8 @@ using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.Authen;
 using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Models.ChatDTO;
+using BrandLoop.Infratructure.Models.Report;
+using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.SubcriptionModel;
 using BrandLoop.Infratructure.Models.UserModel;
 using System;
@@ -134,10 +136,16 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().PaymentId))
                 .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type));
 
+            // Feedback mapping
+            CreateMap<Feedback, FeedbackDTO>().ReverseMap();
+
 
 
             CreateMap<UserOnlineStatus, UserOnlineStatusDto>();
 
+
+            // Feedback mapping
+            CreateMap<Feedback, FeedbackDTO>().ReverseMap();
         }
     }
 }

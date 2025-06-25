@@ -189,9 +189,15 @@ namespace BrandLoop.Infratructure.Persistence
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Feedback>()
-                .HasOne(f => f.User)
-                .WithMany(u => u.Feedbacks)
-                .HasForeignKey(f => f.UID)
+                .HasOne(f => f.FromUser)
+                .WithMany()
+                .HasForeignKey(f => f.FromUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Feedback>()
+                .HasOne(f => f.ToUser)
+                .WithMany() 
+                .HasForeignKey(f => f.ToUserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // CampaignInvitation relationships
@@ -263,9 +269,8 @@ namespace BrandLoop.Infratructure.Persistence
             // Influencer report relationships
             modelBuilder.Entity<KolsJoinCampaign>()
                 .HasOne(k => k.InfluencerReport)
-                .WithOne()
-                .HasForeignKey<KolsJoinCampaign>(k => k.InfluencerReportId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .WithOne(r => r.KolsJoinCampaign)
+                .HasForeignKey<InfluencerReport>(r => r.InfluencerReportId);
 
             // Configure decimal precision for money fields
             modelBuilder.Entity<Wallet>()

@@ -1,6 +1,7 @@
 ﻿using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.Report;
 using Net.payOS.Types;
 using System;
 using System.Collections.Generic;
@@ -23,11 +24,11 @@ namespace BrandLoop.Application.Interfaces
         Task<PaymentCampaign> StartCampaign(string creatorId, int campaignId);
         Task<CreatePaymentResult> CreatePaymentLink(long orderCode);
         Task ConfirmPayment(long orderCode);
-        Task<CampaignDto> EndCampaign(string creatorId, int campaignId);
+        Task<CampaignDto> EndCampaign(string creatorId, BrandReport brandReport);
         Task<CampaignDto> CancelCampaign(string creatorId, int campaignId);
         Task<List<CampaignDto>> GetAllCampaignsAsync(CampaignFilterModel filter);
         Task Cancelayment(long orderCode);
-
+        Task GiveFeedback(CreateFeedback createFeedback, string userId);
     }
 
 }
