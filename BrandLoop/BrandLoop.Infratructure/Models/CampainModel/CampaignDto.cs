@@ -27,7 +27,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
     }
     public class PaymentCampaign
     {
-        public string PaymentId { get; set; }
+        public long PaymentId { get; set; }
         public int Amount { get; set; }
         public string paymentType { get; set; }
         public int CampaignId { get; set; }
@@ -37,5 +37,6 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public DateTime? StartTime { get; set; }
         public DateTime? Deadline { get; set; }
         public string Status { get; set; }
+        public string PaymentLink { get; set; }
     }
 }

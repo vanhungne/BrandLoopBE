@@ -19,7 +19,7 @@ namespace BrandLoop.Domain.Entities
         public string UID { get; set; } // người được đánh giá (KOL hoặc brand)
 
         public string Description { get; set; }
-
+        [Range(1, 10, ErrorMessage = "Rating must be between 1 and 10.")]
         public int? Rating { get; set; } // CHECK (rating BETWEEN 1 AND 5)
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

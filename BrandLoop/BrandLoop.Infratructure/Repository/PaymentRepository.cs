@@ -106,5 +106,22 @@ namespace BrandLoop.Infratructure.Repository
             _context.Payments.Update(existingPayment);
             await _context.SaveChangesAsync();
         }
+
+        public async Task UpdatePaymentLink(long orderCode, string paymentLink)
+        {
+            var existingPayment = await _context.Payments.FirstOrDefaultAsync(p => p.PaymentId == orderCode);
+            if (existingPayment == null)
+                throw new Exception("Payment not found");
+            existingPayment.PaymentLink = paymentLink;
+            _context.Payments.Update(existingPayment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Payment> GetPaymentByCamaignId(int campaignId)
+        {
+            return await _context.Payments
+                .Include(p => p.campaign)
+                .FirstOrDefaultAsync(p => p.CampaignId == campaignId && p.Status != PaymentStatus.Canceled);
+        }
     }
 }

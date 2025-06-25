@@ -320,7 +320,7 @@ namespace BrandLoop.API.Controllers
         }
 
         /// <summary>
-        /// Start campaign
+        /// Bắt đầu campaign
         /// </summary>
         [HttpPost("{campaignId}/start")]
         [Authorize(Roles = "Brand")]
@@ -389,26 +389,26 @@ namespace BrandLoop.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Get payment link for campaign
-        /// </summary>
-        [HttpPost("payment-link/{orderCode}")]
-        [Authorize(Roles = "Brand")]
-        public async Task<ActionResult<ApiResponse<CreatePaymentResult>>> CreatePaymentLink(long orderCode)
-        {
-            try
-            {
-                var result = await _campaignService.CreatePaymentLink(orderCode);
-                if (result == null)
-                    return NotFound(ApiResponse<CreatePaymentResult>.ErrorResult("Không tìm thấy campaign để tạo payment link"));
+        ///// <summary>
+        ///// Get payment link for campaign
+        ///// </summary>
+        //[HttpPost("payment-link/{orderCode}")]
+        //[Authorize(Roles = "Brand")]
+        //public async Task<ActionResult<ApiResponse<CreatePaymentResult>>> CreatePaymentLink(long orderCode)
+        //{
+        //    try
+        //    {
+        //        var result = await _campaignService.CreatePaymentLink(orderCode);
+        //        if (result == null)
+        //            return NotFound(ApiResponse<CreatePaymentResult>.ErrorResult("Không tìm thấy campaign để tạo payment link"));
 
-                return Ok(ApiResponse<CreatePaymentResult>.SuccessResult(result, "Tạo payment link thành công"));
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CreatePaymentResult>.ErrorResult($"Lỗi server: {ex.Message}"));
-            }
-        }
+        //        return Ok(ApiResponse<CreatePaymentResult>.SuccessResult(result, "Tạo payment link thành công"));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError,
+        //            ApiResponse<CreatePaymentResult>.ErrorResult($"Lỗi server: {ex.Message}"));
+        //    }
+        //}
     }
 }

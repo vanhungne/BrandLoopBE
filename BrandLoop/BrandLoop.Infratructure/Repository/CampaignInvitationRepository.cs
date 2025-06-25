@@ -75,6 +75,7 @@ namespace BrandLoop.Infratructure.Repository
                 .Where(i => i.CampaignId == campaignId)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
+                .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
             return invitations;
         }
@@ -94,6 +95,7 @@ namespace BrandLoop.Infratructure.Repository
                 .Where(i => i.UID == kolId)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
+                .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
             return invitations;
         }

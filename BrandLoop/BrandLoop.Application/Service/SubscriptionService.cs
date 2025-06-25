@@ -136,6 +136,7 @@ namespace BrandLoop.Application.Service
                 items
             );
             await _paymentRepository.UpdatePaymentTransactionCode(orderCode, paymentInfo.paymentLinkId);
+            await _paymentRepository.UpdatePaymentLink(orderCode, paymentInfo.checkoutUrl);
             return paymentInfo;
         }
 
