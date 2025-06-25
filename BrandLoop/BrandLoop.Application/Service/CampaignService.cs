@@ -4,6 +4,7 @@ using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Repository;
 using BrandLoop.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,8 @@ namespace BrandLoop.Application.Service
         private readonly IPaymentRepository _paymentRepository;
         private readonly IPaySystem _paySystem;
         private readonly IUserRepository _userRepository;
+        private readonly IInfluencerReportRepository _influencerReportRepository;
+        private readonly IFeedbackRepository _feedbackRepository;
 
         public CampaignService(
             ICampaignRepository campaignRepository,
@@ -34,7 +37,9 @@ namespace BrandLoop.Application.Service
             IImageCampainRepository imageCampaignRepository,
             IPaymentRepository paymentRepository,
             IPaySystem paySystem,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IInfluencerReportRepository influencerReportRepository,
+            IFeedbackRepository feedbackRepository)
         {
             _campaignRepository = campaignRepository ?? throw new ArgumentNullException(nameof(campaignRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -43,6 +48,8 @@ namespace BrandLoop.Application.Service
             _paymentRepository = paymentRepository;
             _paySystem = paySystem;
             _userRepository = userRepository;
+            _influencerReportRepository = influencerReportRepository;
+            _feedbackRepository = feedbackRepository;
         }
 
         public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(string uid)
@@ -501,16 +508,47 @@ namespace BrandLoop.Application.Service
             await _campaignRepository.ConfirmPaymentToStartCampaign((int) payment.CampaignId);
         }
 
-        public async Task<CampaignDto> EndCampaign(string creatorId, int campaignId)
+        public async Task<CampaignDto> EndCampaign(string creatorId, BrandReport brandReport)
         {
-            var checkCampaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
+            var checkCampaign = await _campaignRepository.GetCampaignDetailAsync(brandReport.CampaignId);
             if (checkCampaign == null)
-                throw new InvalidOperationException($"Campaign with ID {campaignId} not found.");
+                throw new InvalidOperationException($"Campaign with ID {brandReport.CampaignId} not found.");
 
             if (checkCampaign.CreatedBy != creatorId)
                 throw new UnauthorizedAccessException($"User {creatorId} is not authorized to end this campaign.");
+            var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(brandReport.CampaignId);
+            foreach (var kol in kolJoinCampaigns)
+            {
+                if (kol.Status != KolJoinCampaignStatus.Completed)
+                    throw new InvalidOperationException($"KOL {kol.User.FullName} is not completed in this campaign yet.");
+                var feedback = _feedbackRepository.GetFeedbackForKolOfCampaignAsync(brandReport.CampaignId, kol.UID);
+                if (feedback == null)
+                    throw new InvalidOperationException($"You need to give feedback to all influencer before end this campaign.");
+            }
 
-            return _mapper.Map<CampaignDto>(await _campaignRepository.EndCampaign(campaignId));
+            // Create campaign report
+            var campaignReport = new CampaignReport
+            {
+                CampaignId = brandReport.CampaignId,
+                TotalRevenue = brandReport.TotalRevenue,
+                TotalSpend = brandReport.TotalSpend,
+                CreatedAt = DateTimeHelper.GetVietnamNow()
+            };
+            var influencerReport = await _influencerReportRepository.GetReportsByCampaignId(brandReport.CampaignId);
+            foreach (var report in influencerReport)
+            {
+                campaignReport.TotalReach += report.TotalReach;
+                campaignReport.TotalImpressions += report.TotalImpressions;
+                campaignReport.TotalEngagement += report.TotalEngagement;
+                campaignReport.TotalClicks += report.TotalClicks;
+                campaignReport.AvgEngagementRate += report.AvgEngagementRate;
+            }
+            campaignReport.AvgEngagementRate = campaignReport.AvgEngagementRate / influencerReport.Count;
+            campaignReport.CostPerEngagement = campaignReport.TotalSpend / campaignReport.TotalEngagement;
+            campaignReport.ROAS = campaignReport.TotalRevenue / campaignReport.TotalSpend;
+            await _influencerReportRepository.AddCampaignReport(campaignReport);
+
+            return _mapper.Map<CampaignDto>(await _campaignRepository.EndCampaign(brandReport.CampaignId));
         }
 
         public async Task<CampaignDto> CancelCampaign(string creatorId, int campaignId)
@@ -549,6 +587,42 @@ namespace BrandLoop.Application.Service
                 return await GenerateOrderCode();
 
             return result;
+        }
+
+        public async Task GiveFeedback(CreateFeedback createFeedback, string userId)
+        {
+            var feedback = new Feedback
+            {
+                CampaignId = createFeedback.CampaignId,
+                ToUserId = createFeedback.ToUserId,
+                Rating = createFeedback.Rating,
+                Description = createFeedback.Description
+            };
+            feedback.FromUserId = userId;
+            feedback.CreatedAt = DateTimeHelper.GetVietnamNow();
+            feedback.FeedbackFrom = Domain.Enums.FeedbackType.Brand;
+            await _feedbackRepository.AddFeedbackAsync(feedback);
+        }
+
+        public async Task<CampaignTracking> GetCampaignDetail(int campaignId)
+        {
+            try
+            {
+                var campaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
+                if (campaign == null)
+                {
+                    _logger.LogWarning("Campaign not found: {CampaignId}", campaignId);
+                    return null;
+                }
+                var result = _mapper.Map<CampaignTracking>(campaign);
+                _logger.LogInformation("Retrieved campaign detail for {CampaignId}", campaignId);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while getting campaign detail {CampaignId}", campaignId);
+                throw new InvalidOperationException("Lỗi khi lấy chi tiết campaign", ex);
+            }
         }
     }
 

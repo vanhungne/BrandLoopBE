@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrandLoop.Domain.Entities
+namespace BrandLoop.Infratructure.Models.Report
 {
-    public class InfluencerReport
+    public class InfluReport
     {
-        [Key, ForeignKey("KolsJoinCampaign")]
-        public int InfluencerReportId { get; set; }
-
+        public int CampaignId { get; set; } // ID của chiến dịch
         [Required]
         [StringLength(100)] // Tối đa 100 ký tự, vì có thể ghi "3 bài đăng + 2 story"
         public string TotalContent { get; set; } // Tổng số bài đăng, video, story
@@ -26,12 +23,11 @@ namespace BrandLoop.Domain.Entities
         [Range(0, int.MaxValue)]
         public int TotalEngagement { get; set; } // Likes + comments + shares + saves
 
-        [Range(0.0, 100.0)]
-        public double AvgEngagementRate { get; set; } // (TotalEngagement / TotalReach) * 100
-
         [Range(0, int.MaxValue)]
         public int TotalClicks { get; set; } // Nhấp vào link (UTM, bio)
 
-        public virtual KolsJoinCampaign KolsJoinCampaign { get; set; }
+        [Range(1, 10, ErrorMessage = "Rating must be between 1 and 10.")]
+        public int? Rating { get; set; }
+        public string Description { get; set; }
     }
 }

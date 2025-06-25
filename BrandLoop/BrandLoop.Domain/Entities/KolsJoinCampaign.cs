@@ -16,8 +16,7 @@ namespace BrandLoop.Domain.Entities
         public int KolsJoinCampaignId { get; set; }
 
         public int CampaignId { get; set; }
-        public int? InfluencerReportId { get; set; } // Optional, if the KOL has submitted a report
-
+        
         [Required]
         [StringLength(32)]
         public string UID { get; set; }
@@ -28,7 +27,6 @@ namespace BrandLoop.Domain.Entities
         public DateTime AppliedAt { get; set; } = DateTimeHelper.GetVietnamNow();
 
         // Navigation properties
-        [ForeignKey("InfluencerReportId")]
         public virtual InfluencerReport InfluencerReport { get; set; }
 
         [ForeignKey("CampaignId")]

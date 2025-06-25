@@ -84,7 +84,7 @@ namespace BrandLoop.Infratructure.Repository
             var subscriptionRegisters = await _context.SubscriptionRegisters
                 .Include(sr => sr.User)
                 .Include(sr => sr.Subscription)
-                .Where(sr => sr.UID == userId)
+                .Where(sr => sr.UID == userId && sr.Status == RegisterSubStatus.Active)
                 .OrderByDescending(sr => sr.RegistrationDate)
                 .ToListAsync();
             return subscriptionRegisters;

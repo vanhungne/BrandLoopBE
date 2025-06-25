@@ -26,6 +26,7 @@ namespace BrandLoop.Infratructure.Interface
         Task<Campaign> CancelCampaign(int campaignId);
         Task<List<KolsJoinCampaign>> GetKolsJoinCampaigns(int campaignId);
         Task<List<Campaign>> GetAllCampaignsAsync();
+        Task UpdateKolJoinCampaignStatus(int kolJoinCampaignId, KolJoinCampaignStatus status);
 
     }
 }

@@ -4,6 +4,7 @@ using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    partial class BLDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250625141056_hungdb2")]
+    partial class hungdb2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,41 +63,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.HasIndex("UID");
 
                     b.ToTable("AuditLogs");
-                });
-
-            modelBuilder.Entity("BrandLoop.Domain.Entities.Banner", b =>
-                {
-                    b.Property<int>("BannerId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BannerId"));
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("InfluenceId")
-                        .HasMaxLength(32)
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TargetUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("BannerId");
-
-                    b.HasIndex("InfluenceId");
-
-                    b.ToTable("Banners");
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.BrandProfile", b =>
@@ -574,9 +542,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.Property<bool>("HasExclusiveBanner")
-                        .HasColumnType("bit");
-
                     b.Property<int?>("InfluencerTypeId")
                         .HasColumnType("int");
 
@@ -584,15 +549,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsFeaturedOnHome")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsInSpotlight")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsPriorityListed")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Languages")
                         .IsRequired()
@@ -1452,17 +1408,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BrandLoop.Domain.Entities.Banner", b =>
-                {
-                    b.HasOne("BrandLoop.Domain.Entities.InfluenceProfile", "InfluenceProfile")
-                        .WithMany()
-                        .HasForeignKey("InfluenceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("InfluenceProfile");
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.BrandProfile", b =>

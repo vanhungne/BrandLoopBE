@@ -46,6 +46,9 @@ namespace BrandLoop.Infratructure.Repository
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
                 .Include(c => c.KolsJoinCampaigns)
+                    .ThenInclude(kjc => kjc.InfluencerReport)
+                .Include(c => c.KolsJoinCampaigns)
+                    .ThenInclude(kjc => kjc.User)
                 .Include(c => c.Feedbacks)
                 .Include(c => c.CampaignInvitations)
                 .Include(c => c.CampaignReports)
@@ -203,16 +206,6 @@ namespace BrandLoop.Infratructure.Repository
             campaign.Status = CampainStatus.Completed;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
             _context.Campaigns.Update(campaign);
-
-            // Update KolsJoinCampaigns status to Cancelled
-            var kolJoinCampaigns = await _context.KolsJoinCampaigns
-                .Where(k => k.CampaignId == campaignId && k.Status == KolJoinCampaignStatus.Active)
-                .ToListAsync();
-            foreach (var kolJoinCampaign in kolJoinCampaigns)
-            {
-                kolJoinCampaign.Status = KolJoinCampaignStatus.Cancelled;
-                _context.KolsJoinCampaigns.Update(kolJoinCampaign);
-            }
             await _context.SaveChangesAsync();
             return campaign;
         }
@@ -226,6 +219,15 @@ namespace BrandLoop.Infratructure.Repository
                 .Where(k => k.CampaignId == campaignId)
                 .ToListAsync();
             return kolsJoinCampaigns;
+        }
+
+        public async Task UpdateKolJoinCampaignStatus(int kolJoinCampaignId, KolJoinCampaignStatus status)
+        {
+            var kolJoinCampaign = await _context.KolsJoinCampaigns.FindAsync(kolJoinCampaignId);
+            if (kolJoinCampaign == null) return;
+            kolJoinCampaign.Status = status;
+            _context.KolsJoinCampaigns.Update(kolJoinCampaign);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<List<Campaign>> GetAllCampaignsAsync()

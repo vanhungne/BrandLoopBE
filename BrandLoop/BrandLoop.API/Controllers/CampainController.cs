@@ -4,11 +4,13 @@ using BrandLoop.Application.Interfaces;
 using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.SubcriptionModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS.Types;
+using System.Security.Authentication;
 using System.Security.Claims;
 
 namespace BrandLoop.API.Controllers
@@ -19,10 +21,12 @@ namespace BrandLoop.API.Controllers
     public class CampaignController : ControllerBase
     {
         private readonly ICampaignService _campaignService;
+        private readonly IInfluReportService _influReportService;
 
-        public CampaignController(ICampaignService campaignService)
+        public CampaignController(ICampaignService campaignService, IInfluReportService influReportService)
         {
             _campaignService = campaignService ?? throw new ArgumentNullException(nameof(campaignService));
+            _influReportService = influReportService ?? throw new ArgumentNullException(nameof(influReportService));
         }
 
         [HttpGet("all")]
@@ -357,9 +361,9 @@ namespace BrandLoop.API.Controllers
         /// <summary>
         /// End campaign
         /// </summary>
-        [HttpPost("{campaignId}/end")]
+        [HttpPost("end")]
         [Authorize(Roles = "Brand")]
-        public async Task<ActionResult<ApiResponse<CampaignDto>>> EndCampaign(int campaignId)
+        public async Task<ActionResult<ApiResponse<CampaignDto>>> EndCampaign([FromBody] BrandReport brandReport)
         {
             try
             {
@@ -367,7 +371,7 @@ namespace BrandLoop.API.Controllers
                 if (string.IsNullOrEmpty(creatorId))
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Không tìm thấy thông tin người dùng"));
 
-                var result = await _campaignService.EndCampaign(creatorId, campaignId);
+                var result = await _campaignService.EndCampaign(creatorId, brandReport);
                 if (result == null)
                     return NotFound(ApiResponse<CampaignDto>.ErrorResult("Không tìm thấy campaign để kết thúc"));
 
@@ -410,5 +414,81 @@ namespace BrandLoop.API.Controllers
         //            ApiResponse<CreatePaymentResult>.ErrorResult($"Lỗi server: {ex.Message}"));
         //    }
         //}
+
+        /// <summary>
+        /// Brand feedback cho influencer
+        /// </summary>
+        [HttpPut("give-feedback")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<bool>>> GiveFeedback([FromBody] CreateFeedback createFeedback)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    return BadRequest(ApiResponse<bool>.ErrorResult("Không tìm thấy thông tin người dùng"));
+                await _campaignService.GiveFeedback(createFeedback, userId);
+                return Ok(ApiResponse<bool>.SuccessResult(true, "Gửi feedback thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<bool>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
+        }
+
+        /// <summary>
+        /// Influencer nop báo cáo kết quả
+        /// </summary>
+        [HttpPost("influencer-report")]
+        [Authorize(Roles = "Influencer")]
+        public async Task<ActionResult<ApiResponse<InfluencerReport>>> SubmitInfluencerReport([FromBody] InfluReport report)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(uid))
+                    return BadRequest(ApiResponse<InfluencerReport>.ErrorResult("Không tìm thấy thông tin người dùng"));
+
+                await _influReportService.FinishReport(uid, report);
+                return Ok(ApiResponse<string>.SuccessResult("Nộp báo cáo thành công"));
+            }
+            catch (AuthenticationException ex)
+            {
+                return Unauthorized(ApiResponse<InfluencerReport>.ErrorResult($"Bạn không có quyền thực hiện hành động này: {ex.Message}"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<InfluencerReport>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
+        }
+
+        /// <summary>
+        /// Lay chi tiết campaign bao gồm các thông tin tracking
+        /// </summary>
+        [HttpGet("tracking/{campaignId}")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<CampaignTracking>>> GetCampaignDetailWithTracking(int campaignId)
+        {
+            try
+            {
+                if (campaignId <= 0)
+                {
+                    return BadRequest(ApiResponse<CampaignTracking>.ErrorResult("Campaign ID phải lớn hơn 0"));
+                }
+                var result = await _campaignService.GetCampaignDetail(campaignId);
+                if (result == null)
+                {
+                    return NotFound(ApiResponse<CampaignTracking>.ErrorResult("Không tìm thấy campaign để lấy thông tin tracking"));
+                }
+                return Ok(ApiResponse<CampaignTracking>.SuccessResult(result, "Lấy chi tiết campaign thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<CampaignTracking>.ErrorResult($"Lỗi server: {ex.Message}"));
+            }
+        }
     }
 }

@@ -14,20 +14,41 @@ namespace BrandLoop.Domain.Entities
         [Key]
         public int CampaignReportId { get; set; }
 
+        [Required]
         public int CampaignId { get; set; }
+
+        [Required]
+        [Range(0, double.MaxValue)]
         public decimal TotalSpend { get; set; } // Tổng chi tiêu
+
+        [Required]
+        [Range(0, double.MaxValue)]
         public decimal TotalRevenue { get; set; } // Doanh thu
 
-        public int? TotalReach { get; set; } = 0; // Số người dùng duy nhất tiếp cận nội dung
-        public int? TotalImpressions { get; set; } = 0; // Số lần nội dung được hiển thị
-        public int? TotalEngagement { get; set; } = 0; // Tổng tương tác (likes + comments + shares + saves)
-        public int? TotalClicks { get; set; } = 0; // Nhấp vào link (UTM, bio)
-        public double? AvgEngagementRate { get; set; } = 0; // (TotalEngagement / TotalReach) * 100
-        public decimal? CostPerEngagement { get; set; } = 0; // TotalSpend / TotalEngagement
-        public decimal? ROAS { get; set; } = 0;// Revenue / TotalSpend
+        [Range(0, int.MaxValue)]
+        public int? TotalReach { get; set; } = 0;
+
+        [Range(0, int.MaxValue)]
+        public int? TotalImpressions { get; set; } = 0;
+
+        [Range(0, int.MaxValue)]
+        public int? TotalEngagement { get; set; } = 0;
+
+        [Range(0, int.MaxValue)]
+        public int? TotalClicks { get; set; } = 0;
+
+        [Range(0.0, 100.0)]
+        public double? AvgEngagementRate { get; set; } = 0;
+
+        [Range(0, double.MaxValue)]
+        public decimal? CostPerEngagement { get; set; } = 0;
+
+        [Range(0, double.MaxValue)]
+        public decimal? ROAS { get; set; } = 0;
+
         public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
 
-        // Navigation properties
+        // Navigation
         [ForeignKey("CampaignId")]
         public virtual Campaign Campaign { get; set; }
     }
