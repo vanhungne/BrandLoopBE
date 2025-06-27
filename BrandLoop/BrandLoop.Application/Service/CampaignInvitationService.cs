@@ -84,7 +84,7 @@ namespace BrandLoop.Application.Service
             }
         }
 
-        public async Task<List<InvitationDTO>> GetAllInvitationsOfCampaignAsync(int campaignId, string uid)
+        public async Task<List<InvitationDTO>> GetAllInvitationsOfCampaignAsync(int campaignId, string uid, CampaignInvitationStatus status)
         {
             // Ensure the user is authorized to view the invitations for this campaign
             var campaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
@@ -93,7 +93,7 @@ namespace BrandLoop.Application.Service
             if (campaign.CreatedBy != uid)
                 throw new AuthenticationException("You are not authorized to view invitations for this campaign.");
 
-            var invitations = await _campaignInvitationRepository.GetAllInvitationsOfCampaignAsync(campaignId);
+            var invitations = await _campaignInvitationRepository.GetAllInvitationsOfCampaignAsync(campaignId, status);
             return _mapper.Map<List<InvitationDTO>>(invitations);
         }
 
@@ -107,9 +107,9 @@ namespace BrandLoop.Application.Service
             return _mapper.Map<InvitationDTO>(invitation);
         }
 
-        public async Task<List<InvitationDTO>> GetInvitationsByKOLIdAsync(string kolId)
+        public async Task<List<InvitationDTO>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus status)
         {
-            var kolInvitation = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(kolId);
+            var kolInvitation = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(kolId, status);
             return _mapper.Map<List<InvitationDTO>>(kolInvitation);
         }
 

@@ -263,7 +263,7 @@ namespace BrandLoop.API.Controllers
         /// <param name="status">Trạng thái mới</param>
         /// <returns>Campaign đã cập nhật</returns>
         [HttpPatch("{campaignId}/status")]
-        public async Task<ActionResult<ApiResponse<CampaignDto>>> UpdateCampaignStatus(int campaignId, [FromBody] CampainStatus status)
+        public async Task<ActionResult<ApiResponse<CampaignDto>>> UpdateCampaignStatus(int campaignId, [FromBody] CampaignStatus status)
         {
             try
             {
@@ -272,7 +272,7 @@ namespace BrandLoop.API.Controllers
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Campaign ID phải lớn hơn 0"));
                 }
 
-                if (!Enum.IsDefined(typeof(CampainStatus), status))
+                if (!Enum.IsDefined(typeof(CampaignStatus), status))
                 {
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Trạng thái không hợp lệ"));
                 }

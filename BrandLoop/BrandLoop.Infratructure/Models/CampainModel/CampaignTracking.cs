@@ -9,18 +9,8 @@ using System.Threading.Tasks;
 
 namespace BrandLoop.Infratructure.Models.CampainModel
 {
-    public class CampaignTracking
+    public class CampaignTracking : CampaignDto
     {
-        public int CampaignId { get; set; }
-        public int BrandId { get; set; }
-        public string CampaignName { get; set; }
-        public string Description { get; set; }
-        public decimal? Budget { get; set; }
-        public DateTime? StartTime { get; set; }
-        public DateTime? Deadline { get; set; }
-        public string Status { get; set; }
-
-        // Campaign report properties
         public decimal TotalSpend { get; set; }
         public decimal TotalRevenue { get; set; }
         public int? TotalReach { get; set; } = 0;

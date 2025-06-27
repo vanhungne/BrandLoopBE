@@ -75,12 +75,12 @@ namespace BrandLoop.API.Controllers
         /// <returns>Trả vè list các invitation của chiến dịch đó</returns>
         [HttpGet("campaign/{campaignId}")]
         [Authorize(Roles = "Brand")]
-        public async Task<IActionResult> GetAllInvitationsOfCampaignAsync(int campaignId, [FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus status, [FromQuery] PaginationFilter filter)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var invitations = await _campaignInvitationService.GetAllInvitationsOfCampaignAsync(campaignId, uid);
+                var invitations = await _campaignInvitationService.GetAllInvitationsOfCampaignAsync(campaignId, uid, status);
                 if (invitations == null || !invitations.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("Can not found any invitation"));
 
@@ -117,13 +117,13 @@ namespace BrandLoop.API.Controllers
         /// <returns>Trả vè list các invitation</returns>
         [HttpGet("get-all-kol-invitation")]
         [Authorize(Roles = "Influencer")]
-        public async Task<IActionResult> GetInvitationsByKOLIdAsync([FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetInvitationsByKOLIdAsync(CampaignInvitationStatus status, [FromQuery] PaginationFilter filter)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                var invitations = await _campaignInvitationService.GetInvitationsByKOLIdAsync(uid);
+                var invitations = await _campaignInvitationService.GetInvitationsByKOLIdAsync(uid, status);
                 if (invitations == null || !invitations.Any())
                     return NotFound(ApiResponse<string>.ErrorResult("Can not found any invitation"));
 

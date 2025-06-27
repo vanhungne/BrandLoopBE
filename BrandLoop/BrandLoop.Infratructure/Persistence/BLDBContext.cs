@@ -224,8 +224,8 @@ namespace BrandLoop.Infratructure.Persistence
             // CampaignReport relationships
             modelBuilder.Entity<CampaignReport>()
                 .HasOne(cr => cr.Campaign)
-                .WithMany(c => c.CampaignReports)
-                .HasForeignKey(cr => cr.CampaignId)
+                .WithOne(c => c.CampaignReport)
+                .HasForeignKey<CampaignReport>(cr => cr.CampaignId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // News relationships
