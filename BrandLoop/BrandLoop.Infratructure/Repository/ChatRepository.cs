@@ -214,7 +214,8 @@ namespace BrandLoop.Infratructure.Repository
                     ProfileImage = s.User.ProfileImage,
                     LastSeen = s.LastSeen,
                     DeviceType = s.DeviceType,
-                    IsOnline = s.IsOnline
+                    IsOnline = s.IsOnline,
+                    RoleId = s.User.RoleId
                 })
                 .OrderBy(u => u.FullName)
                 .ToListAsync();
