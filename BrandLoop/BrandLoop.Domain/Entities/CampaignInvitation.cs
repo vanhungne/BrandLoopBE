@@ -33,6 +33,7 @@ namespace BrandLoop.Domain.Entities
         public CampaignInvitationStatus Status { get; set; } = CampaignInvitationStatus.pending;
 
         public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
+        public bool IsRead { get; set; } = false;
 
         public decimal? Price { get; set; } = 0;
 

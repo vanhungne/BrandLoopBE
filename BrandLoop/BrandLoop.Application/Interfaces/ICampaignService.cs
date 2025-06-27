@@ -18,7 +18,7 @@ namespace BrandLoop.Application.Interfaces
         Task<CampaignDto> CreateCampaignAsync(CreateCampaignDto dto,string uid);
         Task<CampaignDto> UpdateCampaignAsync(UpdateCampaignDto dto);
         Task<bool> DeleteCampaignAsync(int campaignId);
-        Task<CampaignDto> UpdateCampaignStatusAsync(int campaignId, CampainStatus status);
+        Task<CampaignDto> UpdateCampaignStatusAsync(int campaignId, CampaignStatus status);
         Task<CampaignDto> DuplicateCampaignAsync(int campaignId);
         Task<List<CampaignDto>> GetAllCampaignByUid(string uid);
         Task<PaymentCampaign> StartCampaign(string creatorId, int campaignId);
@@ -30,6 +30,10 @@ namespace BrandLoop.Application.Interfaces
         Task Cancelayment(long orderCode);
         Task GiveFeedback(CreateFeedback createFeedback, string userId);
         Task<CampaignTracking> GetCampaignDetail(int campaignId);
+        Task<CampaignCard> GetCampaignCard(string uid);
+        Task<List<CampaignChart>> GetCampaignChard(string uid, int year);
+        Task<List<CampaignSelectOption>> GetCampaignsOf(string uid, CampaignStatus status);
+        Task<CampaignDashboardDetail> GetCampaignDetailForDashboard(string uid, int campaignId);
     }
 
 }

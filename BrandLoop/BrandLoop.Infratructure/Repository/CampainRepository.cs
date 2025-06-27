@@ -51,7 +51,7 @@ namespace BrandLoop.Infratructure.Repository
                     .ThenInclude(kjc => kjc.User)
                 .Include(c => c.Feedbacks)
                 .Include(c => c.CampaignInvitations)
-                .Include(c => c.CampaignReports)
+                .Include(c => c.CampaignReport)
                 .FirstOrDefaultAsync(c => c.CampaignId == campaignId);
         }
 
@@ -78,13 +78,13 @@ namespace BrandLoop.Infratructure.Repository
             var campaign = await _context.Campaigns.FindAsync(campaignId);
             if (campaign == null) return false;
 
-            campaign.Status = CampainStatus.Deleted;
+            campaign.Status = CampaignStatus.Deleted;
             campaign.LastUpdate = DateTime.Now;
             await _context.SaveChangesAsync();
             return true;
         }
 
-        public async Task<Campaign> UpdateCampaignStatusAsync(int campaignId, CampainStatus status)
+        public async Task<Campaign> UpdateCampaignStatusAsync(int campaignId, CampaignStatus status)
         {
             var campaign = await _context.Campaigns.FindAsync(campaignId);
             if (campaign == null) return null;
@@ -109,7 +109,7 @@ namespace BrandLoop.Infratructure.Repository
                 CampaignGoals = originalCampaign.CampaignGoals,
                 Budget = originalCampaign.Budget,
                 Deadline = originalCampaign.Deadline,
-                Status = CampainStatus.Pending,
+                Status = CampaignStatus.Pending,
                 CreatedBy = originalCampaign.CreatedBy,
                 UploadedDate = DateTime.Now,
                 LastUpdate = DateTime.Now
@@ -137,10 +137,10 @@ namespace BrandLoop.Infratructure.Repository
             var campaign = await GetCampaignDetailAsync(campaignId);
             if (campaign == null) return null;
 
-            if (campaign.Status != CampainStatus.Approved)
+            if (campaign.Status != CampaignStatus.Approved)
                 throw new InvalidOperationException("Campaign can only be started if it is in Approved status.");
 
-            campaign.Status = CampainStatus.Pending;
+            campaign.Status = CampaignStatus.Pending;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
             campaign.StartTime = DateTimeHelper.GetVietnamNow();
             _context.Campaigns.Update(campaign);
@@ -151,10 +151,10 @@ namespace BrandLoop.Infratructure.Repository
         {
             var campaign = await GetCampaignDetailAsync(campaignId);
             if (campaign == null) return;
-            if (campaign.Status != CampainStatus.Pending)
+            if (campaign.Status != CampaignStatus.Pending)
                 throw new InvalidOperationException("Campaign can only be started if it is in Pending status.");
 
-            campaign.Status = CampainStatus.InProgress;
+            campaign.Status = CampaignStatus.InProgress;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
             _context.Campaigns.Update(campaign);
 
@@ -175,10 +175,10 @@ namespace BrandLoop.Infratructure.Repository
             var campaign = await GetCampaignDetailAsync(campaignId);
             if (campaign == null) return null;
 
-            if (campaign.Status != CampainStatus.InProgress)
+            if (campaign.Status != CampaignStatus.InProgress)
                 throw new InvalidOperationException("Campaign can only be ended if it is in InProgress status.");
 
-            campaign.Status = CampainStatus.Completed;
+            campaign.Status = CampaignStatus.Completed;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
             _context.Campaigns.Update(campaign);
 
@@ -200,10 +200,10 @@ namespace BrandLoop.Infratructure.Repository
             var campaign = await GetCampaignDetailAsync(campaignId);
             if (campaign == null) return null;
 
-            if (campaign.Status != CampainStatus.Pending)
+            if (campaign.Status != CampaignStatus.Pending)
                 throw new InvalidOperationException("Campaign can only be cancel if it is in Pending status.");
 
-            campaign.Status = CampainStatus.Completed;
+            campaign.Status = CampaignStatus.Completed;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
             _context.Campaigns.Update(campaign);
             await _context.SaveChangesAsync();
@@ -230,14 +230,20 @@ namespace BrandLoop.Infratructure.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Campaign>> GetAllCampaignsAsync()
+        public async Task<List<Campaign>> GetAllCampaignsOfBrandWithStatus(string uid, CampaignStatus status)
         {
             return await _context.Campaigns
                 .Include(c => c.CampaignImages)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
-                .OrderByDescending(c => c.LastUpdate)
+                .Where(c => c.CreatedBy == uid && c.Status == status)
+                .OrderByDescending(c => c.UploadedDate)
                 .ToListAsync();
+        }
+        public async Task<List<Campaign>> GetBrandCampaignsByYear(string uid, int year)
+        {
+            var campaigns = await _context.Campaigns.Where(c => c.CreatedBy == uid && (c.StartTime ?? c.UploadedDate).Year == year).ToListAsync();
+            return campaigns;
         }
     }
 

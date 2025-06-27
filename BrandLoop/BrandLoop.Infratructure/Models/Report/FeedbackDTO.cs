@@ -35,4 +35,12 @@ namespace BrandLoop.Infratructure.Models.Report
         public string FeedbackFrom { get; set; }
         public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
     }
+
+    public class ShowFeedback
+    {
+        public int FeedbackId { get; set; }
+        public string FromUserId { get; set; }
+        public string Description { get; set; }
+        public int? Rating { get; set; }
+    }
 }

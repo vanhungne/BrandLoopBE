@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BrandLoop.Domain.Enums
 {
-    public enum CampainStatus
+    public enum CampaignStatus
     {
         Pending = 1,
         Approved = 2,

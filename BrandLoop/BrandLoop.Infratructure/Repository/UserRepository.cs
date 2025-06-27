@@ -66,9 +66,9 @@ namespace BrandLoop.Infratructure.Repository
             var contentAndStyles = await GetUserContentAndStylesAsync(uid);
 
             // Campaign statistics
-            var activeCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampainStatus.Approved) ?? 0;
-            var completedCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampainStatus.Completed) ?? 0;
-            var pendingCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampainStatus.Pending) ?? 0;
+            var activeCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampaignStatus.Approved) ?? 0;
+            var completedCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampaignStatus.Completed) ?? 0;
+            var pendingCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampaignStatus.Pending) ?? 0;
             var totalCampaigns = brandProfile.Campaigns?.Count ?? 0;
 
             return new BrandProfileModel

@@ -10,7 +10,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
     public class CampaignFilterModel
     {
         public string? Search { get; set; }
-        public CampainStatus? Status { get; set; }
+        public CampaignStatus? Status { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
         public string SortBy { get; set; } = "LastUpdate";

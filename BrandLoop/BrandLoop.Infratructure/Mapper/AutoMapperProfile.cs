@@ -81,7 +81,7 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.KolsJoinCampaigns, opt => opt.Ignore())
                 .ForMember(dest => dest.Feedbacks, opt => opt.Ignore())
                 .ForMember(dest => dest.CampaignInvitations, opt => opt.Ignore())
-                .ForMember(dest => dest.CampaignReports, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignReport, opt => opt.Ignore())
                 .ForMember(dest => dest.CampaignImages, opt => opt.Ignore())
                 .ForMember(dest => dest.Payments, opt => opt.Ignore());
 
@@ -96,7 +96,7 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.KolsJoinCampaigns, opt => opt.Ignore())
                 .ForMember(dest => dest.Feedbacks, opt => opt.Ignore())
                 .ForMember(dest => dest.CampaignInvitations, opt => opt.Ignore())
-                .ForMember(dest => dest.CampaignReports, opt => opt.Ignore())
+                .ForMember(dest => dest.CampaignReport, opt => opt.Ignore())
                 .ForMember(dest => dest.CampaignImages, opt => opt.Ignore())
                 .ForMember(dest => dest.Payments, opt => opt.Ignore());
 
@@ -110,24 +110,27 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => src.StartTime))
                 .ForMember(dest => dest.Deadline, opt => opt.MapFrom(src => src.Deadline))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+            CreateMap<Campaign, CampaignSelectOption>();
             // CampaignTracking mappings
             CreateMap<Campaign, CampaignTracking>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.kolInCampaignTrackings, opt => opt.MapFrom(src => src.KolsJoinCampaigns))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.CampaignImages))
+                .ForMember(dest => dest.kolInCampaignTrackings, opt => opt.MapFrom(src => src.KolsJoinCampaigns))
 
-            // Mapping từ CampaignReport đầu tiên
-            .ForMember(dest => dest.TotalSpend, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault() != null ? src.CampaignReports.First().TotalSpend : 0))
-            .ForMember(dest => dest.TotalRevenue, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault() != null ? src.CampaignReports.First().TotalRevenue : 0))
-            .ForMember(dest => dest.TotalReach, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault().TotalReach ?? 0))
-            .ForMember(dest => dest.TotalImpressions, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault().TotalImpressions ?? 0))
-            .ForMember(dest => dest.TotalEngagement, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault().TotalEngagement ?? 0))
-            .ForMember(dest => dest.TotalClicks, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault().TotalClicks ?? 0))
-            .ForMember(dest => dest.AvgEngagementRate, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault().AvgEngagementRate ?? 0))
-            .ForMember(dest => dest.CostPerEngagement, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault().CostPerEngagement ?? 0))
-            .ForMember(dest => dest.ROAS, opt => opt.MapFrom(src => src.CampaignReports.FirstOrDefault().ROAS ?? 0))
+            // Mapping từ CampaignReport
+                .ForMember(dest => dest.TotalSpend, opt => opt.MapFrom(src => src.CampaignReport.TotalSpend))
+                .ForMember(dest => dest.TotalRevenue, opt => opt.MapFrom(src => src.CampaignReport.TotalRevenue))
+                .ForMember(dest => dest.TotalReach, opt => opt.MapFrom(src => src.CampaignReport.TotalReach ?? 0))
+                .ForMember(dest => dest.TotalImpressions, opt => opt.MapFrom(src => src.CampaignReport.TotalImpressions ?? 0))
+                .ForMember(dest => dest.TotalEngagement, opt => opt.MapFrom(src => src.CampaignReport.TotalEngagement ?? 0))
+                .ForMember(dest => dest.TotalClicks, opt => opt.MapFrom(src => src.CampaignReport.TotalClicks ?? 0))
+                .ForMember(dest => dest.AvgEngagementRate, opt => opt.MapFrom(src => src.CampaignReport.AvgEngagementRate ?? 0))
+                .ForMember(dest => dest.CostPerEngagement, opt => opt.MapFrom(src => src.CampaignReport.CostPerEngagement ?? 0))
+                .ForMember(dest => dest.ROAS, opt => opt.MapFrom(src => src.CampaignReport.ROAS ?? 0))
 
             // Bỏ qua null
-            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<KolsJoinCampaign, KolInCampaignTracking>()
                 .ForMember(dest => dest.KolName, opt => opt.MapFrom(src => src.User.FullName))
@@ -168,17 +171,12 @@ namespace BrandLoop.Infratructure.Mapper
 
             // Feedback mapping
             CreateMap<Feedback, FeedbackDTO>().ReverseMap();
+            CreateMap<Feedback, ShowFeedback>();
 
 
 
             CreateMap<UserOnlineStatus, UserOnlineStatusDto>();
 
-
-            // Feedback mapping
-            CreateMap<Feedback, FeedbackDTO>().ReverseMap();
-
-            // Feedback mapping
-            CreateMap<Feedback, FeedbackDTO>().ReverseMap();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public decimal? Budget { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? Deadline { get; set; }
-        public CampainStatus Status { get; set; }
+        public CampaignStatus Status { get; set; }
         public string CreatedBy { get; set; }
 
         public List<CampaignImageDto> Images { get; set; } = new List<CampaignImageDto>();

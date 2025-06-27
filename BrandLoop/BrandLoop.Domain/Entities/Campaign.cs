@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
+using BrandLoop.Shared.Helper;
 
 namespace BrandLoop.Domain.Entities
 {
@@ -23,9 +24,9 @@ namespace BrandLoop.Domain.Entities
 
         public string Description { get; set; }
 
-        public DateTime UploadedDate { get; set; } = DateTime.Now;
+        public DateTime UploadedDate { get; set; } = DateTimeHelper.GetVietnamNow();
 
-        public DateTime LastUpdate { get; set; } = DateTime.Now;
+        public DateTime LastUpdate { get; set; } = DateTimeHelper.GetVietnamNow();
 
         public string ContentRequirements { get; set; }
 
@@ -37,7 +38,7 @@ namespace BrandLoop.Domain.Entities
         public DateTime? Deadline { get; set; }
 
         [StringLength(50)]
-        public CampainStatus Status { get; set; } = CampainStatus.Approved;
+        public CampaignStatus Status { get; set; } = CampaignStatus.Approved;
 
         [Required]
         [StringLength(32)]
@@ -53,7 +54,7 @@ namespace BrandLoop.Domain.Entities
         public virtual ICollection<KolsJoinCampaign> KolsJoinCampaigns { get; set; }
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<CampaignInvitation> CampaignInvitations { get; set; }
-        public virtual ICollection<CampaignReport> CampaignReports { get; set; }
+        public virtual CampaignReport CampaignReport { get; set; }
         public virtual ICollection<CampaignImage> CampaignImages { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
 

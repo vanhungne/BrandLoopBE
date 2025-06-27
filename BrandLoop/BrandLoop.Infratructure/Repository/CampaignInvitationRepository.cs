@@ -69,10 +69,10 @@ namespace BrandLoop.Infratructure.Repository
             return invitation;
         }
 
-        public async Task<List<CampaignInvitation>> GetAllInvitationsOfCampaignAsync(int campaignId)
+        public async Task<List<CampaignInvitation>> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus status)
         {
             var invitations = await _context.CampaignInvitations
-                .Where(i => i.CampaignId == campaignId)
+                .Where(i => i.CampaignId == campaignId && i.Status == status)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
                 .OrderByDescending(i => i.CreatedAt)
@@ -89,10 +89,10 @@ namespace BrandLoop.Infratructure.Repository
             return invitation ?? throw new Exception("Invitation not found");
         }
 
-        public async Task<List<CampaignInvitation>> GetInvitationsByKOLIdAsync(string kolId)
+        public async Task<List<CampaignInvitation>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus status)
         {
             var invitations = await _context.CampaignInvitations
-                .Where(i => i.UID == kolId)
+                .Where(i => i.UID == kolId && i.Status == status)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
                 .OrderByDescending(i => i.CreatedAt)

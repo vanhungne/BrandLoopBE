@@ -16,7 +16,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public string CampaignGoals { get; set; }
         public decimal? Budget { get; set; }
         public DateTime? Deadline { get; set; }
-        public CampainStatus Status { get; set; }
+        public CampaignStatus Status { get; set; }
     }
 
 }
