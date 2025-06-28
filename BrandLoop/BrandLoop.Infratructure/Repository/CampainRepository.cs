@@ -42,6 +42,7 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<Campaign> GetCampaignDetailAsync(int campaignId)
         {
             return await _context.Campaigns
+                .AsSplitQuery()
                 .Include(c => c.CampaignImages)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
@@ -245,6 +246,36 @@ namespace BrandLoop.Infratructure.Repository
             var campaigns = await _context.Campaigns.Where(c => c.CreatedBy == uid && (c.StartTime ?? c.UploadedDate).Year == year).ToListAsync();
             return campaigns;
         }
+
+        public async Task<List<Campaign>> GetAllCampaignsInfluJoined(string uid)
+        {
+            var campaigns = await _context.Campaigns
+                .Include(c => c.KolsJoinCampaigns)
+                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid))
+                .ToListAsync();
+
+            return campaigns;
+        }
+
+        public async Task<List<Campaign>> GetAllCampaignsInfluJoined(string uid, int year)
+        {
+            var campaigns = await _context.Campaigns
+                .Include(c => c.KolsJoinCampaigns)
+                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid) && (c.StartTime ?? c.UploadedDate).Year == year)
+                .ToListAsync();
+
+            return campaigns;
+        }
+
+        public async Task<List<Campaign>> GetAllCampaignsInfluJoinedWithStatus(string uid, CampaignStatus status)
+        {
+            var campaigns = await _context.Campaigns
+                .Include(c => c.KolsJoinCampaigns)
+                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid) && c.Status == status)
+                .ToListAsync();
+            return campaigns;
+        }
+
     }
 
 }

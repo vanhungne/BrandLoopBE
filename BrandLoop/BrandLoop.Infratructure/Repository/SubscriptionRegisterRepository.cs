@@ -148,5 +148,32 @@ namespace BrandLoop.Infratructure.Repository
                             sr.RegistrationDate.Month == month)
                 .SumAsync(sr => sr.Subscription.Price ?? 0);
         }
+
+        public async Task ApplySubscription(string uid, int subscriptionId)
+        {
+            var influenceProfile = await _context.InfluenceProfiles.FirstOrDefaultAsync(ip => ip.UID == uid);
+            if (influenceProfile == null)
+            {
+                throw new Exception($"User with UID {uid} not found.");
+            }
+
+            switch(subscriptionId)
+            {
+                case 1:
+                    influenceProfile.IsPriorityListed = true;
+                    break;
+                case 2:
+                    influenceProfile.IsFeaturedOnHome = true;
+                    break;
+                case 3:
+                    influenceProfile.HasExclusiveBanner = true;
+                    break;
+                case 4:
+                    influenceProfile.IsInSpotlight = true;
+                    break;
+                default:
+                    throw new Exception($"Invalid subscription ID: {subscriptionId}");
+            }
+        }
     }
 }

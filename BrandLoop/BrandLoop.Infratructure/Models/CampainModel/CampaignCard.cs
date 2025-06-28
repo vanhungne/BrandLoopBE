@@ -54,4 +54,29 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public decimal? ROAS { get; set; } = 0;
         public List<ShowFeedback> feedbacks { get; set; } = new List<ShowFeedback>();
     }
+
+    public class CampaignReportOfInfluencer {
+        public DateTime? StartTime { get; set; }
+        public DateTime? Deadline { get; set; }
+        public decimal? Budget { get; set; }
+        public string Status { get; set; }
+
+        public int totalKolsJoin { get; set; } = 0;
+        public int totalInvitations { get; set; } = 0;
+        public int totalAcceptedInvitations { get; set; } = 0;
+        public int totalRejectedInvitations { get; set; } = 0;
+        public int othersInvitations { get; set; } = 0;
+        public decimal TotalSpend { get; set; } = 0;
+        public decimal TotalRevenue { get; set; } = 0;
+        public int? TotalReach { get; set; } = 0;
+        public int? TotalImpressions { get; set; } = 0;
+        public int? TotalEngagement { get; set; } = 0;
+        public int? TotalClicks { get; set; } = 0;
+        public double? AvgEngagementRate { get; set; } = 0;
+        public decimal? CostPerEngagement { get; set; } = 0;
+        public decimal? ROAS { get; set; } = 0;
+
+        public KolInCampaignTracking? report { get; set; }
+        public ShowFeedback? FeedbackOfInfluencer { get; set; }
+    }
 }

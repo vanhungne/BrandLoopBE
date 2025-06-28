@@ -68,6 +68,7 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<Payment> GetPaymentByOrderCodeAsync(long orderCode)
         {
             var payment = await _context.Payments
+                .Include(p => p.SubscriptionRegister)
                 .FirstOrDefaultAsync(p => p.PaymentId == orderCode);
 
             if (payment == null)

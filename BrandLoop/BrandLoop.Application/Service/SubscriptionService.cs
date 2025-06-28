@@ -18,13 +18,15 @@ namespace BrandLoop.Application.Service
         private readonly IPaymentRepository _paymentRepository;
         private readonly IUserRepository _userRepository;
         private readonly IPaySystem _paySystem;
-        public SubscriptionService(ISubscriptionRepository subscriptionRepository, IMapper mapper, IPaymentRepository paymentRepository, IUserRepository userRepository, IPaySystem paySystem)
+        private readonly ISubscriptionRegisterRepository _subscriptionRegisterRepository;
+        public SubscriptionService(ISubscriptionRepository subscriptionRepository, IMapper mapper, IPaymentRepository paymentRepository, IUserRepository userRepository, IPaySystem paySystem, ISubscriptionRegisterRepository subscriptionRegisterRepository)
         {
             _subscriptionRepository = subscriptionRepository;
             _mapper = mapper;
             _paymentRepository = paymentRepository;
             _userRepository = userRepository;
             _paySystem = paySystem;
+            _subscriptionRegisterRepository = subscriptionRegisterRepository;
         }
         public async Task<List<SubscriptionDTO>> GetAllSubscriptionsAsync()
         {
@@ -154,6 +156,7 @@ namespace BrandLoop.Application.Service
 
             await _paymentRepository.UpdatePaymentStatus(orderCode, PaymentStatus.Succeeded);
             await _subscriptionRepository.UpdateRegisterStatus(payment.SubscriptionRegister.Id, RegisterSubStatus.Active);
+            await _subscriptionRegisterRepository.ApplySubscription(payment.SubscriptionRegister.UID, payment.SubscriptionRegister.SubscriptionId);
         }
 
         public async Task CancelPayment(long orderCode)

@@ -22,5 +22,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<int> GetActiveSubscriptionCountAsync();
         Task<decimal> GetTotalRevenueAsync();
         Task<decimal> GetMonthlyRevenueAsync(int year, int month);
+        Task ApplySubscription(string uid, int subscriptionId);
     }
 }

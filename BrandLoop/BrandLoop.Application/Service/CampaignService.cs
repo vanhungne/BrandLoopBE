@@ -660,7 +660,7 @@ namespace BrandLoop.Application.Service
                         break;
                 }
             }
-            return campaignCard; ;
+            return campaignCard;
         }
 
         public async Task<List<CampaignChart>> GetCampaignChard(string uid, int year)

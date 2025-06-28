@@ -46,6 +46,7 @@ namespace BrandLoop.Infratructure
             services.AddScoped<IBannerRepository, BannerRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            services.AddScoped<ISubscriptionRegisterRepository, SubscriptionRegisterRepository>();
             return services;
         }
     }

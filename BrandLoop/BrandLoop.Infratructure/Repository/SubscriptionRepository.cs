@@ -3,6 +3,7 @@ using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.SubcriptionModel;
 using BrandLoop.Infratructure.Persistence;
+using BrandLoop.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -109,6 +110,14 @@ namespace BrandLoop.Infratructure.Repository
             }
             else
                 throw new Exception($"Subscription register with ID {registrationId} not found.");
+        }
+        
+        public async Task<List<SubscriptionRegister>> GetActiveSubscriptionByUserIdAsync(string uid)
+        {
+            return await _context.SubscriptionRegisters
+                .Include(sr => sr.Subscription)
+                .Where(sr => sr.UID == uid && sr.Status == RegisterSubStatus.Active && (sr.ExpirationDate == null || sr.ExpirationDate >= DateTimeHelper.GetVietnamNow()))
+                .ToListAsync();
         }
 
     }

@@ -10,10 +10,10 @@ namespace BrandLoop.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(Roles = "Brand")]
-    public class BrandDashboardController : ControllerBase
+    public class DashboardBrandController : ControllerBase
     {
         private readonly ICampaignService _campaignService;
-        public BrandDashboardController(ICampaignService campaignService)
+        public DashboardBrandController(ICampaignService campaignService)
         {
             _campaignService = campaignService;
         }
