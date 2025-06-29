@@ -21,5 +21,8 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public DateTime CreatedAt { get; set; }
         public decimal? Price { get; set; }
         public string Type { get; set; } // JoinCampaignType
+        public string Email { get; set; } // Email của KOL
+        public string FullName { get; set; } // Tên đầy đủ của KOL
+        public string ProfileImage { get; set; } // Hình ảnh đại diện của KOL
     }
 }

@@ -8,12 +8,11 @@ namespace BrandLoop.Domain.Enums
 {
     public enum CampaignStatus
     {
-        Pending = 1,
-        Approved = 2,
-        Rejected = 3,
-        InProgress = 4,
-        Completed = 5,
-        Cancelled = 6,
-        Deleted = 7
+        Approved = 1,
+        Rejected = 2,
+        InProgress = 3,
+        Completed = 4,
+        Cancelled = 5,
+        Deleted = 6
     }
 }

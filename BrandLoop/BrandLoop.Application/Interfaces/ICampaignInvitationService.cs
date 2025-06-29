@@ -13,6 +13,7 @@ namespace BrandLoop.Application.Interfaces
     {
         // Define methods for the CampaignInvitation service here
         Task<List<InvitationDTO>> GetAllInvitationsOfCampaignAsync(int campaignId, string uid, CampaignInvitationStatus status);
+        Task<List<InvitationDTO>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus status);
         Task<List<InvitationDTO>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus status);
         Task<InvitationDTO> GetInvitationByIdAsync(int invitationId, string uid);
         Task<InvitationDTO> CreateInvitationAsync(JoinCampaign joinCampaign, string uid,JoinCampaignType type);

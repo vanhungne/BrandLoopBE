@@ -37,7 +37,6 @@ namespace BrandLoop.Infratructure.Models.UserModel
         public int TotalCampaigns { get; set; }
         public int ActiveCampaigns { get; set; }
         public int CompletedCampaigns { get; set; }
-        public int PendingCampaigns { get; set; }
 
         // Skills and Content
         public List<SkillModel> Skills { get; set; } = new List<SkillModel>();

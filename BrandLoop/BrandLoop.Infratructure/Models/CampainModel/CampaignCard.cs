@@ -15,7 +15,6 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public int totalUnstartedCampaigns { get; set; }
         public int totalCompletedCampaigns { get; set; }
         public int totalOverdueCampaigns { get; set; }
-        public int totalUnpaidCampaigns { get; set; }
     }
 
     public class CampaignChart

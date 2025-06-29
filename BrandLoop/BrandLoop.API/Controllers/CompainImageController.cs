@@ -38,7 +38,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error occurred");
+                return StatusCode(500, ex);
             }
         }
 
@@ -83,7 +83,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error occurred");
+                return StatusCode(500, ex);
             }
         }
         [HttpDelete("campaign/image/{campaignImageId}")]
@@ -100,7 +100,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error occurred");
+                return StatusCode(500, ex);
             }
         }
         [HttpDelete("campaign/{campaignId}/images")]
@@ -117,7 +117,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error occurred");
+                return StatusCode(500, ex);
             }
         }
         public class CampaignImageUploadModel

@@ -71,7 +71,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<IEnumerable<CampaignDto>>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<IEnumerable<CampaignDto>>.ErrorResult(ex.Message));
             }
         }
 
@@ -112,7 +112,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<PaginationResponse<CampaignDto>>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<PaginationResponse<CampaignDto>>.ErrorResult(ex.Message));
             }
         }
         /// <summary>
@@ -141,7 +141,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<CampaignDto>.ErrorResult(ex.Message));
             }
         }
 
@@ -178,7 +178,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<CampaignDto>.ErrorResult(ex.Message));
             }
         }
 
@@ -222,7 +222,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<CampaignDto>.ErrorResult(ex.Message));
             }
         }
 
@@ -252,7 +252,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<bool>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<bool>.ErrorResult(ex.Message));
             }
         }
 
@@ -288,7 +288,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<CampaignDto>.ErrorResult(ex.Message));
             }
         }
 
@@ -319,7 +319,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<CampaignDto>.ErrorResult(ex.Message));
             }
         }
 
@@ -344,17 +344,17 @@ namespace BrandLoop.API.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ApiResponse<PaymentCampaign>.ErrorResult($"Lỗi: {ex.Message}"));
+                return BadRequest(ApiResponse<PaymentCampaign>.ErrorResult(ex.Message));
             }
             catch (UnauthorizedAccessException ex)
             {
                 return StatusCode(StatusCodes.Status403Forbidden,
-                    ApiResponse<PaymentCampaign>.ErrorResult($"Truy cập bị từ chối: {ex.Message}"));
+                    ApiResponse<PaymentCampaign>.ErrorResult(ex.Message));
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<PaymentCampaign>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<PaymentCampaign>.ErrorResult(ex.Message));
             }
         }
 
@@ -379,7 +379,7 @@ namespace BrandLoop.API.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return BadRequest(ApiResponse<CampaignDto>.ErrorResult($"Lỗi: {ex.Message}"));
+                return BadRequest(ApiResponse<CampaignDto>.ErrorResult(ex.Message));
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -389,7 +389,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignDto>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<CampaignDto>.ErrorResult(ex.Message));
             }
         }
 
@@ -433,7 +433,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<bool>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<bool>.ErrorResult(ex.Message));
             }
         }
 
@@ -460,7 +460,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<InfluencerReport>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<InfluencerReport>.ErrorResult(ex.Message));
             }
         }
 
@@ -487,7 +487,7 @@ namespace BrandLoop.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignTracking>.ErrorResult($"Lỗi server: {ex.Message}"));
+                    ApiResponse<CampaignTracking>.ErrorResult(ex.Message));
             }
         }
     }

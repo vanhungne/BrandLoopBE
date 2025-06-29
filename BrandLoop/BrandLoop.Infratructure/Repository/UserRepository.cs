@@ -68,7 +68,6 @@ namespace BrandLoop.Infratructure.Repository
             // Campaign statistics
             var activeCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampaignStatus.Approved) ?? 0;
             var completedCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampaignStatus.Completed) ?? 0;
-            var pendingCampaigns = brandProfile.Campaigns?.Count(c => c.Status == CampaignStatus.Pending) ?? 0;
             var totalCampaigns = brandProfile.Campaigns?.Count ?? 0;
 
             return new BrandProfileModel
@@ -102,7 +101,6 @@ namespace BrandLoop.Infratructure.Repository
                 TotalCampaigns = totalCampaigns,
                 ActiveCampaigns = activeCampaigns,
                 CompletedCampaigns = completedCampaigns,
-                PendingCampaigns = pendingCampaigns,
 
                 // Skills and Content
                 Skills = skills,

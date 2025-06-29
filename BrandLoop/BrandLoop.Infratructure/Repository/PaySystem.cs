@@ -46,12 +46,12 @@ namespace BrandLoop.Infratructure.Repository
 
             if(payment.Type == PaymentType.subscription)
             {
-                returnUrl = $"http://localhost:5173/payment/success";
-                cancelUrl = $"http://localhost:5173/payment/cancel";
+                returnUrl = $"http://localhost:5173/payment/success?type=subscription";
+                cancelUrl = $"http://localhost:5173/payment/cancel?type=subscription";
             } else if(payment.Type == PaymentType.campaign)
             {
-                returnUrl = $"http://localhost:5173/payment/success";
-                cancelUrl = $"http://localhost:5173/payment/cancel";
+                returnUrl = $"http://localhost:5173/payment/success?type=campaign";
+                cancelUrl = $"http://localhost:5173/payment/cancel?type=campaign";
             }
 
             PaymentData paymentData = new PaymentData(

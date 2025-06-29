@@ -72,9 +72,20 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<List<CampaignInvitation>> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus status)
         {
             var invitations = await _context.CampaignInvitations
-                .Where(i => i.CampaignId == campaignId && i.Status == status)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
+                .OrderByDescending(i => i.CreatedAt)
+                .Where(i => i.CampaignId == campaignId && i.Status == status)
+                .ToListAsync();
+            return invitations;
+        }
+
+        public async Task<List<CampaignInvitation>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus status)
+        {
+            var invitations = await _context.CampaignInvitations
+                .Include(i => i.User)
+                .Include(i => i.Campaign)
+                .Where(i => i.Campaign.CreatedBy == brandUid && i.Status == status)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
             return invitations;

@@ -111,6 +111,42 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Láy tất cả các invitation của một brand
+        /// </summary>
+        /// <returns>Trả vè list các invitation của chiến dịch đó</returns>
+        [HttpGet("get-all-of-brand")]
+        [Authorize(Roles = "Brand")]
+        public async Task<IActionResult> GetAllInvitationsOfBrandAsync(CampaignInvitationStatus status, [FromQuery] PaginationFilter filter)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var invitations = await _campaignInvitationService.GetAllInvitationsOfBrandAsync(uid, status);
+                if (invitations == null || !invitations.Any())
+                    return NotFound(ApiResponse<string>.ErrorResult("Can not found any invitation"));
+
+                var totalRecords = invitations.Count;
+                var pagedData = invitations
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<InvitationDTO>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+                );
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         /// <summary>
         /// Láy tất cả các invitation của KOL (nếu đang là KOL)
         /// </summary>

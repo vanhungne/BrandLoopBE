@@ -110,7 +110,7 @@ namespace BrandLoop.Infratructure.Repository
                 CampaignGoals = originalCampaign.CampaignGoals,
                 Budget = originalCampaign.Budget,
                 Deadline = originalCampaign.Deadline,
-                Status = CampaignStatus.Pending,
+                Status = CampaignStatus.Approved,
                 CreatedBy = originalCampaign.CreatedBy,
                 UploadedDate = DateTime.Now,
                 LastUpdate = DateTime.Now
@@ -141,7 +141,6 @@ namespace BrandLoop.Infratructure.Repository
             if (campaign.Status != CampaignStatus.Approved)
                 throw new InvalidOperationException("Campaign can only be started if it is in Approved status.");
 
-            campaign.Status = CampaignStatus.Pending;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
             campaign.StartTime = DateTimeHelper.GetVietnamNow();
             _context.Campaigns.Update(campaign);
@@ -152,8 +151,6 @@ namespace BrandLoop.Infratructure.Repository
         {
             var campaign = await GetCampaignDetailAsync(campaignId);
             if (campaign == null) return;
-            if (campaign.Status != CampaignStatus.Pending)
-                throw new InvalidOperationException("Campaign can only be started if it is in Pending status.");
 
             campaign.Status = CampaignStatus.InProgress;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();
@@ -201,8 +198,8 @@ namespace BrandLoop.Infratructure.Repository
             var campaign = await GetCampaignDetailAsync(campaignId);
             if (campaign == null) return null;
 
-            if (campaign.Status != CampaignStatus.Pending)
-                throw new InvalidOperationException("Campaign can only be cancel if it is in Pending status.");
+            if (campaign.Status != CampaignStatus.Approved)
+                throw new InvalidOperationException("Campaign can only be cancel if it is in Approved status.");
 
             campaign.Status = CampaignStatus.Completed;
             campaign.LastUpdate = DateTimeHelper.GetVietnamNow();

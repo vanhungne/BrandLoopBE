@@ -55,10 +55,6 @@ namespace BrandLoop.Application.Service
                         campaignCard.totalUnstartedCampaigns++;
                         break;
 
-                    case CampaignStatus.Pending:
-                        campaignCard.totalUnpaidCampaigns++;
-                        break;
-
                     case CampaignStatus.InProgress:
                         if (campaign.Deadline >= now)
                             campaignCard.totalInprogressCampaigns++;

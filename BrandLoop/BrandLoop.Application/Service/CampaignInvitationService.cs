@@ -97,6 +97,12 @@ namespace BrandLoop.Application.Service
             return _mapper.Map<List<InvitationDTO>>(invitations);
         }
 
+        public async Task<List<InvitationDTO>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus status)
+        {
+            var invitations = await _campaignInvitationRepository.GetAllInvitationsOfBrandAsync(brandUid, status);
+            return _mapper.Map<List<InvitationDTO>>(invitations);
+        }
+
         public async Task<InvitationDTO> GetInvitationByIdAsync(int invitationId, string uid)
         {
             var invitation = await _campaignInvitationRepository.GetInvitationByIdAsync(invitationId);
