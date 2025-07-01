@@ -34,7 +34,7 @@ namespace BrandLoop.Infratructure.Repository
             return await _context.Campaigns.Include(c => c.CampaignImages)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
-                .Where(c => c.Brand.UID == uid)
+                .Where(c => c.Brand.UID == uid && c.Status != CampaignStatus.Deleted)
                 .OrderByDescending(c => c.LastUpdate)
                 .ToListAsync();
         }
@@ -53,7 +53,7 @@ namespace BrandLoop.Infratructure.Repository
                 .Include(c => c.Feedbacks)
                 .Include(c => c.CampaignInvitations)
                 .Include(c => c.CampaignReport)
-                .FirstOrDefaultAsync(c => c.CampaignId == campaignId);
+                .FirstOrDefaultAsync(c => c.CampaignId == campaignId && c.Status != CampaignStatus.Deleted);
         }
 
         public async Task<Campaign> CreateCampaignAsync(Campaign campaign)
@@ -127,7 +127,7 @@ namespace BrandLoop.Infratructure.Repository
                 .Include(c=>c.CampaignImages)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
-                .Where(c => c.CreatedBy == uid)
+                .Where(c => c.CreatedBy == uid && c.Status != CampaignStatus.Deleted)
                 .OrderByDescending(c => c.LastUpdate)
                 .ToListAsync();
             return camaigns;
@@ -240,7 +240,7 @@ namespace BrandLoop.Infratructure.Repository
         }
         public async Task<List<Campaign>> GetBrandCampaignsByYear(string uid, int year)
         {
-            var campaigns = await _context.Campaigns.Where(c => c.CreatedBy == uid && (c.StartTime ?? c.UploadedDate).Year == year).ToListAsync();
+            var campaigns = await _context.Campaigns.Where(c => c.CreatedBy == uid && (c.StartTime ?? c.UploadedDate).Year == year && c.Status != CampaignStatus.Deleted).ToListAsync();
             return campaigns;
         }
 
@@ -248,7 +248,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var campaigns = await _context.Campaigns
                 .Include(c => c.KolsJoinCampaigns)
-                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid))
+                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid) && c.Status != CampaignStatus.Deleted)
                 .ToListAsync();
 
             return campaigns;
@@ -258,7 +258,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var campaigns = await _context.Campaigns
                 .Include(c => c.KolsJoinCampaigns)
-                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid) && (c.StartTime ?? c.UploadedDate).Year == year)
+                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid) && (c.StartTime ?? c.UploadedDate).Year == year && c.Status != CampaignStatus.Deleted)
                 .ToListAsync();
 
             return campaigns;
@@ -268,7 +268,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var campaigns = await _context.Campaigns
                 .Include(c => c.KolsJoinCampaigns)
-                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid) && c.Status == status)
+                .Where(c => c.KolsJoinCampaigns.Any(kjc => kjc.UID == uid) && c.Status == status && c.Status != CampaignStatus.Deleted)
                 .ToListAsync();
             return campaigns;
         }

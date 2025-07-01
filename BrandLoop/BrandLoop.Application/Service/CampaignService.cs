@@ -632,7 +632,7 @@ namespace BrandLoop.Application.Service
             var now = DateTimeHelper.GetVietnamNow();
             var campaigns = await _campaignRepository.GetBrandCampaignsAsync(uid);
             if (campaigns == null || !campaigns.Any())
-                throw new Exception("No campaigns found.");
+                return campaignCard; // Return empty object if no campaigns found
 
             campaignCard.totalCampaigns = campaigns.Count();
 
@@ -678,7 +678,7 @@ namespace BrandLoop.Application.Service
             // Lấy tất cả campaigns theo năm
             var campaigns = await _campaignRepository.GetBrandCampaignsByYear(uid, year);
             if (campaigns == null || !campaigns.Any())
-                throw new Exception($"No campaigns found in year {year}");
+                return result; // Trả về danh sách rỗng nếu không có campaigns
 
             foreach (var campaign in campaigns)
             {
@@ -717,8 +717,10 @@ namespace BrandLoop.Application.Service
         public async Task<CampaignDashboardDetail> GetCampaignDetailForDashboard(string uid, int campaignId)
         {
             var campaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
-            if(campaign.CreatedBy != uid)
-                throw new AuthenticationException($"You are can not view this campaign detail.");
+            if (campaign == null)
+                return null; // Return null if campaign not found
+            if (campaign.CreatedBy != uid)
+                throw new AuthenticationException($"You can not view this campaign detail.");
 
             var result = new CampaignDashboardDetail
             {

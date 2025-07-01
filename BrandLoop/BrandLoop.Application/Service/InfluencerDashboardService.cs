@@ -43,7 +43,7 @@ namespace BrandLoop.Application.Service
             var now = DateTimeHelper.GetVietnamNow();
             var campaigns = await _campaignRepository.GetAllCampaignsInfluJoined(uid);
             if (campaigns == null || !campaigns.Any())
-                throw new Exception("No campaigns found.");
+                return campaignCard; // Trả về đối tượng rỗng nếu không có campaigns
 
             campaignCard.totalCampaigns = campaigns.Count();
 
@@ -89,7 +89,7 @@ namespace BrandLoop.Application.Service
             // Lấy tất cả campaigns theo năm
             var campaigns = await _campaignRepository.GetAllCampaignsInfluJoined(uid, year);
             if (campaigns == null || !campaigns.Any())
-                throw new Exception($"No campaigns found in year {year}");
+                return result; // Trả về danh sách rỗng nếu không có campaigns
 
             foreach (var campaign in campaigns)
             {
@@ -123,7 +123,7 @@ namespace BrandLoop.Application.Service
         {
             var campaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
             if (campaign == null)
-                throw new Exception($"Campaign with ID {campaignId} not found.");
+                return null; // Trả về null nếu không tìm thấy chiến dịch
 
             var result = new CampaignReportOfInfluencer
             {
