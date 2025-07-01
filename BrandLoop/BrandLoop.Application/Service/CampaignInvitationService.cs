@@ -113,10 +113,10 @@ namespace BrandLoop.Application.Service
 
         public async Task<InvitationTotal> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus? status)
         {
-            var allInvitation = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(brandUid, null);
+            var allInvitation = await _campaignInvitationRepository.GetAllInvitationsOfBrandAsync(brandUid, null);
             var result = new InvitationTotal();
             result.totalInvitation = allInvitation.Count;
-            var invitationByStatus = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(brandUid, status);
+            var invitationByStatus = await _campaignInvitationRepository.GetAllInvitationsOfBrandAsync(brandUid, status);
             result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
             foreach (var invitation in allInvitation)
             {

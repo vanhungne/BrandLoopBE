@@ -51,8 +51,44 @@ namespace BrandLoop.API.Controllers
 
                 var campaigns = await _campaignService.GetAllCampaignByUid(uid);
                 if (campaigns == null || !campaigns.Any())
+                    return Ok();
+                var totalRecords = campaigns.Count;
+                var pagedData = campaigns
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponse<CampaignDto>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+                );
+                return Ok(ApiResponse<PaginationResponse<CampaignDto>>.SuccessResult(response, "Lấy danh sách campaigns thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<IEnumerable<CampaignDto>>.ErrorResult(ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Lấy danh sách campaigns cua brand
+        /// </summary>
+        /// <returns>Danh sách campaigns</returns>
+        [HttpGet("search-brand/my-brand")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<CampaignDto>>>> GetMyCampaigns([FromQuery] PaginationFilter filter, CampaignStatus? status, string? name)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var campaigns = await _campaignService.GetAllCampaignByUid(status, name, uid);
+                if (campaigns == null || !campaigns.Any())
                 {
-                    return NotFound(ApiResponse<List<CampaignDto>>.ErrorResult("Không tìm thấy campaigns cho brand này"));
+                    return Ok();
                 }
                 var totalRecords = campaigns.Count;
                 var pagedData = campaigns

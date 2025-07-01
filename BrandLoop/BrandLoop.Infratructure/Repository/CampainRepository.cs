@@ -133,6 +133,24 @@ namespace BrandLoop.Infratructure.Repository
             return camaigns;
         }
 
+        public async Task<List<Campaign>> GetAllCampaignByUid(CampaignStatus? status, string? name, string uid)
+        {
+            var campaigns = await _context.Campaigns
+                .Include(c => c.CampaignImages)
+                .Include(c => c.Brand)
+                .Include(c => c.Creator)
+                .Where(c =>
+                    c.CreatedBy == uid
+                    && c.Status != CampaignStatus.Deleted
+                    && (status == null || c.Status == status)
+                    && (string.IsNullOrEmpty(name) || c.CampaignName.Contains(name))
+                )
+                .OrderByDescending(c => c.LastUpdate)
+                .ToListAsync();
+
+            return campaigns;
+        }
+
         public async Task<Campaign> StartCampaign(int campaignId)
         {
             var campaign = await GetCampaignDetailAsync(campaignId);

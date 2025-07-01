@@ -356,6 +356,16 @@ namespace BrandLoop.Application.Service
             }
             return _mapper.Map<List<CampaignDto>>(campaigns);
         }
+        public async Task<List<CampaignDto>> GetAllCampaignByUid(CampaignStatus? status, string? name,string uid)
+        {
+            var campaigns = await _campaignRepository.GetAllCampaignByUid(status, name, uid);
+            if (campaigns == null || !campaigns.Any())
+            {
+                _logger.LogWarning("No campaigns found for user {Uid}", uid);
+            }
+            return _mapper.Map<List<CampaignDto>>(campaigns);
+        }
+
         public async Task<List<CampaignDto>> GetAllCampaignsAsync(CampaignFilterModel filter)
         {
             var query = _campaignRepository.GetAll()

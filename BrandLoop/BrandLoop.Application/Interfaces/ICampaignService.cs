@@ -21,6 +21,7 @@ namespace BrandLoop.Application.Interfaces
         Task<CampaignDto> UpdateCampaignStatusAsync(int campaignId, CampaignStatus status);
         Task<CampaignDto> DuplicateCampaignAsync(int campaignId);
         Task<List<CampaignDto>> GetAllCampaignByUid(string uid);
+        Task<List<CampaignDto>> GetAllCampaignByUid(CampaignStatus? status,string? name, string uid);
         Task<PaymentCampaign> StartCampaign(string creatorId, int campaignId);
         Task<CreatePaymentResult> CreatePaymentLink(long orderCode);
         Task ConfirmPayment(long orderCode);
