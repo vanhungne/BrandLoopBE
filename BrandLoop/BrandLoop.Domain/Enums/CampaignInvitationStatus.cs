@@ -11,7 +11,8 @@ namespace BrandLoop.Domain.Enums
         pending,
         negotiating,
         accepted,
-        rejected
+        rejected,
+        expired
     }
 
     public enum DealStatus

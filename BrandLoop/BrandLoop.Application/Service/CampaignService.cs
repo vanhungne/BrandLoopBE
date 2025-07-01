@@ -30,6 +30,7 @@ namespace BrandLoop.Application.Service
         private readonly IUserRepository _userRepository;
         private readonly IInfluencerReportRepository _influencerReportRepository;
         private readonly IFeedbackRepository _feedbackRepository;
+        private readonly ICampaignInvitationRepository _campaignInvitationRepository;
 
         public CampaignService(
             ICampaignRepository campaignRepository,
@@ -40,7 +41,8 @@ namespace BrandLoop.Application.Service
             IPaySystem paySystem,
             IUserRepository userRepository,
             IInfluencerReportRepository influencerReportRepository,
-            IFeedbackRepository feedbackRepository)
+            IFeedbackRepository feedbackRepository,
+            ICampaignInvitationRepository campaignInvitationRepository)
         {
             _campaignRepository = campaignRepository ?? throw new ArgumentNullException(nameof(campaignRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -51,6 +53,7 @@ namespace BrandLoop.Application.Service
             _userRepository = userRepository;
             _influencerReportRepository = influencerReportRepository;
             _feedbackRepository = feedbackRepository;
+            _campaignInvitationRepository = campaignInvitationRepository;
         }
 
         public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(string uid)
@@ -442,6 +445,12 @@ namespace BrandLoop.Application.Service
             };
             await _paymentRepository.CreatePaymentAsync(payment);
             var paymentLink = await CreatePaymentLink(orderCode);
+
+            // Update invitation status to expired
+            var invitationList = await _campaignInvitationRepository.GetAllWaitingInvitationOfCampaign(campaignId);
+            foreach (var invitation in invitationList)
+                await _campaignInvitationRepository.UpdateInvitationStatus(invitation.InvitationId, CampaignInvitationStatus.expired);
+
             return _mapper.Map<PaymentCampaign>(campaign);
         }
 

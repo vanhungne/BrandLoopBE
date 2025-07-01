@@ -64,28 +64,39 @@ namespace BrandLoop.Infratructure.Repository
                 Status = CampaignInvitationStatus.pending
             };
             invitation.Type = type;
-             _context.CampaignInvitations.Add(invitation);
+            _context.CampaignInvitations.Add(invitation);
             await _context.SaveChangesAsync();
             return invitation;
         }
 
-        public async Task<List<CampaignInvitation>> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus status)
+        public async Task<List<CampaignInvitation>> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus? status)
         {
             var invitations = await _context.CampaignInvitations
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
                 .OrderByDescending(i => i.CreatedAt)
-                .Where(i => i.CampaignId == campaignId && i.Status == status)
+                .Where(i => i.CampaignId == campaignId && (status == null || i.Status == status))
                 .ToListAsync();
             return invitations;
         }
 
-        public async Task<List<CampaignInvitation>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus status)
+        public async Task<List<CampaignInvitation>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus? status)
         {
             var invitations = await _context.CampaignInvitations
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
-                .Where(i => i.Campaign.CreatedBy == brandUid && i.Status == status)
+                .Where(i => i.Campaign.CreatedBy == brandUid && (status == null || i.Status == status) && i.Type == JoinCampaignType.BrandInvited)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+            return invitations;
+        }
+
+        public async Task<List<CampaignInvitation>> GetAllRequestedsOfBrandAsync(string brandUid, CampaignInvitationStatus? status)
+        {
+            var invitations = await _context.CampaignInvitations
+                .Include(i => i.User)
+                .Include(i => i.Campaign)
+                .Where(i => i.Campaign.CreatedBy == brandUid && (status == null || i.Status == status) && i.Type == JoinCampaignType.KolApplied)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
             return invitations;
@@ -100,21 +111,34 @@ namespace BrandLoop.Infratructure.Repository
             return invitation ?? throw new Exception("Invitation not found");
         }
 
-        public async Task<List<CampaignInvitation>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus status)
+        public async Task<List<CampaignInvitation>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus? status)
         {
             var invitations = await _context.CampaignInvitations
-                .Where(i => i.UID == kolId && i.Status == status)
+                .Where(i => i.UID == kolId && (status == null || i.Status == status) && i.Type == JoinCampaignType.BrandInvited)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
+
+            return invitations;
+        }
+
+        public async Task<List<CampaignInvitation>> GetRequestByKOLIdAsync(string kolId, CampaignInvitationStatus? status)
+        {
+            var invitations = await _context.CampaignInvitations
+                .Where(i => i.UID == kolId && (status == null || i.Status == status) && i.Type == JoinCampaignType.KolApplied)
+                .Include(i => i.User)
+                .Include(i => i.Campaign)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+
             return invitations;
         }
 
         public async Task<bool> IsWaitingForApprove(int campaignId, string uid)
         {
             var isWaiting = await _context.CampaignInvitations
-                .AnyAsync(i => i.CampaignId == campaignId && i.UID == uid 
+                .AnyAsync(i => i.CampaignId == campaignId && i.UID == uid
                 && (i.Status == Domain.Enums.CampaignInvitationStatus.pending || i.Status == CampaignInvitationStatus.negotiating));
             return isWaiting;
         }
@@ -141,6 +165,34 @@ namespace BrandLoop.Infratructure.Repository
             invitation.Status = Domain.Enums.CampaignInvitationStatus.rejected;
             _context.CampaignInvitations.Update(invitation);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<List<CampaignInvitation>> GetAllWaitingInvitationOfCampaign(int campaignId)
+        {
+            var invitations = await _context.CampaignInvitations
+                .Include(i => i.User)
+                .Include(i => i.Campaign)
+                .Where(i => (i.Status == CampaignInvitationStatus.pending || i.Status == CampaignInvitationStatus.negotiating) && i.CampaignId == campaignId)
+                .OrderByDescending(i => i.CreatedAt)
+                .ToListAsync();
+            return invitations;
+        }
+
+        public async Task UpdateInvitationStatus(int invitationId, CampaignInvitationStatus status)
+        {
+            var invitation = _context.CampaignInvitations.FirstOrDefault(i => i.InvitationId == invitationId);
+            if (invitation == null)
+                throw new Exception("Invitation not found");
+            invitation.Status = status;
+            _context.CampaignInvitations.Update(invitation);
+            await _context.SaveChangesAsync();
+        }
+
+        public Task<CampaignInvitation> GetByCampaignAndCreatedBy(int campaignId, string kolUid)
+        {
+            var invitation = _context.CampaignInvitations
+                .FirstOrDefaultAsync(i => i.CampaignId == campaignId && i.UID == kolUid);
+            return invitation;
         }
     }
 }

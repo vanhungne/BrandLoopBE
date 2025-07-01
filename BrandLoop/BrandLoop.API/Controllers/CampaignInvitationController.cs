@@ -75,14 +75,14 @@ namespace BrandLoop.API.Controllers
         /// <returns>Trả vè list các invitation của chiến dịch đó</returns>
         [HttpGet("campaign/{campaignId}")]
         [Authorize(Roles = "Brand")]
-        public async Task<IActionResult> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus status, [FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus? status, [FromQuery] PaginationFilter filter)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var invitations = await _campaignInvitationService.GetAllInvitationsOfCampaignAsync(campaignId, uid, status);
                 if (invitations == null || !invitations.Any())
-                    return NotFound(ApiResponse<string>.ErrorResult("Can not found any invitation"));
+                    return Ok(invitations);
 
                 var totalRecords = invitations.Count;
                 var pagedData = invitations
@@ -113,31 +113,37 @@ namespace BrandLoop.API.Controllers
         }
 
         /// <summary>
-        /// Láy tất cả các invitation của một brand
+        /// Láy tất cả các invitation ma brand đã gửi cho KOL
         /// </summary>
         /// <returns>Trả vè list các invitation của chiến dịch đó</returns>
-        [HttpGet("get-all-of-brand")]
+        [HttpGet("get-all-invitation-of-brand")]
         [Authorize(Roles = "Brand")]
-        public async Task<IActionResult> GetAllInvitationsOfBrandAsync(CampaignInvitationStatus status, [FromQuery] PaginationFilter filter)
+        public async Task<IActionResult> GetAllInvitationsOfBrandAsync(CampaignInvitationStatus? status, [FromQuery] PaginationFilter filter)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var invitations = await _campaignInvitationService.GetAllInvitationsOfBrandAsync(uid, status);
-                if (invitations == null || !invitations.Any())
-                    return NotFound(ApiResponse<string>.ErrorResult("Can not found any invitation"));
 
-                var totalRecords = invitations.Count;
-                var pagedData = invitations
+                var invitations = await _campaignInvitationService.GetAllInvitationsOfBrandAsync(uid, status);
+                if (invitations == null || !invitations.Invitations.Any())
+                    return Ok();
+
+                var totalRecords = invitations.Invitations.Count;
+                var pagedData = invitations.Invitations
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponse<InvitationDTO>(
+                var response = new PaginationResponseV2<InvitationDTO>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,
-                totalRecords
+                totalRecords,
+                invitations.totalInvitation,
+                invitations.totalWaitingInvitation,
+                invitations.totalAcceptedInvitation,
+                invitations.totalRejectedInvitation,
+                invitations.totalExpiredInvitation
                 );
                 return Ok(response);
             }
@@ -148,32 +154,37 @@ namespace BrandLoop.API.Controllers
         }
 
         /// <summary>
-        /// Láy tất cả các invitation của KOL (nếu đang là KOL)
+        /// Láy tất cả các invitation ma KOL đã gửi cho brand
         /// </summary>
-        /// <returns>Trả vè list các invitation</returns>
-        [HttpGet("get-all-kol-invitation")]
-        [Authorize(Roles = "Influencer")]
-        public async Task<IActionResult> GetInvitationsByKOLIdAsync(CampaignInvitationStatus status, [FromQuery] PaginationFilter filter)
+        /// <returns>Trả vè list các invitation của chiến dịch đó</returns>
+        [HttpGet("get-all-request-to-brand")]
+        [Authorize(Roles = "Brand")]
+        public async Task<IActionResult> GetAllRequestToBrandAsync(CampaignInvitationStatus? status, [FromQuery] PaginationFilter filter)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-                var invitations = await _campaignInvitationService.GetInvitationsByKOLIdAsync(uid, status);
-                if (invitations == null || !invitations.Any())
-                    return NotFound(ApiResponse<string>.ErrorResult("Can not found any invitation"));
+                var invitations = await _campaignInvitationService.GetAllRequestOfBrandAsync(uid, status);
+                if (invitations == null || !invitations.Invitations.Any())
+                    return Ok();
 
-                var totalRecords = invitations.Count;
-                var pagedData = invitations
+                var totalRecords = invitations.Invitations.Count;
+                var pagedData = invitations.Invitations
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponse<InvitationDTO>(
+                var response = new PaginationResponseV2<InvitationDTO>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,
-                totalRecords
+                totalRecords,
+                invitations.totalInvitation,
+                invitations.totalWaitingInvitation,
+                invitations.totalAcceptedInvitation,
+                invitations.totalRejectedInvitation,
+                invitations.totalExpiredInvitation
                 );
                 return Ok(response);
             }
@@ -182,6 +193,89 @@ namespace BrandLoop.API.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Láy tất cả các invitaion ma brand moi KOL tham gia
+        /// </summary>
+        /// <returns>Trả vè list các invitation</returns>
+        [HttpGet("get-all-kol-invitation")]
+        [Authorize(Roles = "Influencer")]
+        public async Task<IActionResult> GetInvitationsByKOLIdAsync([FromQuery]CampaignInvitationStatus? status, [FromQuery] PaginationFilter filter)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var invitations = await _campaignInvitationService.GetInvitationsByKOLIdAsync(uid, status);
+                if (invitations == null || !invitations.Invitations.Any())
+                    return Ok();
+
+                var totalRecords = invitations.Invitations.Count;
+                var pagedData = invitations.Invitations
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponseV2<InvitationDTO>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords,
+                invitations.totalInvitation,
+                invitations.totalWaitingInvitation,
+                invitations.totalAcceptedInvitation,
+                invitations.totalRejectedInvitation,
+                invitations.totalExpiredInvitation
+                );
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Láy tất cả các invitation của KOL request cho brand (nếu đang là KOL)
+        /// </summary>
+        /// <returns>Trả vè list các invitation</returns>
+        [HttpGet("get-all-brand-invite-of-kol")]
+        [Authorize(Roles = "Influencer")]
+        public async Task<IActionResult> GetAllBrandInviteKOL([FromQuery] CampaignInvitationStatus? status, [FromQuery] PaginationFilter filter)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var invitations = await _campaignInvitationService.GetRequestedByKOLIdAsync(uid, status);
+                if (invitations == null || !invitations.Invitations.Any())
+                    return Ok();
+
+                var totalRecords = invitations.Invitations.Count;
+                var pagedData = invitations.Invitations
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+                var response = new PaginationResponseV2<InvitationDTO>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords,
+                invitations.totalInvitation,
+                invitations.totalWaitingInvitation,
+                invitations.totalAcceptedInvitation,
+                invitations.totalRejectedInvitation,
+                invitations.totalExpiredInvitation
+                );
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
         /// <summary>
         /// Lấy thông tin của một invitation theo ID
         /// </summary>

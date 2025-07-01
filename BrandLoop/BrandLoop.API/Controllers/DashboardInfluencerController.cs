@@ -73,7 +73,7 @@ namespace BrandLoop.API.Controllers
         }
 
         /// <summary>
-        /// Lay thong tin cac goi subscription dang hoat dong cua influencer
+        /// Lay thong tin cac option de chon campaign tren dashboard cua influencer
         /// </summary>
         /// 
         [HttpGet("campaign-select-option")]

@@ -13,6 +13,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BrandLoop.Application.Service
 {
@@ -40,6 +41,11 @@ namespace BrandLoop.Application.Service
             {
                 if (await CheckCanApprove(invitationId, uid))
                 {
+                    // check if the influencer already in this campaign
+                    var kolJoinCampaign = (await _campaignRepository.GetKolsJoinCampaigns(invitation.CampaignId)).FirstOrDefault(k => k.UID == invitation.UID);
+                    if (kolJoinCampaign != null)
+                        throw new Exception("This influencer has already joined this campaign.");
+
                     await _campaignInvitationRepository.AprroveInvitation(invitationId);
                     // Create a deal after approving the invitation
                     await _dealRepository.CreateDealAsync(invitation, (decimal)invitation.ProposedRate);
@@ -67,6 +73,10 @@ namespace BrandLoop.Application.Service
             switch (type)
             {
                 case JoinCampaignType.BrandInvited: // Brand invites KOLs to the campaign
+                    // Check if user is already invited to the campaign
+                    var existingInvitation = await _campaignInvitationRepository.GetByCampaignAndCreatedBy(joinCampaign.CampaignId, joinCampaign.UID);
+                    if (existingInvitation != null)
+                        throw new Exception("You have already invited this influencer to this campaign.");
                     var campaign = await _campaignRepository.GetCampaignDetailAsync(joinCampaign.CampaignId);
                     if (campaign.CreatedBy == uid)
                     {
@@ -79,12 +89,16 @@ namespace BrandLoop.Application.Service
 
                 default: // KOLs apply to join the campaign
                     joinCampaign.UID = uid;
+                    // Check if user has already applied to the campaign
+                    var existingKolInvitation = await _campaignInvitationRepository.GetByCampaignAndCreatedBy(joinCampaign.CampaignId, uid);
+                    if (existingKolInvitation != null)
+                        throw new Exception("You have already applied to this campaign.");
                     var kolInvitation = await _campaignInvitationRepository.CreateInvitationAsync(joinCampaign, type);
                     return _mapper.Map<InvitationDTO>(kolInvitation);
             }
         }
 
-        public async Task<List<InvitationDTO>> GetAllInvitationsOfCampaignAsync(int campaignId, string uid, CampaignInvitationStatus status)
+        public async Task<List<InvitationDTO>> GetAllInvitationsOfCampaignAsync(int campaignId, string uid, CampaignInvitationStatus? status)
         {
             // Ensure the user is authorized to view the invitations for this campaign
             var campaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
@@ -97,10 +111,49 @@ namespace BrandLoop.Application.Service
             return _mapper.Map<List<InvitationDTO>>(invitations);
         }
 
-        public async Task<List<InvitationDTO>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus status)
+        public async Task<InvitationTotal> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus? status)
         {
-            var invitations = await _campaignInvitationRepository.GetAllInvitationsOfBrandAsync(brandUid, status);
-            return _mapper.Map<List<InvitationDTO>>(invitations);
+            var allInvitation = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(brandUid, null);
+            var result = new InvitationTotal();
+            result.totalInvitation = allInvitation.Count;
+            var invitationByStatus = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(brandUid, status);
+            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            foreach (var invitation in allInvitation)
+            {
+                if (invitation.Status == CampaignInvitationStatus.pending)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.negotiating)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.accepted)
+                    result.totalAcceptedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.rejected)
+                    result.totalRejectedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.expired)
+                    result.totalExpiredInvitation++;
+            }
+            return result;
+        }
+        public async Task<InvitationTotal> GetAllRequestOfBrandAsync(string brandUid, CampaignInvitationStatus? status)
+        {
+            var allInvitation = await _campaignInvitationRepository.GetAllRequestedsOfBrandAsync(brandUid, null);
+            var result = new InvitationTotal();
+            result.totalInvitation = allInvitation.Count;
+            var invitationByStatus = await _campaignInvitationRepository.GetAllRequestedsOfBrandAsync(brandUid, status);
+            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            foreach (var invitation in allInvitation)
+            {
+                if (invitation.Status == CampaignInvitationStatus.pending)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.negotiating)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.accepted)
+                    result.totalAcceptedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.rejected)
+                    result.totalRejectedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.expired)
+                    result.totalExpiredInvitation++;
+            }
+            return result;
         }
 
         public async Task<InvitationDTO> GetInvitationByIdAsync(int invitationId, string uid)
@@ -113,10 +166,49 @@ namespace BrandLoop.Application.Service
             return _mapper.Map<InvitationDTO>(invitation);
         }
 
-        public async Task<List<InvitationDTO>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus status)
+        public async Task<InvitationTotal> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus? status)
         {
-            var kolInvitation = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(kolId, status);
-            return _mapper.Map<List<InvitationDTO>>(kolInvitation);
+            var allKolInvitation = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(kolId, null);
+            var result = new InvitationTotal();
+            result.totalInvitation = allKolInvitation.Count;
+            var invitationByStatus = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(kolId, status);
+            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            foreach (var invitation in allKolInvitation)
+            {
+                if (invitation.Status == CampaignInvitationStatus.pending)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.negotiating)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.accepted)
+                    result.totalAcceptedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.rejected)
+                    result.totalRejectedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.expired)
+                    result.totalExpiredInvitation++;
+            }
+            return result;
+        }
+        public async Task<InvitationTotal> GetRequestedByKOLIdAsync(string kolId, CampaignInvitationStatus? status)
+        {
+            var allKolInvitation = await _campaignInvitationRepository.GetRequestByKOLIdAsync(kolId, null);
+            var result = new InvitationTotal();
+            result.totalInvitation = allKolInvitation.Count;
+            var invitationByStatus = await _campaignInvitationRepository.GetRequestByKOLIdAsync(kolId, status);
+            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            foreach (var invitation in allKolInvitation)
+            {
+                if (invitation.Status == CampaignInvitationStatus.pending)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.negotiating)
+                    result.totalWaitingInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.accepted)
+                    result.totalAcceptedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.rejected)
+                    result.totalRejectedInvitation++;
+                else if (invitation.Status == CampaignInvitationStatus.expired)
+                    result.totalExpiredInvitation++;
+            }
+            return result;
         }
 
         public async Task<bool> IsWaitingForApprove(int campaignId, string uid)

@@ -12,9 +12,11 @@ namespace BrandLoop.Infratructure.Interface
     public interface ICampaignInvitationRepository
     {
         // Define methods for the CampaignInvitation repository here
-        Task<List<CampaignInvitation>> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus status);
-        Task<List<CampaignInvitation>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus status);
-        Task<List<CampaignInvitation>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus status);
+        Task<List<CampaignInvitation>> GetAllInvitationsOfCampaignAsync(int campaignId, CampaignInvitationStatus? status);
+        Task<List<CampaignInvitation>> GetAllInvitationsOfBrandAsync(string brandUid, CampaignInvitationStatus? status);
+        Task<List<CampaignInvitation>> GetAllRequestedsOfBrandAsync(string brandUid, CampaignInvitationStatus? status);
+        Task<List<CampaignInvitation>> GetInvitationsByKOLIdAsync(string kolId, CampaignInvitationStatus? status);
+        Task<List<CampaignInvitation>> GetRequestByKOLIdAsync(string kolId, CampaignInvitationStatus? status);
         Task<CampaignInvitation> GetInvitationByIdAsync(int invitationId);
         Task<CampaignInvitation> CreateInvitationAsync(JoinCampaign joinCampaign, JoinCampaignType type);
         Task AprroveInvitation(int invitationId);
@@ -22,5 +24,8 @@ namespace BrandLoop.Infratructure.Interface
         Task RejectInvitation(int invitationId);
         Task<bool> IsWaitingForApprove(int campaignId, string uid);
         Task<bool> CheckIsBrand(int campaignId, string uid);
+        Task<List<CampaignInvitation>> GetAllWaitingInvitationOfCampaign(int campaignId);
+        Task UpdateInvitationStatus(int invitationId, CampaignInvitationStatus status);
+        Task<CampaignInvitation> GetByCampaignAndCreatedBy(int campaignId, string kolUid);
     }
 }
