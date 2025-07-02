@@ -31,10 +31,25 @@ namespace BrandLoop.API.Controllers
 
         [HttpGet("all")]
         [AllowAnonymous]
-        public async Task<ActionResult<ApiResponse<List<CampaignDto>>>> GetAllCampaigns([FromQuery] CampaignFilterModel filter)
+        public async Task<ActionResult<ApiResponse<PaginationResponse<CampaignDto>>>> GetAllCampaigns([FromQuery] CampaignFilterModel filter)
         {
             var result = await _campaignService.GetAllCampaignsAsync(filter);
-            return Ok(ApiResponse<List<CampaignDto>>.SuccessResult(result, "Lấy tất cả campaign thành công"));
+            var totalRecords = result.Count; // If your service supports total count, use that instead
+
+            // If you want to support paging, apply Skip/Take here
+            var pagedData = result
+                .Skip((filter.PageNumber - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToList();
+
+            var response = new PaginationResponse<CampaignDto>(
+                pagedData,
+                filter.PageNumber,
+                filter.PageSize,
+                totalRecords
+            );
+
+            return Ok(ApiResponse<PaginationResponse<CampaignDto>>.SuccessResult(response, "Lấy tất cả campaign thành công"));
         }
 
         /// <summary>
