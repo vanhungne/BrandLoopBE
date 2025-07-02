@@ -95,5 +95,126 @@ namespace BrandLoop.Infratructure.Repository
                 return false;
             }
         }
+
+        public async Task<Notification> CreateAsync(Notification notification)
+        {
+            notification.CreatedAt = DateTime.Now;
+            _context.Notifications.Add(notification);
+            await _context.SaveChangesAsync();
+            return notification;
+        }
+
+        public async Task<Notification> GetByIdAsync(int notificationId)
+        {
+            return await _context.Notifications
+                .Include(n => n.User)
+                .FirstOrDefaultAsync(n => n.NotificationId == notificationId);
+        }
+
+        public async Task<List<Notification>> GetByUserIdAsync(string userId, int pageSize = 20, int pageNumber = 1)
+        {
+            return await _context.Notifications
+                .Where(n => n.UID == userId && n.Status != NotificationStatus.Deleted)
+                .OrderByDescending(n => n.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Include(n => n.User)
+                .ToListAsync();
+        }
+
+        public async Task<List<Notification>> GetUnreadByUserIdAsync(string userId)
+        {
+            return await _context.Notifications
+                .Where(n => n.UID == userId && n.Status == NotificationStatus.Unread)
+                .OrderByDescending(n => n.CreatedAt)
+                .Include(n => n.User)
+                .ToListAsync();
+        }
+
+        public async Task<List<Notification>> GetByTargetAsync(NotificationTarget target, int pageSize = 20, int pageNumber = 1)
+        {
+            return await _context.Notifications
+                .Where(n => n.Target == target && n.Status != NotificationStatus.Deleted)
+                .OrderByDescending(n => n.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Include(n => n.User)
+                .ToListAsync();
+        }
+
+        public async Task<bool> MarkAsReadAsync(int notificationId)
+        {
+            var notification = await _context.Notifications.FindAsync(notificationId);
+            if (notification != null)
+            {
+                notification.Status = NotificationStatus.Read;
+                notification.IsRead = true;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> MarkAllAsReadAsync(string userId)
+        {
+            var notifications = await _context.Notifications
+                .Where(n => n.UID == userId && n.Status == NotificationStatus.Unread)
+                .ToListAsync();
+
+            foreach (var notification in notifications)
+            {
+                notification.Status = NotificationStatus.Read;
+                notification.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(int notificationId)
+        {
+            var notification = await _context.Notifications.FindAsync(notificationId);
+            if (notification != null)
+            {
+                notification.Status = NotificationStatus.Deleted;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<int> GetUnreadCountAsync(string userId)
+        {
+            return await _context.Notifications
+                .CountAsync(n => n.UID == userId && n.Status == NotificationStatus.Unread);
+        }
+
+        public async Task<List<Notification>> GetAdminNotificationsAsync(int pageSize = 20, int pageNumber = 1)
+        {
+            return await _context.Notifications
+                .Where(n => n.Target == NotificationTarget.All && n.Status != NotificationStatus.Deleted)
+                .OrderByDescending(n => n.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Include(n => n.User)
+                .ToListAsync();
+        }
+
+        public async Task<List<Notification>> GetUnreadAdminNotificationsAsync()
+        {
+            return await _context.Notifications
+                .Where(n => n.Target == NotificationTarget.All && n.Status == NotificationStatus.Unread)
+                .OrderByDescending(n => n.CreatedAt)
+                .Include(n => n.User)
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateAsync(Notification notification)
+        {
+            _context.Notifications.Update(notification);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

@@ -28,6 +28,8 @@ namespace BrandLoop.Domain.Entities
         [StringLength(20)]
         public NotificationStatus Status { get; set; } = NotificationStatus.Unread;
 
+        public NotificationTarget Target { get; set; } = NotificationTarget.All;
+
         public bool IsRead { get; set; } = false;
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;

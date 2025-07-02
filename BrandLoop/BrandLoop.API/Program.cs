@@ -218,6 +218,7 @@ public class Program
 
         app.MapHub<ChatAiHub>("/ChatAiHub");
         app.MapHub<ChatHub>("/chathub");
+        app.MapHub<NotificationHub>("/NotificationHub");
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
