@@ -22,13 +22,13 @@ namespace BrandLoop.Domain.Entities
         public string CompanyName { get; set; }
 
         [StringLength(100)]
-        public string Industry { get; set; }
+        public string? Industry { get; set; }
 
         [StringLength(255)]
-        public string Website { get; set; }
+        public string? Website { get; set; }
 
         [StringLength(255)]
-        public string Logo { get; set; }
+        public string? Logo { get; set; }
 
         [StringLength(50)]
         public string CompanySize { get; set; }
@@ -38,18 +38,18 @@ namespace BrandLoop.Domain.Entities
         public string Address { get; set; }
 
         [StringLength(50)]
-        public string TaxCode { get; set; }
+        public string? TaxCode { get; set; }
 
         public int? EstablishedYear { get; set; }
 
         [StringLength(255)]
-        public string Facebook { get; set; }
+        public string? Facebook { get; set; }
 
         [StringLength(255)]
-        public string Instagram { get; set; }
+        public string? Instagram { get; set; }
 
         [StringLength(255)]
-        public string Tiktok { get; set; }
+        public string? Tiktok { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 

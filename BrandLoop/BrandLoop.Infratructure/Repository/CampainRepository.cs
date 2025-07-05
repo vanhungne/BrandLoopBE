@@ -34,6 +34,7 @@ namespace BrandLoop.Infratructure.Repository
             return await _context.Campaigns.Include(c => c.CampaignImages)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
+                .Include(c => c.KolsJoinCampaigns)
                 .Where(c => c.Brand.UID == uid && c.Status != CampaignStatus.Deleted)
                 .OrderByDescending(c => c.LastUpdate)
                 .ToListAsync();
@@ -124,6 +125,7 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<List<Campaign>> GetAllCampaignByUid(string uid)
         {
             var camaigns = await _context.Campaigns
+                  .Include(c => c.KolsJoinCampaigns)
                 .Include(c=>c.CampaignImages)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
@@ -136,6 +138,7 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<List<Campaign>> GetAllCampaignByUid(CampaignStatus? status, string? name, string uid)
         {
             var campaigns = await _context.Campaigns
+                    .Include(c => c.KolsJoinCampaigns)
                 .Include(c => c.CampaignImages)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
@@ -250,6 +253,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             return await _context.Campaigns
                 .Include(c => c.CampaignImages)
+                 .Include(c => c.KolsJoinCampaigns)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
                 .Where(c => c.CreatedBy == uid && c.Status == status)

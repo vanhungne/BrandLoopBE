@@ -370,6 +370,7 @@ namespace BrandLoop.Application.Service
         {
             var query = _campaignRepository.GetAll()
                 .Include(c => c.CampaignImages)
+                .Include(c => c.KolsJoinCampaigns)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
                 .AsQueryable();

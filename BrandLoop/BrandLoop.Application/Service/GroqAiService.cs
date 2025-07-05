@@ -28,15 +28,19 @@ namespace BrandLoop.Application.Service
         public async Task<ChatResponseDto> AskAsync(ChatRequestDto req,
                                                    CancellationToken ct = default)
         {
+            var systemPrompt = !string.IsNullOrEmpty(req.SystemPrompt)
+                     ? $"{_opt.DefaultSystemPrompt}\n\n{req.SystemPrompt}"
+                     : _opt.DefaultSystemPrompt;
+
             var body = new
             {
                 model = _opt.Model,
                 temperature = req.Temperature,
                 messages = new[]
-                {
-                new { role = "system", content = req.SystemPrompt },
-                new { role = "user",   content = req.UserPrompt  }
-            }
+                   {
+                    new { role = "system", content = systemPrompt },
+                    new { role = "user",   content = req.UserPrompt  }
+                }
             };
 
             var httpReq = new HttpRequestMessage(HttpMethod.Post,
@@ -45,6 +49,7 @@ namespace BrandLoop.Application.Service
                 Content = new StringContent(JsonSerializer.Serialize(body, _jOpt),
                                             Encoding.UTF8, "application/json")
             };
+
             httpReq.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _opt.ApiKey);
 
             using var res = await _http.SendAsync(httpReq, ct).ConfigureAwait(false);

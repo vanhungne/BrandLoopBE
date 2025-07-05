@@ -19,7 +19,7 @@
             public string UID { get; set; }
 
             [StringLength(100)]
-            public string Nickname { get; set; }
+            public string? Nickname { get; set; }
 
             public string Bio { get; set; }
 
@@ -33,23 +33,23 @@
             public string Languages { get; set; }
 
             [StringLength(255)]
-            public string PortfolioUrl { get; set; }
+            public string? PortfolioUrl { get; set; }
 
             public decimal? AverageRate { get; set; }
 
             public bool Verified { get; set; } = false;
 
             [StringLength(255)]
-            public string Facebook { get; set; }
+            public string? Facebook { get; set; }
 
             [StringLength(255)]
-            public string Instagram { get; set; }
+            public string? Instagram { get; set; }
 
             [StringLength(255)]
-            public string Tiktok { get; set; }
+            public string? Tiktok { get; set; }
 
             [StringLength(255)]
-            public string Youtube { get; set; }
+            public string? Youtube { get; set; }
 
             public int? FollowerCount { get; set; }
 
