@@ -310,12 +310,10 @@ namespace BrandLoop.Infratructure.ReporitorY
                 }
             }
 
-            string emailBody = _emailSender.GetMailBody(model, "Brand");
-            bool emailSent = await _emailSender.EmailSendAsync(model.Email, "Brand Registration Submitted", emailBody);
+            //string emailBody = _emailSender.GetMailBody(model, "Brand");
+            //bool emailSent = await _emailSender.EmailSendAsync(model.Email, "Brand Registration Submitted", emailBody);
 
-            return emailSent
-                ? "Your brand registration has been submitted. You will receive an email when your account is approved by an administrator."
-                : "Your brand registration has been submitted, but there was an error sending the confirmation email.";
+            return "Your brand registration has been submitted.";
         }
 
         // New methods for KOL registration
@@ -408,12 +406,10 @@ namespace BrandLoop.Infratructure.ReporitorY
                 }
             }
 
-            string emailBody = _emailSender.GetMailBody(model, "Influencer");
-            bool emailSent = await _emailSender.EmailSendAsync(model.Email, "Influencer Registration Submitted", emailBody);
+            //string emailBody = _emailSender.GetMailBody(model, "Influencer");
+            //bool emailSent = await _emailSender.EmailSendAsync(model.Email, "Influencer Registration Submitted", emailBody);
 
-            return emailSent
-                ? "Your Influencer registration has been submitted. You will receive an email when your account is approved by an administrator."
-                : "Your Influencer registration has been submitted, but there was an error sending the confirmation email.";
+            return "Your Influencer registration has been submitted";
         }
 
         // Method to get all pending registrations for admin

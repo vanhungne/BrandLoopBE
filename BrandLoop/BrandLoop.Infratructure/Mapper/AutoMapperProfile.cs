@@ -63,6 +63,10 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<Campaign, CampaignDto>().ReverseMap();
             CreateMap<Campaign, CampaignDto>()
+                .ForMember(dest => dest.BrandIndustry,
+                          opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Industry : null))
+                .ForMember(dest => dest.TotalKolsJoined,
+                          opt => opt.MapFrom(src => src.KolsJoinCampaigns != null ? src.KolsJoinCampaigns.Count : 0))
                 .ForMember(dest => dest.Images,
                       opt => opt.MapFrom(src => src.CampaignImages));
             // Campaign mappings
@@ -180,6 +184,44 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<UserOnlineStatus, UserOnlineStatusDto>();
 
+            // Mapping for CampaignDtoDetail with BrandInfo
+            CreateMap<Campaign, CampaignDtoDetail>()
+                .ForMember(dest => dest.BrandIndustry,
+                          opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Industry : null))
+                .ForMember(dest => dest.TotalKolsJoined,
+                          opt => opt.MapFrom(src => src.KolsJoinCampaigns != null ? src.KolsJoinCampaigns.Count : 0))
+                .ForMember(dest => dest.Images,
+                          opt => opt.MapFrom(src => src.CampaignImages))
+                .ForMember(dest => dest.BrandInfo,
+                          opt => opt.MapFrom(src => src.Brand != null ? new BrandInfoDto
+                          {
+                              Logo = src.Brand.Logo,
+                              Avatar = src.Brand.User != null ? src.Brand.User.ProfileImage : null,
+                              CompanyName = src.Brand.CompanyName,
+                              Industry = src.Brand.Industry,
+                              Email = src.Brand.User != null ? src.Brand.User.Email : null,
+                              Phone = src.Brand.User != null ? src.Brand.User.Phone : null
+                          } : null));
+
+            // Alternative: Separate mapping for BrandInfo
+            CreateMap<BrandProfile, BrandInfoDto>()
+                .ForMember(dest => dest.Logo, opt => opt.MapFrom(src => src.Logo))
+                .ForMember(dest => dest.Avatar, opt => opt.MapFrom(src => src.User != null ? src.User.ProfileImage : null))
+                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.CompanyName))
+                .ForMember(dest => dest.Industry, opt => opt.MapFrom(src => src.Industry))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User != null ? src.User.Email : null))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.User != null ? src.User.Phone : null));
+
+            // If using separate mapping, update the Campaign to CampaignDtoDetail mapping
+            CreateMap<Campaign, CampaignDtoDetail>()
+                .ForMember(dest => dest.BrandIndustry,
+                          opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Industry : null))
+                .ForMember(dest => dest.TotalKolsJoined,
+                          opt => opt.MapFrom(src => src.KolsJoinCampaigns != null ? src.KolsJoinCampaigns.Count : 0))
+                .ForMember(dest => dest.Images,
+                          opt => opt.MapFrom(src => src.CampaignImages))
+                .ForMember(dest => dest.BrandInfo,
+                          opt => opt.MapFrom(src => src.Brand));
         }
     }
 }
