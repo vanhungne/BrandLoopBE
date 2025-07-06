@@ -258,7 +258,9 @@ namespace BrandLoop.Infratructure.Repository
         }
         public async Task<List<Campaign>> GetBrandCampaignsByYear(string uid, int year)
         {
-            var campaigns = await _context.Campaigns.Where(c => c.CreatedBy == uid && (c.StartTime ?? c.UploadedDate).Year == year && c.Status != CampaignStatus.Deleted).ToListAsync();
+            var campaigns = await _context.Campaigns
+                .Include(c => c.CampaignReport)
+                .Where(c => c.CreatedBy == uid && (c.StartTime ?? c.UploadedDate).Year == year && c.Status != CampaignStatus.Deleted).ToListAsync();
             return campaigns;
         }
 

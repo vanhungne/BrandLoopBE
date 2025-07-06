@@ -49,6 +49,7 @@ namespace BrandLoop.Infratructure.Persistence
 
         public DbSet<UserOnlineStatus> UserOnlineStatuses { get; set; }
         public DbSet<Banner> Banners { get; set; }
+        public DbSet<Evidence> Evidences { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

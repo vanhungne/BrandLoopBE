@@ -13,7 +13,7 @@ namespace BrandLoop.Application.Interfaces
     public interface IInfluencerDashboardService
     {
         Task<CampaignCard> GetCampaignCardAsync(string uid);
-        Task<List<CampaignChart>> GetCampaignChart(string uid, int year);
+        Task<List<CampaignChart>> GetRevenueChart(string uid, int year);
         Task<List<SubscriptionRegisterDTO>> GetActiveSubscriptionRegisterAsync(string uid);
         Task<List<CampaignSelectOption>> GetCampaignSelectOption(string uid, CampaignStatus status);
         Task<CampaignReportOfInfluencer> GetCampaignReportOfInfluencerAsync(string uid, int campaignId);

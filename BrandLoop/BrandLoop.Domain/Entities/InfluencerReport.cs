@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,5 +34,6 @@ namespace BrandLoop.Domain.Entities
         public int TotalClicks { get; set; } // Nhấp vào link (UTM, bio)
 
         public virtual KolsJoinCampaign KolsJoinCampaign { get; set; }
+        public virtual ICollection<Evidence> Evidences { get; set; }
     }
 }

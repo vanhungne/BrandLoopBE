@@ -39,13 +39,13 @@ namespace BrandLoop.API.Controllers
         /// <summary>
         /// Lay thong tin cho bieu do tren dashboard cua influencer theo nam
         /// </summary>
-        [HttpGet("campaign-chart-by-year")]
-        public async Task<IActionResult> GetCampaignChartByYear(int year)
+        [HttpGet("revenue-chart-by-year")]
+        public async Task<IActionResult> GetRevenueChartByYear(int year)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var result = await _influencerDashboardService.GetCampaignChart(uid, year);
+                var result = await _influencerDashboardService.GetRevenueChart(uid, year);
                 return Ok(result);
             }
             catch (Exception e)

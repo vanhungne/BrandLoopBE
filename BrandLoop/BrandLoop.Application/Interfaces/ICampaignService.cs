@@ -32,7 +32,7 @@ namespace BrandLoop.Application.Interfaces
         Task GiveFeedback(CreateFeedback createFeedback, string userId);
         Task<CampaignTracking> GetCampaignDetail(int campaignId);
         Task<CampaignCard> GetCampaignCard(string uid);
-        Task<List<CampaignChart>> GetCampaignChard(string uid, int year);
+        Task<List<CampaignChart>> GetRevenueChard(string uid, int year);
         Task<List<CampaignSelectOption>> GetCampaignsOf(string uid, CampaignStatus status);
         Task<CampaignDashboardDetail> GetCampaignDetailForDashboard(string uid, int campaignId);
     }

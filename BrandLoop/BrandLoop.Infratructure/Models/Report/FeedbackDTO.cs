@@ -19,6 +19,9 @@ namespace BrandLoop.Infratructure.Models.Report
 
         [Range(1, 10, ErrorMessage = "Rating must be between 1 and 10.")]
         public int? Rating { get; set; } // CHECK (rating BETWEEN 1 AND 5)
+        public string EvidenceDescription { get; set; }
+        public string EvidenceLink { get; set; }
+        public int InfluencerMoney { get; set; } // Số tiền influencer nhận được từ chiến dịch
     }
 
     public class FeedbackDTO

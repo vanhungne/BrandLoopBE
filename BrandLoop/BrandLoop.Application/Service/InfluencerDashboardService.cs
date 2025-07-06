@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BrandLoop.Application.Service
 {
@@ -20,12 +21,16 @@ namespace BrandLoop.Application.Service
     {
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly ICampaignRepository _campaignRepository;
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IKolsJoinCampaignRepository _kolsJoinCampaignRepository;
         private readonly IMapper _mapper;
-        public InfluencerDashboardService(ISubscriptionRepository subscriptionRepository, ICampaignRepository campaignRepository, IMapper mapper)
+        public InfluencerDashboardService(ISubscriptionRepository subscriptionRepository, ICampaignRepository campaignRepository, IMapper mapper, IKolsJoinCampaignRepository kolsJoinCampaignRepository, IPaymentRepository paymentRepository)
         {
             _subscriptionRepository = subscriptionRepository;
             _campaignRepository = campaignRepository;
             _mapper = mapper;
+            _kolsJoinCampaignRepository = kolsJoinCampaignRepository;
+            _paymentRepository = paymentRepository;
         }
         public async Task<List<SubscriptionRegisterDTO>> GetActiveSubscriptionRegisterAsync(string uid)
         {
@@ -70,7 +75,7 @@ namespace BrandLoop.Application.Service
             return campaignCard;
         }
 
-        public async Task<List<CampaignChart>> GetCampaignChart(string uid, int year)
+        public async Task<List<CampaignChart>> GetRevenueChart(string uid, int year)
         {
             var result = new List<CampaignChart>();
 
@@ -80,40 +85,24 @@ namespace BrandLoop.Application.Service
                 result.Add(new CampaignChart
                 {
                     month = month,
-                    approvedCampaigns = 0,
-                    inprogressCampaigns = 0,
-                    completedCampaigns = 0
+                    moneyIn= 0,
+                    moneyOut = 0,
                 });
             }
 
-            // Lấy tất cả campaigns theo năm
-            var campaigns = await _campaignRepository.GetAllCampaignsInfluJoined(uid, year);
-            if (campaigns == null || !campaigns.Any())
-                return result; // Trả về danh sách rỗng nếu không có campaigns
+            var payments = await _paymentRepository.GetPaymentOfInfluencerByYear(uid, year);
+            var kolJoinCampaigns = await _kolsJoinCampaignRepository.GetKolJoinCampaignOfInfluencer(uid, year);
 
-            foreach (var campaign in campaigns)
+            // Cập nhật số tiền vào và ra cho từng tháng
+            foreach (var payment in payments)
             {
-                var campaignDate = campaign.StartTime ?? campaign.UploadedDate;
-
-                int month = campaignDate.Month;
-
-                var chart = result.FirstOrDefault(c => c.month == month);
-                if (chart == null) continue;
-
-                switch (campaign.Status)
-                {
-                    case CampaignStatus.Approved:
-                        chart.approvedCampaigns++;
-                        break;
-
-                    case CampaignStatus.InProgress:
-                        chart.inprogressCampaigns++;
-                        break;
-
-                    case CampaignStatus.Completed:
-                        chart.completedCampaigns++;
-                        break;
-                }
+                var month = payment.CreatedAt.Month;
+                result[month - 1].moneyOut += payment.Amount;
+            }
+            foreach (var kolJoinCampaign in kolJoinCampaigns)
+            {
+                var month = kolJoinCampaign.AppliedAt.Month;
+                result[month - 1].moneyIn += kolJoinCampaign.InfluencerEarning;
             }
 
             return result;

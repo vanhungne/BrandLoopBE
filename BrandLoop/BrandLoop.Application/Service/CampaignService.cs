@@ -31,6 +31,8 @@ namespace BrandLoop.Application.Service
         private readonly IInfluencerReportRepository _influencerReportRepository;
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly ICampaignInvitationRepository _campaignInvitationRepository;
+        private readonly IEvidenceRepository _evidenceRepository;
+        private readonly IKolsJoinCampaignRepository _kolsJoinCampaignRepository;
 
         public CampaignService(
             ICampaignRepository campaignRepository,
@@ -42,7 +44,9 @@ namespace BrandLoop.Application.Service
             IUserRepository userRepository,
             IInfluencerReportRepository influencerReportRepository,
             IFeedbackRepository feedbackRepository,
-            ICampaignInvitationRepository campaignInvitationRepository)
+            ICampaignInvitationRepository campaignInvitationRepository,
+            IEvidenceRepository evidenceRepository,
+            IKolsJoinCampaignRepository kolsJoinCampaignRepository)
         {
             _campaignRepository = campaignRepository ?? throw new ArgumentNullException(nameof(campaignRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -54,6 +58,8 @@ namespace BrandLoop.Application.Service
             _influencerReportRepository = influencerReportRepository;
             _feedbackRepository = feedbackRepository;
             _campaignInvitationRepository = campaignInvitationRepository;
+            _evidenceRepository = evidenceRepository;
+            _kolsJoinCampaignRepository = kolsJoinCampaignRepository;
         }
 
         public async Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(string uid)
@@ -622,6 +628,18 @@ namespace BrandLoop.Application.Service
             feedback.CreatedAt = DateTimeHelper.GetVietnamNow();
             feedback.FeedbackFrom = Domain.Enums.FeedbackType.Brand;
             await _feedbackRepository.AddFeedbackAsync(feedback);
+
+            // Update influencer's money received from campaign
+            await _kolsJoinCampaignRepository.UpdateKolMoney(createFeedback.CampaignId, createFeedback.ToUserId, createFeedback.InfluencerMoney);
+
+            // Create evidence for the feedback
+            var evidence = new Evidence
+            {
+                Description = createFeedback.EvidenceDescription,
+                Link = createFeedback.EvidenceLink,
+                EvidenceOf = EvidenceType.Brand,
+            };
+            await _evidenceRepository.AddEvidenceAsync(evidence);
         }
 
         public async Task<CampaignTracking> GetCampaignDetail(int campaignId)
@@ -678,7 +696,7 @@ namespace BrandLoop.Application.Service
             return campaignCard;
         }
 
-        public async Task<List<CampaignChart>> GetCampaignChard(string uid, int year)
+        public async Task<List<CampaignChart>> GetRevenueChard(string uid, int year)
         {
             var result = new List<CampaignChart>();
 
@@ -688,40 +706,33 @@ namespace BrandLoop.Application.Service
                 result.Add(new CampaignChart
                 {
                     month = month,
-                    approvedCampaigns = 0,
-                    inprogressCampaigns = 0,
-                    completedCampaigns = 0
+                    moneyIn = 0,
+                    moneyOut = 0
                 });
             }
 
             // Lấy tất cả campaigns theo năm
+            var koljoinCampaigns = await _kolsJoinCampaignRepository.GetKolsJoinCampaignsOfBrand(uid, year);
             var campaigns = await _campaignRepository.GetBrandCampaignsByYear(uid, year);
-            if (campaigns == null || !campaigns.Any())
-                return result; // Trả về danh sách rỗng nếu không có campaigns
+            var payments = await _paymentRepository.GetPaymentOfBrandByYear(uid, year);
+            
 
-            foreach (var campaign in campaigns)
+            // Tong hợp tiền ra và tiền vào theo tháng
+            foreach (var item in koljoinCampaigns)
             {
-                var campaignDate = campaign.StartTime ?? campaign.UploadedDate;
+                var month = item.AppliedAt.Month;
+                result[month - 1].moneyOut += item.InfluencerEarning;
+            }
+            foreach (var item in payments)
+            {
+                var month = item.CreatedAt.Month;
+                result[month - 1].moneyOut += item.Amount;
+            }
 
-                int month = campaignDate.Month;
-
-                var chart = result.FirstOrDefault(c => c.month == month);
-                if (chart == null) continue;
-
-                switch (campaign.Status)
-                {
-                    case CampaignStatus.Approved:
-                        chart.approvedCampaigns++;
-                        break;
-
-                    case CampaignStatus.InProgress:
-                        chart.inprogressCampaigns++;
-                        break;
-
-                    case CampaignStatus.Completed:
-                        chart.completedCampaigns++;
-                        break;
-                }
+            foreach (var item in campaigns)
+            {
+                var month = item.UploadedDate.Month;
+                result[month - 1].moneyIn += (int)(item.CampaignReport?.TotalRevenue ?? 0);
             }
 
             return result;

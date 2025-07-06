@@ -16,11 +16,13 @@ namespace BrandLoop.Application.Service
         private readonly IInfluencerReportRepository _influencerReportRepository;
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly ICampaignRepository _campaignRepository;
-        public InfluReportService(IInfluencerReportRepository influencerReportRepository, IFeedbackRepository feedbackRepository, ICampaignRepository campaignRepository)
+        private readonly IEvidenceRepository _evidenceRepository;
+        public InfluReportService(IInfluencerReportRepository influencerReportRepository, IFeedbackRepository feedbackRepository, ICampaignRepository campaignRepository, IEvidenceRepository evidenceRepository)
         {
             _influencerReportRepository = influencerReportRepository;
             _feedbackRepository = feedbackRepository;
             _campaignRepository = campaignRepository;
+            _evidenceRepository = evidenceRepository;
         }
         public async Task FinishReport(string userId, InfluReport influReport)
         {
@@ -54,6 +56,22 @@ namespace BrandLoop.Application.Service
                 Description = influReport.Description
             };
             await _feedbackRepository.AddFeedbackAsync(feedback);
+
+            // Create evidences for the report
+            if (influReport.Evidences != null && influReport.Evidences.Any())
+            {
+                foreach (var evidence in influReport.Evidences)
+                {
+                    var newEvidence = new Evidence
+                    {
+                        Description = evidence.Description,
+                        Link = evidence.Link,
+                        EvidenceOf = Domain.Enums.EvidenceType.Influecner,
+                        InfluencerReportId = newReport.InfluencerReportId
+                    };
+                    await _evidenceRepository.AddEvidenceAsync(newEvidence);
+                }
+            }
 
             // Update kol join campaign status to Completed
             await _campaignRepository.UpdateKolJoinCampaignStatus(kolJoinCampaign.KolsJoinCampaignId, Domain.Enums.KolJoinCampaignStatus.Completed);

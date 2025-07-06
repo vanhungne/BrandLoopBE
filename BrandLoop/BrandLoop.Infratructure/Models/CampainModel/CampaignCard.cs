@@ -20,9 +20,8 @@ namespace BrandLoop.Infratructure.Models.CampainModel
     public class CampaignChart
     {
         public int month { get; set; }
-        public int approvedCampaigns { get; set; }
-        public int inprogressCampaigns { get; set; }
-        public int completedCampaigns { get; set; }
+        public int moneyIn { get; set; } // Số tiền chiến dịch thu về
+        public int moneyOut{ get; set; } // Số tiền đã chi cho chiến dịch
     }
     public class CampaignSelectOption
     {
