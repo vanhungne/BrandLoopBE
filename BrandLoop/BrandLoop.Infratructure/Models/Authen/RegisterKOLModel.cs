@@ -10,9 +10,9 @@ namespace BrandLoop.Infratructure.Models.Authen
     public class RegisterKOLModel : RegisterBaseModel
     {
         [StringLength(100)]
-        public string Nickname { get; set; }
+        public string? Nickname { get; set; }
 
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
 
         [StringLength(100)]
         public string ContentCategory { get; set; }
@@ -24,19 +24,19 @@ namespace BrandLoop.Infratructure.Models.Authen
         public string Languages { get; set; }
 
         [StringLength(255)]
-        public string PortfolioUrl { get; set; }
+        public string? PortfolioUrl { get; set; }
 
         [StringLength(255)]
-        public string Facebook { get; set; }
+        public string? Facebook { get; set; }
 
         [StringLength(255)]
-        public string Instagram { get; set; }
+        public string? Instagram { get; set; }
 
         [StringLength(255)]
-        public string Tiktok { get; set; }
+        public string? Tiktok { get; set; }
 
         [StringLength(255)]
-        public string Youtube { get; set; }
+        public string? Youtube { get; set; }
 
         public int? FollowerCount { get; set; }
 
