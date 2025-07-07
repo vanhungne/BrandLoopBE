@@ -142,5 +142,16 @@ namespace BrandLoop.Infratructure.Repository
                 .ToListAsync();
             return payments;
         }
+
+        public Task<List<Payment>> GetAllPaymentsByYear(int? year)
+        {
+            var payments = _context.Payments
+                .Include(p => p.SubscriptionRegister)
+                .Include(p => p.campaign)
+                .Where(p => (year == null || p.CreatedAt.Year == year) && p.Status == PaymentStatus.Succeeded)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+            return payments;
+        }
     }
 }

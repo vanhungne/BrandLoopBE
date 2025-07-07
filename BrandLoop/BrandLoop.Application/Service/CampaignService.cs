@@ -4,6 +4,7 @@ using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.Dashboard;
 using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Repository;
 using BrandLoop.Shared.Helper;

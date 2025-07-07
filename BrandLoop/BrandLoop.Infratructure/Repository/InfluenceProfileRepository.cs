@@ -132,5 +132,28 @@ namespace BrandLoop.Infratructure.Repository
 
             return q;
         }
+
+        public async Task<List<InfluenceProfile>> SearchInfluencer(string? name, string? contentCategory, int? influencerTypeId)
+        {
+            var query = _context.InfluenceProfiles
+                .Include(ip => ip.User)
+                .Include(ip => ip.InfluencerType)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+                query = query.Where(ip => ip.Nickname.Contains(name) || ip.User.FullName.Contains(name));
+
+            if (!string.IsNullOrEmpty(contentCategory))
+                query = query.Where(ip => ip.ContentCategory.Contains(contentCategory));
+
+            if (influencerTypeId.HasValue)
+                query = query.Where(ip => ip.InfluencerTypeId == influencerTypeId.Value);
+
+            var result = await query
+                .OrderByDescending(ip => ip.IsPriorityListed)
+                .ToListAsync();
+
+            return result;
+        }
     }
-    }
+}

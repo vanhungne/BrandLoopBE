@@ -21,5 +21,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<Payment> GetPaymentByCamaignId(int campaignId);
         Task<List<Payment>> GetPaymentOfBrandByYear(string uid, int year);
         Task<List<Payment>> GetPaymentOfInfluencerByYear(string uid, int year);
+        Task<List<Payment>> GetAllPaymentsByYear(int? year);
     }
 }

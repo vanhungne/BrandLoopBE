@@ -1,4 +1,5 @@
 ﻿using BrandLoop.Domain.Enums;
+using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Models.Report;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BrandLoop.Infratructure.Models.CampainModel
+namespace BrandLoop.Infratructure.Models.Dashboard
 {
     public class CampaignCard
     {

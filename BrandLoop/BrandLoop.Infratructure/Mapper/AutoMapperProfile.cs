@@ -4,6 +4,8 @@ using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.Authen;
 using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Models.ChatDTO;
+using BrandLoop.Infratructure.Models.Dashboard;
+using BrandLoop.Infratructure.Models.Influence;
 using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.Report;
@@ -59,7 +61,14 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<InfluenceProfile, InfluenceProfileResponseDto>();
 
+            CreateMap<InfluenceProfile, InfluencerList>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.ProfileImage, opt => opt.MapFrom(src => src.User.ProfileImage))
+                .ForMember(dest => dest.InfluencerType, opt => opt.MapFrom(src => src.InfluencerType.Name))
+                .ForMember(dest => dest.PlatformFee, opt => opt.MapFrom(src => src.InfluencerType.PlatformFee));
+
             CreateMap<InfluencerType, InfluTypeModel>().ReverseMap();
+            CreateMap<InfluencerType, InfluencerTypeSelectionModel>();
 
             CreateMap<Campaign, CampaignDto>().ReverseMap();
             CreateMap<Campaign, CampaignDto>()

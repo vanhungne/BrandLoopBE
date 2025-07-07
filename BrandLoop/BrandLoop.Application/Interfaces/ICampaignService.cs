@@ -1,6 +1,7 @@
 ﻿using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.Dashboard;
 using BrandLoop.Infratructure.Models.Report;
 using Net.payOS.Types;
 using System;
