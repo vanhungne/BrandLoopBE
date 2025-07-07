@@ -1,6 +1,7 @@
 ﻿using BrandLoop.Domain.Entities;
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.CampainModel;
+using BrandLoop.Infratructure.Models.Dashboard;
 using BrandLoop.Infratructure.Models.Report;
 using Net.payOS.Types;
 using System;
@@ -32,7 +33,7 @@ namespace BrandLoop.Application.Interfaces
         Task GiveFeedback(CreateFeedback createFeedback, string userId);
         Task<CampaignTracking> GetCampaignDetail(int campaignId);
         Task<CampaignCard> GetCampaignCard(string uid);
-        Task<List<CampaignChart>> GetCampaignChard(string uid, int year);
+        Task<List<CampaignChart>> GetRevenueChard(string uid, int year);
         Task<List<CampaignSelectOption>> GetCampaignsOf(string uid, CampaignStatus status);
         Task<CampaignDashboardDetail> GetCampaignDetailForDashboard(string uid, int campaignId);
     }

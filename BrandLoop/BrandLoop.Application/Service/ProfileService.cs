@@ -24,8 +24,9 @@ namespace BrandLoop.Application.Service
         private readonly IBannerRepository _bannerRepo;
         private readonly ILogger<ProfileService> _logger;
         private readonly IMapper _mapper;
+        private readonly IInfluencerTypeRepository _influencerTypeRepository;
 
-        public ProfileService(IUserRepository profileRepository, ILogger<ProfileService> logger,IBrandProfileRepository brandProfileRepository,IInfluenceRepository influenceRepository,IMapper mapper, IBannerRepository bannerRepo)
+        public ProfileService(IUserRepository profileRepository, ILogger<ProfileService> logger, IBrandProfileRepository brandProfileRepository, IInfluenceRepository influenceRepository, IMapper mapper, IBannerRepository bannerRepo, IInfluencerTypeRepository influencerTypeRepository)
         {
             _profileRepository = profileRepository;
             _logger = logger;
@@ -33,6 +34,7 @@ namespace BrandLoop.Application.Service
             _influenceProfileRepository = influenceRepository;
             _mapper = mapper;
             _bannerRepo = bannerRepo;
+            _influencerTypeRepository = influencerTypeRepository;
         }
 
         public async Task<BasicAccountProfileModel> GetBasicAccountProfileAsync(string uid)
@@ -57,7 +59,7 @@ namespace BrandLoop.Application.Service
 
         public Task<List<ContentAndStyleModel>> GetUserContentAndStylesAsync(string uid)
         {
-            return  _profileRepository.GetUserContentAndStylesAsync(uid);
+            return _profileRepository.GetUserContentAndStylesAsync(uid);
         }
 
         public async Task<ProfileResponseDto> GetUserProfileAsync(string uid)
@@ -136,6 +138,18 @@ namespace BrandLoop.Application.Service
                 EndDate = b.EndDate,
                 Nickname = b.InfluenceProfile.Nickname
             }).ToList();
+        }
+
+        public async Task<List<InfluencerTypeSelectionModel>> GetAllInfluencerType()
+        {
+            var influencerTypes = await _influencerTypeRepository.GetAllInfluencerTypesAsync();
+            return _mapper.Map<List<InfluencerTypeSelectionModel>>(influencerTypes);
+        }
+
+        public async Task<List<InfluencerList>> SearchInfluencer(string? name, string? contentCategory, int? id)
+        {
+            var influencers = await _influenceProfileRepository.SearchInfluencer(name, contentCategory, id);
+            return _mapper.Map<List<InfluencerList>>(influencers);
         }
     }
 }

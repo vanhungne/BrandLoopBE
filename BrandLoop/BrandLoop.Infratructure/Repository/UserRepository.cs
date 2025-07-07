@@ -246,5 +246,25 @@ namespace BrandLoop.Infratructure.Repository
         {
             await _context.SaveChangesAsync();
         }
+
+        public Task<List<User>> GetAllNewsUserInYear(int? year)
+        {
+            var userQuery = _context.Users
+                .Include(u => u.Role)
+                .AsQueryable();
+
+            if (year.HasValue)
+            {
+                userQuery = userQuery.Where(u => u.CreatedAt >= new DateTime(year.Value, 1, 1)
+                                              && u.CreatedAt < new DateTime(year.Value + 1, 1, 1));
+            }
+
+            return userQuery
+                .Where(u => u.Status == UserStatus.Active
+                    && (u.Role.RoleName == "Brand" || u.Role.RoleName == "Influencer"))
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+        }
+
     }
 }

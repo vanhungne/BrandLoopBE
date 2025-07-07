@@ -1,6 +1,8 @@
-﻿using System;
+﻿using BrandLoop.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,5 +31,11 @@ namespace BrandLoop.Infratructure.Models.Report
         [Range(1, 10, ErrorMessage = "Rating must be between 1 and 10.")]
         public int? Rating { get; set; }
         public string Description { get; set; }
+        public List<EvidenceDTO> Evidences { get; set; } = new List<EvidenceDTO>();
+    }
+    public class EvidenceDTO
+    {
+        public string Description { get; set; }
+        public string Link { get; set; }
     }
 }

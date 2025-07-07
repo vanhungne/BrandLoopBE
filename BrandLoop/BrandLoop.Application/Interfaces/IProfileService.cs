@@ -26,5 +26,7 @@ namespace BrandLoop.Application.Interfaces
         Task<List<InfluenceProfile>> SearchInfluencersAsync(InfluenceSearchOptions opts);
         Task<List<InfluenceProfile>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts);
         Task<List<BannerDto>> GetActiveBannersAsync();
+        Task<List<InfluencerTypeSelectionModel>> GetAllInfluencerType();
+        Task<List<InfluencerList>> SearchInfluencer(string? name, string? contentCategory, int? id);
     }
 }

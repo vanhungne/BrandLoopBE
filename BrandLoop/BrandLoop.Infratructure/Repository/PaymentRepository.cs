@@ -124,5 +124,34 @@ namespace BrandLoop.Infratructure.Repository
                 .Include(p => p.campaign)
                 .FirstOrDefaultAsync(p => p.CampaignId == campaignId && p.Status != PaymentStatus.Canceled);
         }
+
+        public Task<List<Payment>> GetPaymentOfBrandByYear(string uid, int year)
+        {
+            var payments = _context.Payments
+                .Include(p => p.campaign)
+                .Where(p => p.campaign.CreatedBy == uid && p.campaign.UploadedDate.Year == year && p.Type == PaymentType.campaign)
+                .ToListAsync();
+            return payments;
+        }
+
+        public Task<List<Payment>> GetPaymentOfInfluencerByYear(string uid, int year)
+        {
+            var payments = _context.Payments
+                .Include(p => p.SubscriptionRegister)
+                .Where(p => p.SubscriptionRegister.UID == uid && p.CreatedAt.Year == year && p.Type == PaymentType.subscription)
+                .ToListAsync();
+            return payments;
+        }
+
+        public Task<List<Payment>> GetAllPaymentsByYear(int? year)
+        {
+            var payments = _context.Payments
+                .Include(p => p.SubscriptionRegister)
+                .Include(p => p.campaign)
+                .Where(p => (year == null || p.CreatedAt.Year == year) && p.Status == PaymentStatus.Succeeded)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+            return payments;
+        }
     }
 }

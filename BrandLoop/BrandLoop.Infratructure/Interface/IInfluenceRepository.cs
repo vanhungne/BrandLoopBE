@@ -18,5 +18,6 @@ namespace BrandLoop.Infratructure.Interface
 
         Task<List<InfluenceProfile>> SearchAsync(InfluenceSearchOptions opts);
         Task<List<InfluenceProfile>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts);
+        Task<List<InfluenceProfile>> SearchInfluencer(string? name, string? contentCategory, int? id);
     }
 }

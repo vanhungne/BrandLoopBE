@@ -41,13 +41,13 @@ namespace BrandLoop.API.Controllers
         /// Lay du lieu cho bieu do tren dashboard cua brand theo nam
         /// </summary>
         /// 
-        [HttpGet("chart")]
+        [HttpGet("revenue-chart-by-year")]
         public async Task<IActionResult> GetDashboardChart(int year)
         {
             try
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var result = await _campaignService.GetCampaignChard(uid, year);
+                var result = await _campaignService.GetRevenueChard(uid, year);
                 return Ok(result);
             }
             catch (Exception e)

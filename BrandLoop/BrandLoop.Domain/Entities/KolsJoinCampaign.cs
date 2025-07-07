@@ -21,12 +21,15 @@ namespace BrandLoop.Domain.Entities
         [StringLength(32)]
         public string UID { get; set; }
 
+        [Range(0, int.MaxValue)]
+        public int InfluencerEarning { get; set; } = 0; // Số tiền influencer nhận được từ chiến dịch
+
         [StringLength(50)]
         public KolJoinCampaignStatus Status { get; set; } = KolJoinCampaignStatus.Pending;
 
         public DateTime AppliedAt { get; set; } = DateTimeHelper.GetVietnamNow();
 
-        // Navigation properties
+        // Navigation properties    
         public virtual InfluencerReport InfluencerReport { get; set; }
 
         [ForeignKey("CampaignId")]
