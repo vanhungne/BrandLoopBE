@@ -1,4 +1,5 @@
 ﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.News;
 using BrandLoop.Infratructure.Persistence;
@@ -59,10 +60,12 @@ namespace BrandLoop.Infratructure.Repository
                 AuthorName = user.FullName,
                 Category = news.Category,
                 FeaturedImage = newsImageUrl,
-                Status = Domain.Enums.NewsStatus.Draft,
+                Status = Domain.Enums.NewsStatus.Published,
                 CreatedAt = DateTimeHelper.GetVietnamNow(),
                 UpdatedAt = DateTimeHelper.GetVietnamNow()
             };
+            await _context.News.AddAsync(newNews);  
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteNews(int newsId)
@@ -106,7 +109,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var news = await _context.News
                 .Include(n => n.AuthorUser)
-                .FirstOrDefaultAsync(n => n.Slug == slug && n.Status == Domain.Enums.NewsStatus.Published);
+                .FirstOrDefaultAsync(n => n.Slug == slug);
             return news;
         }
 
@@ -182,5 +185,56 @@ namespace BrandLoop.Infratructure.Repository
             normalized = Regex.Replace(normalized, @"\s+", "-").Trim('-');
             return normalized;
         }
+        public async Task<List<string>> GetAllSlugs()
+        {
+            var slugs = await _context.News
+                .Select(n => n.Slug)
+                .Distinct()
+                .OrderBy(s => s)
+                .ToListAsync();
+            return slugs;
+        }
+
+        public async Task<List<string>> GetAllCategories()
+        {
+            var categories = await _context.News
+                .Select(n => n.Category)
+                .Distinct()
+                .OrderBy(c => c)
+                .ToListAsync();
+            return categories;
+        }
+
+        public async Task<List<News>> GetsAllNewsPublished()
+        {
+            var allNews = await _context.News
+                         .Where(n => n.Status == Domain.Enums.NewsStatus.Published)
+                         .OrderByDescending(n => n.CreatedAt)
+                         .ToListAsync();
+                                return allNews;
+        }
+        public async Task UpdateNewsStatus(int newsId, NewsStatus status)
+        {
+            var news = await _context.News.FirstOrDefaultAsync(n => n.NewsId == newsId);
+            if (news == null)
+                throw new Exception("News not found");
+
+            news.Status = status;
+
+            // Set PublishedAt when status is Published
+            if (status == Domain.Enums.NewsStatus.Published)
+            {
+                news.PublishedAt = DateTimeHelper.GetVietnamNow();
+            }
+            else if (status == Domain.Enums.NewsStatus.Draft)
+            {
+                news.PublishedAt = null; // Clear publish date for draft
+            }
+
+            news.UpdatedAt = DateTimeHelper.GetVietnamNow();
+            _context.News.Update(news);
+            await _context.SaveChangesAsync();
+        }
+
     }
 }
