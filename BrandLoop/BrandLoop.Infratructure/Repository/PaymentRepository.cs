@@ -138,7 +138,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var payments = _context.Payments
                 .Include(p => p.SubscriptionRegister)
-                .Where(p => p.SubscriptionRegister.UID == uid && p.CreatedAt.Year == year && p.Type == PaymentType.subscription && p.Status == PaymentStatus.Succeeded)
+                .Where(p => p.SubscriptionRegister.UID == uid && p.CreatedAt.Year == year && p.Type == PaymentType.subscription)
                 .ToListAsync();
             return payments;
         }

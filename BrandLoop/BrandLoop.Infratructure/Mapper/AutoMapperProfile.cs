@@ -25,7 +25,6 @@ namespace BrandLoop.Infratructure.Mapper
         public AutoMapperProfile()
         {
             CreateMap<User, PendingRegistrationDto>()
-<<<<<<< Updated upstream
                              .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
                              .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
                              .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.BrandProfile.CompanyName))
@@ -45,24 +44,6 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); // Fixed the error by replacing 'ForAllOtherMembers' with 'ForAllMembers'
 
-=======
-                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone))
-                .ForMember(dest => dest.CompanyName, opt => opt.MapFrom(src => src.BrandProfile.CompanyName))
-                .ForMember(dest => dest.Industry, opt => opt.MapFrom(src => src.BrandProfile.Industry))
-                .ForMember(dest => dest.Website, opt => opt.MapFrom(src => src.BrandProfile.Website))
-                .ForMember(dest => dest.Nickname, opt => opt.MapFrom(src => src.InfluenceProfile.Nickname))
-                .ForMember(dest => dest.ContentCategory, opt => opt.MapFrom(src => src.InfluenceProfile.ContentCategory))
-                .ForMember(dest => dest.Facebook, opt => opt.MapFrom(src =>
-                    src.InfluenceProfile != null ? src.InfluenceProfile.Facebook : src.BrandProfile.Facebook))
-                .ForMember(dest => dest.Instagram, opt => opt.MapFrom(src =>
-                    src.InfluenceProfile != null ? src.InfluenceProfile.Instagram : src.BrandProfile.Instagram));
-
-            CreateMap<UpdateUserProfileDto, User>()
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); // Fixed the error by replacing 'ForAllOtherMembers' with 'ForAllMembers'
-
->>>>>>> Stashed changes
             CreateMap<User, ProfileResponseDto>();
 
             // Brand Profile mappings
@@ -78,7 +59,6 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); // Fixed the error by replacing 'ForAllOtherMembers' with 'ForAllMembers'
 
             CreateMap<InfluenceProfile, InfluenceProfileResponseDto>();
-<<<<<<< Updated upstream
 
             CreateMap<InfluenceProfile, InfluencerList>()
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
@@ -88,8 +68,6 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<InfluencerType, InfluTypeModel>().ReverseMap();
             CreateMap<InfluencerType, InfluencerTypeSelectionModel>();
-=======
->>>>>>> Stashed changes
 
             CreateMap<Campaign, CampaignDto>().ReverseMap();
             CreateMap<Campaign, CampaignDto>()
@@ -193,7 +171,6 @@ namespace BrandLoop.Infratructure.Mapper
 
             // Content and Style mapping
             CreateMap<ContentAndStyle, ContentAndStyleModel>();
-<<<<<<< Updated upstream
 
             //Subscription mapping
             CreateMap<Subscription, SubscriptionDTO>();
@@ -209,8 +186,7 @@ namespace BrandLoop.Infratructure.Mapper
 
             // Feedback mapping
             CreateMap<Feedback, FeedbackDTO>().ReverseMap();
-            CreateMap<Feedback, ShowFeedback>()
-                .ForMember(dest => dest.FromUserName, opt => opt.MapFrom(src => src.FromUser != null ? src.FromUser.FullName : "Unknown User"));
+            CreateMap<Feedback, ShowFeedback>();
 
 
 
@@ -277,8 +253,6 @@ namespace BrandLoop.Infratructure.Mapper
 
             // News to PendingNewsDto (for admin pending news)
             CreateMap<News, PendingNewsDto>();
-=======
->>>>>>> Stashed changes
         }
     }
 }

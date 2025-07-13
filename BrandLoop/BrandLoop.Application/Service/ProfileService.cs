@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using BrandLoop.Application.Interfaces;
-<<<<<<< Updated upstream
 using BrandLoop.Domain.Entities;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.BannerDTO;
 using BrandLoop.Infratructure.Models.FeartureDTO;
 using BrandLoop.Infratructure.Models.Influence;
-=======
-using BrandLoop.Infratructure.Interface;
->>>>>>> Stashed changes
 using BrandLoop.Infratructure.Models.UserModel;
 using BrandLoop.Infratructure.Repository;
 using Microsoft.Extensions.Logging;
@@ -25,31 +21,20 @@ namespace BrandLoop.Application.Service
         private readonly IUserRepository _profileRepository;
         private readonly IBrandProfileRepository _brandProfileRepository;
         private readonly IInfluenceRepository _influenceProfileRepository;
-<<<<<<< Updated upstream
         private readonly IBannerRepository _bannerRepo;
         private readonly ILogger<ProfileService> _logger;
         private readonly IMapper _mapper;
         private readonly IInfluencerTypeRepository _influencerTypeRepository;
 
         public ProfileService(IUserRepository profileRepository, ILogger<ProfileService> logger, IBrandProfileRepository brandProfileRepository, IInfluenceRepository influenceRepository, IMapper mapper, IBannerRepository bannerRepo, IInfluencerTypeRepository influencerTypeRepository)
-=======
-        private readonly ILogger<ProfileService> _logger;
-        private readonly IMapper _mapper;
-
-        public ProfileService(IUserRepository profileRepository, ILogger<ProfileService> logger,IBrandProfileRepository brandProfileRepository,IInfluenceRepository influenceRepository,IMapper mapper)
->>>>>>> Stashed changes
         {
             _profileRepository = profileRepository;
             _logger = logger;
             _brandProfileRepository = brandProfileRepository;
             _influenceProfileRepository = influenceRepository;
             _mapper = mapper;
-<<<<<<< Updated upstream
             _bannerRepo = bannerRepo;
             _influencerTypeRepository = influencerTypeRepository;
-=======
-
->>>>>>> Stashed changes
         }
 
         public async Task<BasicAccountProfileModel> GetBasicAccountProfileAsync(string uid)
@@ -68,14 +53,6 @@ namespace BrandLoop.Application.Service
         }
 
         public Task<ProfileResponseDto> GetProfileAsync(string uid)
-<<<<<<< Updated upstream
-=======
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ContentAndStyleModel>> GetUserContentAndStylesAsync(string uid)
->>>>>>> Stashed changes
         {
             throw new NotImplementedException();
         }
@@ -138,7 +115,6 @@ namespace BrandLoop.Application.Service
 
             return await GetProfileAsync(uid);
         }
-<<<<<<< Updated upstream
         public async Task<List<InfluencerList>> SearchInfluencersAsync(InfluenceSearchOptions opts)
         {
             var influ = await _influenceProfileRepository.SearchAsync(opts);
@@ -187,7 +163,5 @@ namespace BrandLoop.Application.Service
         {
             return await _profileRepository.GetListInfluenceProfilesByUsernameAsync(username);
         }
-=======
->>>>>>> Stashed changes
     }
 }

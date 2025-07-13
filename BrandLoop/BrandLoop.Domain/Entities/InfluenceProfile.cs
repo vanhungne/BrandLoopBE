@@ -19,11 +19,7 @@
             public string UID { get; set; }
 
             [StringLength(100)]
-<<<<<<< Updated upstream
             public string? Nickname { get; set; }
-=======
-            public string Nickname { get; set; }
->>>>>>> Stashed changes
 
             public string Bio { get; set; }
 
@@ -37,18 +33,13 @@
             public string Languages { get; set; }
 
             [StringLength(255)]
-<<<<<<< Updated upstream
             public string? PortfolioUrl { get; set; }
-=======
-            public string PortfolioUrl { get; set; }
->>>>>>> Stashed changes
 
             public decimal? AverageRate { get; set; }
 
             public bool Verified { get; set; } = false;
 
             [StringLength(255)]
-<<<<<<< Updated upstream
             public string? Facebook { get; set; }
 
             [StringLength(255)]
@@ -59,18 +50,6 @@
 
             [StringLength(255)]
             public string? Youtube { get; set; }
-=======
-            public string Facebook { get; set; }
-
-            [StringLength(255)]
-            public string Instagram { get; set; }
-
-            [StringLength(255)]
-            public string Tiktok { get; set; }
-
-            [StringLength(255)]
-            public string Youtube { get; set; }
->>>>>>> Stashed changes
 
             public int? FollowerCount { get; set; }
 
@@ -84,7 +63,6 @@
             public DateTime CreatedAt { get; set; } = DateTime.Now;
 
             public DateTime UpdatedAt { get; set; } = DateTime.Now;
-<<<<<<< Updated upstream
 
             public int? InfluencerTypeId { get; set; }
 
@@ -97,10 +75,6 @@
         [ForeignKey("InfluencerTypeId")]
             public InfluencerType InfluencerType { get; set; }
             
-=======
-
-            // Navigation properties
->>>>>>> Stashed changes
             [ForeignKey("UID")]
             public virtual User User { get; set; }
         }
