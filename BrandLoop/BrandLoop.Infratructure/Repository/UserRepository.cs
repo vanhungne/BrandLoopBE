@@ -246,6 +246,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             await _context.SaveChangesAsync();
         }
+<<<<<<< Updated upstream
 
         public Task<List<User>> GetAllNewsUserInYear(int? year)
         {
@@ -416,5 +417,7 @@ namespace BrandLoop.Infratructure.Repository
             return results;
         }
 
+=======
+>>>>>>> Stashed changes
     }
 }

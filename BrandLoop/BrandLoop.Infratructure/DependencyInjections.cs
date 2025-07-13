@@ -30,6 +30,7 @@ namespace BrandLoop.Infratructure
             services.AddScoped<ICampaignRepository, CampaignRepository>();
             services.AddScoped<IAccountCleanupRepository, AccountCleanupRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+<<<<<<< Updated upstream
             services.AddScoped<INewsRepository, NewsRepository>();
             services.AddScoped<ICampaignInvitationRepository, CampaignInvitationRepository>();
             services.AddScoped<IDealRepository, DealRepository>();
@@ -49,6 +50,10 @@ namespace BrandLoop.Infratructure
             services.AddScoped<ISubscriptionRegisterRepository, SubscriptionRegisterRepository>();
             services.AddScoped<IEvidenceRepository, EvidenceRepository>();
             services.AddScoped<IKolsJoinCampaignRepository, KolsJoinCampaignRepository>();
+=======
+            services.AddScoped<IBrandProfileRepository, BrandProfileRepository>();
+            services.AddScoped<IInfluenceRepository, InfluenceProfileRepository>();
+>>>>>>> Stashed changes
             return services;
         }
     }

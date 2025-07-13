@@ -1,10 +1,15 @@
 ﻿using BrandLoop.Domain.Entities;
+<<<<<<< Updated upstream
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.FeartureDTO;
 using BrandLoop.Infratructure.Models.Influence;
 using BrandLoop.Infratructure.Persistence;
 using BrandLoop.Shared.Helper;
+=======
+using BrandLoop.Infratructure.Interface;
+using BrandLoop.Infratructure.Persistence;
+>>>>>>> Stashed changes
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,15 +35,20 @@ namespace BrandLoop.Infratructure.Repository
         {
             _context.InfluenceProfiles.Update(influenceProfile);
         }
+<<<<<<< Updated upstream
   
 
 
 
  
+=======
+
+>>>>>>> Stashed changes
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
         }
+<<<<<<< Updated upstream
 
         public async Task<List<InfluenceProfile>> SearchAsync(InfluenceSearchOptions opts)
         {
@@ -157,3 +167,7 @@ namespace BrandLoop.Infratructure.Repository
         }
     }
 }
+=======
+    }
+}
+>>>>>>> Stashed changes

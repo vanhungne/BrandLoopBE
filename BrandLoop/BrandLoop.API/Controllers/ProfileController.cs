@@ -157,7 +157,11 @@ namespace BrandLoop.API.Controllers
             }
             catch (Exception ex)
             {
+<<<<<<< Updated upstream
                 return StatusCode(500, ex.Message);
+=======
+                return StatusCode(500, "Internal server error");
+>>>>>>> Stashed changes
             }
         }
 
@@ -176,7 +180,11 @@ namespace BrandLoop.API.Controllers
             }
             catch (Exception ex)
             {
+<<<<<<< Updated upstream
                 return StatusCode(500, ex.Message);
+=======
+                return StatusCode(500, "Internal server error");
+>>>>>>> Stashed changes
             }
         }
 
@@ -195,7 +203,11 @@ namespace BrandLoop.API.Controllers
             }
             catch (Exception ex)
             {
+<<<<<<< Updated upstream
                 return StatusCode(500, ex.Message);
+=======
+                return StatusCode(500, "Internal server error");
+>>>>>>> Stashed changes
             }
         }
     }

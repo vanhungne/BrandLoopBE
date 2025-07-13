@@ -25,10 +25,13 @@ namespace BrandLoop.Application.Interfaces
         Task<ProfileResponseDto> UpdateUserProfileAsync(string uid, UpdateUserProfileDto updateDto);
         Task<ProfileResponseDto> UpdateBrandProfileAsync(string uid, UpdateBrandProfileDto updateDto);
         Task<ProfileResponseDto> UpdateInfluenceProfileAsync(string uid, UpdateInfluenceProfileDto updateDto);
+<<<<<<< Updated upstream
         Task<List<InfluencerList>> SearchInfluencersAsync(InfluenceSearchOptions opts);
         Task<List<InfluencerList>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts);
         Task<List<BannerDto>> GetActiveBannersAsync();
         Task<List<InfluencerTypeSelectionModel>> GetAllInfluencerType();
         Task<List<InfluencerList>> SearchInfluencer(string? name, string? contentCategory, int? id);
+=======
+>>>>>>> Stashed changes
     }
 }

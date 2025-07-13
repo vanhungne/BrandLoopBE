@@ -23,6 +23,9 @@ namespace BrandLoop.Infratructure.Interface
         Task<User> GetUserWithProfilesAsync(string uid);
         Task UpdateAsync(User user);
         Task SaveChangesAsync();
+<<<<<<< Updated upstream
         Task<List<User>> GetAllNewsUserInYear(int? year);
+=======
+>>>>>>> Stashed changes
     }
 }
