@@ -38,6 +38,6 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 # Copy file cert vào đúng stage
-COPY BrandLoop.API/brandloop.pfx /app/https/brandloop.pfx
+COPY BrandLoop.API/brandloop.io.vn.pfx /app/https/brandloop.io.vn.pfx
 
 ENTRYPOINT ["dotnet", "BrandLoop.API.dll"]
