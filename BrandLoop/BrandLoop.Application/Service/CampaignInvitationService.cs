@@ -117,7 +117,7 @@ namespace BrandLoop.Application.Service
             var result = new InvitationTotal();
             result.totalInvitation = allInvitation.Count;
             var invitationByStatus = await _campaignInvitationRepository.GetAllInvitationsOfBrandAsync(brandUid, status);
-            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            result.Invitations = _mapper.Map<List<InvitationOfBrand>>(invitationByStatus);
             foreach (var invitation in allInvitation)
             {
                 if (invitation.Status == CampaignInvitationStatus.pending)
@@ -139,7 +139,7 @@ namespace BrandLoop.Application.Service
             var result = new InvitationTotal();
             result.totalInvitation = allInvitation.Count;
             var invitationByStatus = await _campaignInvitationRepository.GetAllRequestedsOfBrandAsync(brandUid, status);
-            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            result.Invitations = _mapper.Map<List<InvitationOfBrand>>(invitationByStatus);
             foreach (var invitation in allInvitation)
             {
                 if (invitation.Status == CampaignInvitationStatus.pending)
@@ -172,7 +172,7 @@ namespace BrandLoop.Application.Service
             var result = new InvitationTotal();
             result.totalInvitation = allKolInvitation.Count;
             var invitationByStatus = await _campaignInvitationRepository.GetInvitationsByKOLIdAsync(kolId, status);
-            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            result.Invitations = _mapper.Map<List<InvitationOfBrand>>(invitationByStatus);
             foreach (var invitation in allKolInvitation)
             {
                 if (invitation.Status == CampaignInvitationStatus.pending)
@@ -194,7 +194,7 @@ namespace BrandLoop.Application.Service
             var result = new InvitationTotal();
             result.totalInvitation = allKolInvitation.Count;
             var invitationByStatus = await _campaignInvitationRepository.GetRequestByKOLIdAsync(kolId, status);
-            result.Invitations = _mapper.Map<List<InvitationDTO>>(invitationByStatus);
+            result.Invitations = _mapper.Map<List<InvitationOfBrand>>(invitationByStatus);
             foreach (var invitation in allKolInvitation)
             {
                 if (invitation.Status == CampaignInvitationStatus.pending)

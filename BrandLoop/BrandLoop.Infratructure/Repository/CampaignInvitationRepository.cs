@@ -85,6 +85,7 @@ namespace BrandLoop.Infratructure.Repository
             var invitations = await _context.CampaignInvitations
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
+                    .ThenInclude(c => c.Brand)
                 .Where(i => i.Campaign.CreatedBy == brandUid && (status == null || i.Status == status) && i.Type == JoinCampaignType.BrandInvited)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
@@ -96,6 +97,7 @@ namespace BrandLoop.Infratructure.Repository
             var invitations = await _context.CampaignInvitations
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
+                    .ThenInclude(c => c.Brand)
                 .Where(i => i.Campaign.CreatedBy == brandUid && (status == null || i.Status == status) && i.Type == JoinCampaignType.KolApplied)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
@@ -117,6 +119,7 @@ namespace BrandLoop.Infratructure.Repository
                 .Where(i => i.UID == kolId && (status == null || i.Status == status) && i.Type == JoinCampaignType.BrandInvited)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
+                    .ThenInclude(c =>c.Brand)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
 
@@ -129,6 +132,7 @@ namespace BrandLoop.Infratructure.Repository
                 .Where(i => i.UID == kolId && (status == null || i.Status == status) && i.Type == JoinCampaignType.KolApplied)
                 .Include(i => i.User)
                 .Include(i => i.Campaign)
+                    .ThenInclude(c => c.Brand)
                 .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
 

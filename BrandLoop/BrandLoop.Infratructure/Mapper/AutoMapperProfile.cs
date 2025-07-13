@@ -165,6 +165,13 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
                 .ForMember(dest => dest.ProfileImage, opt => opt.MapFrom(src => src.User.ProfileImage));
+
+            CreateMap<CampaignInvitation, InvitationOfBrand>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.ProfileImage, opt => opt.MapFrom(src => src.User.ProfileImage))
+                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Campaign.Brand.CompanyName));
+
             CreateMap<Deal, DealDTO>();
 
             // Skill mapping

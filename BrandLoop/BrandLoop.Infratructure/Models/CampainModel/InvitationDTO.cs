@@ -26,6 +26,11 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public string ProfileImage { get; set; } // Hình ảnh đại diện của KOL
     }
 
+    public class InvitationOfBrand : InvitationDTO
+    {
+        public string BrandName { get; set; } // Tên thương hiệu
+    }
+
     public class InvitationTotal
     {
         public int totalInvitation { get; set; } = 0;
@@ -34,6 +39,6 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public int totalRejectedInvitation { get; set; } = 0;
         public int totalExpiredInvitation { get; set; } = 0;
 
-        public List<InvitationDTO> Invitations { get; set; } = new List<InvitationDTO>();
+        public List<InvitationOfBrand> Invitations { get; set; } = new List<InvitationOfBrand>();
     }
 }

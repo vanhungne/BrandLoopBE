@@ -216,7 +216,7 @@ namespace BrandLoop.API.Controllers
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponseV2<InvitationDTO>(
+                var response = new PaginationResponseV2<InvitationOfBrand>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,
@@ -257,7 +257,7 @@ namespace BrandLoop.API.Controllers
                 .Take(filter.PageSize)
                 .ToList();
 
-                var response = new PaginationResponseV2<InvitationDTO>(
+                var response = new PaginationResponseV2<InvitationOfBrand>(
                 pagedData,
                 filter.PageNumber,
                 filter.PageSize,
