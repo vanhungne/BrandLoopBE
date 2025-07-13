@@ -35,6 +35,8 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<List<Feedback>> GetFeedbacksByCampaignIdAsync(int campaignId)
         {
             var feedbacks = await _context.Feedbacks
+                .Include(f => f.FromUser)
+                .Include(f => f.ToUser)
                 .Where(f => f.CampaignId == campaignId && f.FeedbackFrom == Domain.Enums.FeedbackType.Influencer)
                 .OrderByDescending(f => f.CreatedAt)
                 .ToListAsync();
