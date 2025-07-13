@@ -266,5 +266,155 @@ namespace BrandLoop.Infratructure.Repository
                 .ToListAsync();
         }
 
+        public async Task<InfluenceProfileModel> GetInfluenceProfileByUsernameAsync(string username)
+        {
+            var influenceProfile = await _context.InfluenceProfiles
+                  .Include(ip => ip.User)
+                  .ThenInclude(u => u.Role)
+                  .Include(ip => ip.User.KolsJoinCampaigns)
+                  .ThenInclude(kjc => kjc.Campaign)
+                  .Include(ip => ip.User.Wallets)
+                  .Include(ip => ip.InfluencerType)
+                  .FirstOrDefaultAsync(ip => ip.User.FullName == username);
+            if (influenceProfile == null) return null;
+            var uid = influenceProfile.UID;
+
+            if (uid == null) return null;
+
+            var skills = await GetUserSkillsAsync(uid);
+            var contentAndStyles = await GetUserContentAndStylesAsync(uid);
+
+            // Campaign statistics
+            var completedCampaigns = influenceProfile.User?.KolsJoinCampaigns?
+                .Count(kjc => kjc.Status == KolJoinCampaignStatus.Completed) ?? 0;
+            var pendingCampaigns = influenceProfile.User?.KolsJoinCampaigns?
+                .Count(kjc => kjc.Status == KolJoinCampaignStatus.Pending) ?? 0;
+            var approvedCampaigns = influenceProfile.User?.KolsJoinCampaigns?
+                .Count(kjc => kjc.Status == KolJoinCampaignStatus.Active) ?? 0;
+            var totalCampaignsJoined = influenceProfile.User?.KolsJoinCampaigns?.Count ?? 0;
+
+            return new InfluenceProfileModel
+            {
+                InfluenceId = influenceProfile.InfluenceId,
+                UID = influenceProfile.UID,
+                Nickname = influenceProfile.Nickname,
+                Bio = influenceProfile.Bio,
+                ContentCategory = influenceProfile.ContentCategory,
+                Location = influenceProfile.Location,
+                Languages = influenceProfile.Languages,
+                PortfolioUrl = influenceProfile.PortfolioUrl,
+                AverageRate = influenceProfile.AverageRate,
+                Verified = influenceProfile.Verified,
+                Facebook = influenceProfile.Facebook,
+                Instagram = influenceProfile.Instagram,
+                Tiktok = influenceProfile.Tiktok,
+                Youtube = influenceProfile.Youtube,
+                FollowerCount = influenceProfile.FollowerCount,
+                Type = influenceProfile.InfluencerType.Name,
+                EngagementRate = influenceProfile.EngagementRate,
+                Gender = influenceProfile.Gender,
+                DayOfBirth = influenceProfile.DayOfBirth,
+                CreatedAt = influenceProfile.CreatedAt,
+                UpdatedAt = influenceProfile.UpdatedAt,
+
+                // User basic info
+                Email = influenceProfile.User?.Email,
+                FullName = influenceProfile.User?.FullName,
+                Phone = influenceProfile.User?.Phone,
+                ProfileImage = influenceProfile.User?.ProfileImage,
+                Status = influenceProfile.User?.Status.ToString(),
+                LastLogin = influenceProfile.User?.LastLogin,
+
+                // Statistics
+                TotalCampaignsJoined = totalCampaignsJoined,
+                CompletedCampaigns = completedCampaigns,
+                PendingCampaigns = pendingCampaigns,
+                ApprovedCampaigns = approvedCampaigns,
+                SkillsCount = skills.Count,
+                ContentCount = contentAndStyles.Count,
+
+                // Skills and Content
+                Skills = skills,
+                ContentAndStyles = contentAndStyles
+            };
+        }
+        public async Task<List<InfluenceProfileModel>> GetListInfluenceProfilesByUsernameAsync(string username)
+        {
+            var influenceProfiles = await _context.InfluenceProfiles
+                .Include(ip => ip.User)
+                    .ThenInclude(u => u.Role)
+                .Include(ip => ip.User.KolsJoinCampaigns)
+                    .ThenInclude(kjc => kjc.Campaign)
+                .Include(ip => ip.User.Wallets)
+                .Include(ip => ip.InfluencerType)
+                .Where(ip => ip.User.FullName == username) // Hoặc Contains cho search tương đối
+                .ToListAsync();
+
+            var results = new List<InfluenceProfileModel>();
+
+            foreach (var influenceProfile in influenceProfiles)
+            {
+                if (influenceProfile?.UID == null)
+                    continue;
+
+                var uid = influenceProfile.UID;
+                var skills = await GetUserSkillsAsync(uid);
+                var contentAndStyles = await GetUserContentAndStylesAsync(uid);
+
+                var kolsJoin = influenceProfile.User?.KolsJoinCampaigns ?? new List<KolsJoinCampaign>();
+                var completedCampaigns = kolsJoin.Count(k => k.Status == KolJoinCampaignStatus.Completed);
+                var pendingCampaigns = kolsJoin.Count(k => k.Status == KolJoinCampaignStatus.Pending);
+                var approvedCampaigns = kolsJoin.Count(k => k.Status == KolJoinCampaignStatus.Active);
+                var totalCampaigns = kolsJoin.Count;
+
+                results.Add(new InfluenceProfileModel
+                {
+                    InfluenceId = influenceProfile.InfluenceId,
+                    UID = influenceProfile.UID,
+                    Nickname = influenceProfile.Nickname,
+                    Bio = influenceProfile.Bio,
+                    ContentCategory = influenceProfile.ContentCategory,
+                    Location = influenceProfile.Location,
+                    Languages = influenceProfile.Languages,
+                    PortfolioUrl = influenceProfile.PortfolioUrl,
+                    AverageRate = influenceProfile.AverageRate,
+                    Verified = influenceProfile.Verified,
+                    Facebook = influenceProfile.Facebook,
+                    Instagram = influenceProfile.Instagram,
+                    Tiktok = influenceProfile.Tiktok,
+                    Youtube = influenceProfile.Youtube,
+                    FollowerCount = influenceProfile.FollowerCount,
+                    Type = influenceProfile.InfluencerType?.Name,
+                    EngagementRate = influenceProfile.EngagementRate,
+                    Gender = influenceProfile.Gender,
+                    DayOfBirth = influenceProfile.DayOfBirth,
+                    CreatedAt = influenceProfile.CreatedAt,
+                    UpdatedAt = influenceProfile.UpdatedAt,
+
+                    // User basic info
+                    Email = influenceProfile.User?.Email,
+                    FullName = influenceProfile.User?.FullName,
+                    Phone = influenceProfile.User?.Phone,
+                    ProfileImage = influenceProfile.User?.ProfileImage,
+                    Status = influenceProfile.User?.Status.ToString(),
+                    LastLogin = influenceProfile.User?.LastLogin,
+
+                    // Statistics
+                    TotalCampaignsJoined = totalCampaigns,
+                    CompletedCampaigns = completedCampaigns,
+                    PendingCampaigns = pendingCampaigns,
+                    ApprovedCampaigns = approvedCampaigns,
+                    SkillsCount = skills.Count,
+                    ContentCount = contentAndStyles.Count,
+
+                    // Skills and Content
+                    Skills = skills,
+                    ContentAndStyles = contentAndStyles
+                });
+            }
+
+            return results;
+        }
+
     }
 }

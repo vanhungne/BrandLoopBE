@@ -115,14 +115,16 @@ namespace BrandLoop.Application.Service
 
             return await GetProfileAsync(uid);
         }
-        public async Task<List<InfluenceProfile>> SearchInfluencersAsync(InfluenceSearchOptions opts)
+        public async Task<List<InfluencerList>> SearchInfluencersAsync(InfluenceSearchOptions opts)
         {
-            return await _influenceProfileRepository.SearchAsync(opts);
+            var influ = await _influenceProfileRepository.SearchAsync(opts);
+            return _mapper.Map<List<InfluencerList>>(influ);
         }
 
-        public async Task<List<InfluenceProfile>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts)
+        public async Task<List<InfluencerList>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts)
         {
-            return await _influenceProfileRepository.SearchHomeFeaturedAsync(opts);
+            var influ = await _influenceProfileRepository.SearchHomeFeaturedAsync(opts);
+            return _mapper.Map<List<InfluencerList>>(influ);
         }
 
         public async Task<List<BannerDto>> GetActiveBannersAsync()
@@ -150,6 +152,16 @@ namespace BrandLoop.Application.Service
         {
             var influencers = await _influenceProfileRepository.SearchInfluencer(name, contentCategory, id);
             return _mapper.Map<List<InfluencerList>>(influencers);
+        }
+
+        public async Task<InfluenceProfileModel> GetInfluenceProfileUsernameAsync(string username)
+        {
+            return await _profileRepository.GetInfluenceProfileByUsernameAsync(username);
+        }
+
+        public async Task<List<InfluenceProfileModel>> GetListInfluenceProfilesByUsernameAsync(string username)
+        {
+            return await _profileRepository.GetListInfluenceProfilesByUsernameAsync(username);
         }
     }
 }

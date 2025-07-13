@@ -49,34 +49,34 @@ namespace BrandLoop.API.Controllers
             }
         }
 
-        [HttpGet("search-influencer")]
-        public async Task<IActionResult> SearchInfluencer(string? name, string? contentCategory, int? influencerTypeId, [FromQuery] PaginationFilter filter)
-        {
-            try
+            [HttpGet("search-influencer")]
+            public async Task<IActionResult> SearchInfluencer(string? name, string? contentCategory, int? influencerTypeId, [FromQuery] PaginationFilter filter)
             {
-                var influencers = await _profileService.SearchInfluencer(name, contentCategory, influencerTypeId);
-                if (influencers == null || !influencers.Any())
+                try
                 {
-                    return Ok();
-                }
-                var totalRecords = influencers.Count;
-                var pagedData = influencers
-                .Skip((filter.PageNumber - 1) * filter.PageSize)
-                .Take(filter.PageSize)
-                .ToList();
+                    var influencers = await _profileService.SearchInfluencer(name, contentCategory, influencerTypeId);
+                    if (influencers == null || !influencers.Any())
+                    {
+                        return Ok();
+                    }
+                    var totalRecords = influencers.Count;
+                    var pagedData = influencers
+                    .Skip((filter.PageNumber - 1) * filter.PageSize)
+                    .Take(filter.PageSize)
+                    .ToList();
 
-                var response = new PaginationResponse<InfluencerList>(
-                pagedData,
-                filter.PageNumber,
-                filter.PageSize,
-                totalRecords
-                );
-                return Ok(ApiResponse<PaginationResponse<InfluencerList>>.SuccessResult(response, "Lấy danh sách influencer thành công"));
+                    var response = new PaginationResponse<InfluencerList>(
+                    pagedData,
+                    filter.PageNumber,
+                    filter.PageSize,
+                    totalRecords
+                    );
+                    return Ok(ApiResponse<PaginationResponse<InfluencerList>>.SuccessResult(response, "Lấy danh sách influencer thành công"));
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = ex.Message });
+                }
             }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-        }
     }
 }
