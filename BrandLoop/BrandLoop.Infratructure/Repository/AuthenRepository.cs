@@ -313,7 +313,7 @@ namespace BrandLoop.Infratructure.ReporitorY
             //string emailBody = _emailSender.GetMailBody(model, "Brand");
             //bool emailSent = await _emailSender.EmailSendAsync(model.Email, "Brand Registration Submitted", emailBody);
 
-            return "Your brand registration has been submitted.";
+            return "Your brand registration has been submitted";
         }
 
         // New methods for KOL registration
