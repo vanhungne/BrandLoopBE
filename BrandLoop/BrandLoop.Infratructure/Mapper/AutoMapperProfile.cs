@@ -186,7 +186,8 @@ namespace BrandLoop.Infratructure.Mapper
 
             // Feedback mapping
             CreateMap<Feedback, FeedbackDTO>().ReverseMap();
-            CreateMap<Feedback, ShowFeedback>();
+            CreateMap<Feedback, ShowFeedback>()
+                .ForMember(dest => dest.FromUserName, opt => opt.MapFrom(src => src.FromUser != null ? src.FromUser.FullName : "Unknown User"));
 
 
 
