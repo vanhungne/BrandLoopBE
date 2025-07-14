@@ -148,19 +148,21 @@ namespace BrandLoop.Infratructure.Repository
             if (existingNews == null)
                 throw new Exception("News not found");
 
-            string newsImageUrl = null;
+            // Chỉ cập nhật FeaturedImage khi có newsImage mới
             if (newsImage != null)
             {
                 var cloudinaryService = new CloundinaryRepository(_configuration);
-                newsImageUrl = await cloudinaryService.UploadImage(newsImage);
+                string newsImageUrl = await cloudinaryService.UploadImage(newsImage);
+                existingNews.FeaturedImage = newsImageUrl;
             }
 
+            // Cập nhật các trường khác
             existingNews.Title = news.Title;
             existingNews.Slug = GenerateSlug(news.Title);
             existingNews.Content = news.Content;
             existingNews.Category = news.Category;
-            existingNews.FeaturedImage = newsImageUrl;
             existingNews.UpdatedAt = DateTimeHelper.GetVietnamNow();
+
             _context.News.Update(existingNews);
             await _context.SaveChangesAsync();
             return existingNews;

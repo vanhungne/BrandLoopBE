@@ -91,12 +91,16 @@ namespace BrandLoop.Application.Service
             return _mapper.Map<List<NewsListDto>>(searchResults);
         }
 
-        public async Task<News> UpdateNewsAsync(UpdateNews news, IFormFile newsImage, string UID)
+        public async Task<NewsDetailDto> UpdateNewsAsync(UpdateNews news, IFormFile newsImage, string UID)
         {
             var existNews = await _newsRepository.GetNewsById(news.NewsId);
             if (existNews.Author != UID)
                 throw new UnauthorizedAccessException("You do not have permission to update this news.");
-            return await _newsRepository.UpdateNews(news, newsImage);
+
+            var updatedNews = await _newsRepository.UpdateNews(news, newsImage);
+
+            // Map the updated entity to DTO to avoid circular reference
+            return _mapper.Map<NewsDetailDto>(updatedNews);
         }
         public async Task<List<SlugDto>> GetAllSlugsAsync()
         {

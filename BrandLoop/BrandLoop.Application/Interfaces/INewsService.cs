@@ -20,7 +20,7 @@ namespace BrandLoop.Application.Interfaces
         Task<List<NewsListDto>> SearchNewsAsync(string searchTerm);
         Task<NewsDetailDto> GetNewsBySlugAsync(string slug);
         Task<List<NewsListDto>> GetNewsByCategoryAsync(string category);
-        Task<News> UpdateNewsAsync(UpdateNews news, IFormFile newsImage, string UID);
+        Task<NewsDetailDto> UpdateNewsAsync(UpdateNews news, IFormFile newsImage, string UID);
         Task DeleteNewsAsync(int newsId, string UID);
         Task<List<PendingNewsDto>> GetAllPendingNewsAsync();
         Task ApproveNewsAsync(int newsId);

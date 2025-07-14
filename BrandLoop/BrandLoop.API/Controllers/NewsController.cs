@@ -207,7 +207,7 @@ namespace BrandLoop.API.Controllers
             {
                 var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var updatedNews = await _newsService.UpdateNewsAsync(news, newsImage, uid);
-                return Ok(ApiResponse<News>.SuccessResult(updatedNews));
+                return Ok(ApiResponse<NewsDetailDto>.SuccessResult(updatedNews)); // Changed from News to NewsDetailDto
             }
             catch (Exception ex)
             {

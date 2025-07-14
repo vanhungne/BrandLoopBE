@@ -340,19 +340,61 @@ namespace BrandLoop.Infratructure.Repository
         }
         public async Task<List<InfluenceProfileModel>> GetListInfluenceProfilesByUsernameAsync(string username)
         {
-            var influenceProfiles = await _context.InfluenceProfiles
+            // Nếu không nhập gì thì trả về tất cả
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                username = "";
+            }
+
+            var keywords = username
+                .Trim()
+                .ToLower()
+                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var query = _context.InfluenceProfiles
                 .Include(ip => ip.User)
                     .ThenInclude(u => u.Role)
                 .Include(ip => ip.User.KolsJoinCampaigns)
                     .ThenInclude(kjc => kjc.Campaign)
                 .Include(ip => ip.User.Wallets)
                 .Include(ip => ip.InfluencerType)
-                .Where(ip => ip.User.FullName == username) // Hoặc Contains cho search tương đối
-                .ToListAsync();
+                .AsQueryable();
+
+            // Ưu tiên 1: Trùng khớp hoàn toàn
+            var exact = query.Where(ip => ip.User.FullName.ToLower() == username.ToLower());
+
+            // Ưu tiên 2: Chứa tất cả từ khóa (AND)
+            var allKeywords = query.Where(ip =>
+                keywords.All(kw => ip.User.FullName.ToLower().Contains(kw))
+            );
+
+            // Ưu tiên 3: Chứa ít nhất một từ khóa (OR)
+            var anyKeyword = query.Where(ip =>
+                keywords.Any(kw => ip.User.FullName.ToLower().Contains(kw))
+            );
+
+            // Ưu tiên 4: Chứa bất kỳ ký tự nào trong tên nhập vào
+            var charContains = query;
+            if (keywords.Length > 0)
+            {
+                var chars = keywords.SelectMany(kw => kw.ToCharArray()).Distinct().ToArray();
+                charContains = query.Where(ip => chars.Any(c => ip.User.FullName.ToLower().Contains(c)));
+            }
+
+            // Lấy danh sách theo ưu tiên
+            List<InfluenceProfile> resultList = await exact.ToListAsync();
+            if (resultList.Count == 0 && keywords.Length > 0)
+                resultList = await allKeywords.ToListAsync();
+            if (resultList.Count == 0 && keywords.Length > 0)
+                resultList = await anyKeyword.ToListAsync();
+            if (resultList.Count == 0 && keywords.Length > 0)
+                resultList = await charContains.ToListAsync();
+            if (resultList.Count == 0)
+                resultList = await query.ToListAsync();
 
             var results = new List<InfluenceProfileModel>();
 
-            foreach (var influenceProfile in influenceProfiles)
+            foreach (var influenceProfile in resultList)
             {
                 if (influenceProfile?.UID == null)
                     continue;
@@ -415,6 +457,7 @@ namespace BrandLoop.Infratructure.Repository
 
             return results;
         }
+
 
     }
 }
