@@ -352,7 +352,7 @@ namespace BrandLoop.Infratructure.Persistence
                 new Role { RoleId = 4, RoleName = "Guest", Description = "Guest User" }
             );
             modelBuilder.Entity<InfluencerType>().HasData(
-                new InfluencerType { Id = 1, Name = "Norman", MinFollower = 0, MaxFollower = 10000, PlatformFee = 10000 },
+                new InfluencerType { Id = 1, Name = "Entry-Level Influence", MinFollower = 0, MaxFollower = 10000, PlatformFee = 10000 },
                 new InfluencerType { Id = 2, Name = "Nano Influencers", MinFollower = 10000, MaxFollower = 50000, PlatformFee = 100000 },
                 new InfluencerType { Id = 3, Name = "Micro Influencers", MinFollower = 50000, MaxFollower = 100000, PlatformFee = 200000 },
                 new InfluencerType { Id = 4, Name = "Mid-Tier Influencers", MinFollower = 100000, MaxFollower = 500000, PlatformFee = 300000 },
