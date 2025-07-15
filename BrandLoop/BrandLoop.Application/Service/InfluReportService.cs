@@ -1,7 +1,9 @@
-﻿using BrandLoop.Application.Interfaces;
+﻿using AutoMapper;
+using BrandLoop.Application.Interfaces;
 using BrandLoop.Domain.Entities;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.Report;
+using BrandLoop.Shared.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,21 +19,34 @@ namespace BrandLoop.Application.Service
         private readonly IFeedbackRepository _feedbackRepository;
         private readonly ICampaignRepository _campaignRepository;
         private readonly IEvidenceRepository _evidenceRepository;
-        public InfluReportService(IInfluencerReportRepository influencerReportRepository, IFeedbackRepository feedbackRepository, ICampaignRepository campaignRepository, IEvidenceRepository evidenceRepository)
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IMapper _mapper;
+        public InfluReportService(IInfluencerReportRepository influencerReportRepository, IFeedbackRepository feedbackRepository, ICampaignRepository campaignRepository, IEvidenceRepository evidenceRepository, IMapper mapper, IPaymentRepository paymentRepository)
         {
             _influencerReportRepository = influencerReportRepository;
             _feedbackRepository = feedbackRepository;
             _campaignRepository = campaignRepository;
             _evidenceRepository = evidenceRepository;
+            _mapper = mapper;
+            _paymentRepository = paymentRepository;
         }
         public async Task FinishReport(string userId, InfluReport influReport)
         {
             var campaign = await _campaignRepository.GetCampaignDetailAsync(influReport.CampaignId);
-            var kolJoinCampaign = campaign.KolsJoinCampaigns.FirstOrDefault(k => k.UID == userId);
+            if (campaign.Status != Domain.Enums.CampaignStatus.InProgress)
+                throw new Exception("Chiến dịch chưa được bắt đầu.");
+
+                var kolJoinCampaign = campaign.KolsJoinCampaigns.FirstOrDefault(k => k.UID == userId);
             if (kolJoinCampaign == null)
             {
-                throw new AuthenticationException("You can not report this campaign.");
+                throw new AuthenticationException("Bạn không có quyền để báo cáo cho chiến dịch này.");
             }
+
+            // Check if user is already reported
+            var report = await _influencerReportRepository.GetReportById(kolJoinCampaign.KolsJoinCampaignId);
+            if (report != null)
+                throw new Exception("Bạn đã báo cáo rồi.");
+
             // Create a new Influencer Report
             var newReport = new InfluencerReport
             {
@@ -40,7 +55,7 @@ namespace BrandLoop.Application.Service
                 TotalReach = influReport.TotalReach,
                 TotalImpressions = influReport.TotalImpressions,
                 TotalEngagement = influReport.TotalEngagement,
-                AvgEngagementRate = (influReport.TotalEngagement / influReport.TotalReach) * 100,   //(TotalEngagement / TotalReach) * 100
+                AvgEngagementRate = influReport.TotalReach > 0 ? ((double)influReport.TotalEngagement / influReport.TotalReach) * 100 : 0,   //(TotalEngagement / TotalReach) * 100
                 TotalClicks = influReport.TotalClicks
             };
             await _influencerReportRepository.AddInfluencerReport(newReport);
@@ -75,6 +90,62 @@ namespace BrandLoop.Application.Service
 
             // Update kol join campaign status to Completed
             await _campaignRepository.UpdateKolJoinCampaignStatus(kolJoinCampaign.KolsJoinCampaignId, Domain.Enums.KolJoinCampaignStatus.Completed);
+
+            // Update campaign report
+            var campaignReport = await _campaignRepository.GetCampaignReportByCampaignIdAsync(campaign.CampaignId);
+
+            if (campaignReport == null)
+            {
+                var payment = await _paymentRepository.GetPaymentByCamaignId(campaign.CampaignId);
+                campaignReport = new CampaignReport
+                {
+                    CampaignId = campaign.CampaignId,
+                    TotalSpend = payment != null ? payment.Amount : 0,
+                    TotalReach = influReport.TotalReach,
+                    TotalImpressions = influReport.TotalImpressions,
+                    TotalEngagement = influReport.TotalEngagement,
+                    TotalClicks = influReport.TotalClicks,
+                    AvgEngagementRate = influReport.TotalReach > 0 ? ((double)influReport.TotalEngagement / influReport.TotalReach) * 100 : 0,
+                    CostPerEngagement = influReport.TotalEngagement > 0 ? ((payment != null ? payment.Amount : 0) / influReport.TotalEngagement) : 0,
+                    CreatedAt = DateTimeHelper.GetVietnamNow()
+                };
+
+                await _influencerReportRepository.AddCampaignReport(campaignReport);
+            }
+            else
+            {
+                campaignReport.TotalReach += influReport.TotalReach;
+                campaignReport.TotalImpressions += influReport.TotalImpressions;
+                campaignReport.TotalEngagement += influReport.TotalEngagement;
+                campaignReport.TotalClicks += influReport.TotalClicks;
+                campaignReport.AvgEngagementRate = campaignReport.TotalReach > 0 ? ((double)campaignReport.TotalEngagement / campaignReport.TotalReach) * 100 : 0;
+                campaignReport.CostPerEngagement = campaignReport.TotalEngagement > 0 ? campaignReport.TotalSpend / campaignReport.TotalEngagement : 0;
+                await _influencerReportRepository.UpdateCampaignReport(campaignReport);
+            }
+
+        }
+
+        public async Task<List<FeedbackDTO>> GetFeedbacksOfBrandByCampaignId(int campaignId, string brandUID)
+        {
+            var feedbacks = await _feedbackRepository.GetFeedbacksOfBrandByCampaignId(campaignId, brandUID);
+            return _mapper.Map<List<FeedbackDTO>>(feedbacks);
+        }
+
+        public async Task<InfluencerReportModel> GetReportByCampaignId(int campaignId, string influencerUID)
+        {
+            var report = await _influencerReportRepository.GetReportsByCampaignId(campaignId);
+            var influReport = _mapper.Map<InfluReport>(report.FirstOrDefault(r => r.KolsJoinCampaign.UID == influencerUID));
+
+            if (influReport == null)
+                throw new ArgumentException("Bạn chưa báo cáo cho chiến dịch này.");
+            var model = _mapper.Map<InfluencerReportModel>(influReport);
+            model.AvgEngagementRate = report.FirstOrDefault(r => r.KolsJoinCampaign.UID == influencerUID).AvgEngagementRate;
+
+            var feedback = await _feedbackRepository.GetFeedbackOfKolByCampaignIdAsync(campaignId, influencerUID);
+            if (feedback != null)
+                model.Feedback = _mapper.Map<FeedbackDTO>(feedback);
+
+            return model;
         }
     }
 }

@@ -36,6 +36,7 @@ namespace BrandLoop.Infratructure.Models.Report
         public int? Rating { get; set; } // CHECK (rating BETWEEN 1 AND 5)
 
         public string FeedbackFrom { get; set; }
+        public string FeedbackTo { get; set; }
         public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamNow();
     }
 
@@ -43,6 +44,7 @@ namespace BrandLoop.Infratructure.Models.Report
     {
         public int FeedbackId { get; set; }
         public string FromUserId { get; set; }
+        public string FromUserName { get; set; } // Tên người đánh giá
         public string Description { get; set; }
         public int? Rating { get; set; }
     }

@@ -195,7 +195,7 @@ namespace BrandLoop.Infratructure.Repository
         public Task<CampaignInvitation> GetByCampaignAndCreatedBy(int campaignId, string kolUid)
         {
             var invitation = _context.CampaignInvitations
-                .FirstOrDefaultAsync(i => i.CampaignId == campaignId && i.UID == kolUid);
+                .FirstOrDefaultAsync(i => i.CampaignId == campaignId && i.UID == kolUid && i.Status != CampaignInvitationStatus.rejected && i.Status != CampaignInvitationStatus.expired);
             return invitation;
         }
     }

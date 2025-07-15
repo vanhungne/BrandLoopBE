@@ -541,5 +541,59 @@ namespace BrandLoop.API.Controllers
                     ApiResponse<CampaignTracking>.ErrorResult(ex.Message));
             }
         }
+
+        /// <summary>
+        /// Lay thong tin report của influencer o campaign (campaignId)
+        /// </summary>
+        /// 
+        [HttpGet("influencer-report/{campaignId}")]
+        [Authorize(Roles = "Influencer")]
+        public async Task<ActionResult<ApiResponse<InfluencerReportModel>>> GetInfluencerReport(int campaignId)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(uid))
+                    return BadRequest(ApiResponse<InfluencerReportModel>.ErrorResult("Không tìm thấy thông tin người dùng"));
+                var report = await _influReportService.GetReportByCampaignId(campaignId, uid);
+                if (report == null)
+                {
+                    return NotFound(ApiResponse<InfluencerReportModel>.ErrorResult("Không tìm thấy báo cáo cho campaign này"));
+                }
+                return Ok(ApiResponse<InfluencerReportModel>.SuccessResult(report, "Lấy báo cáo thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<InfluencerReportModel>.ErrorResult(ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Lấy các feedback của brand cho influencer trong campaign
+        /// </summary>
+        /// 
+        [HttpGet("feedback/{campaignId}")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<FeedbackDTO>>>> GetFeedbacks(int campaignId)
+        {
+            try
+            {
+                var uid = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(uid))
+                    return BadRequest(ApiResponse<IEnumerable<FeedbackDTO>>.ErrorResult("Không tìm thấy thông tin người dùng"));
+                var feedbacks = await _influReportService.GetFeedbacksOfBrandByCampaignId(campaignId, uid);
+                if (feedbacks == null || !feedbacks.Any())
+                {
+                    return NotFound(ApiResponse<IEnumerable<FeedbackDTO>>.ErrorResult("Không tìm thấy feedback cho campaign này"));
+                }
+                return Ok(ApiResponse<IEnumerable<FeedbackDTO>>.SuccessResult(feedbacks, "Lấy feedback thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<IEnumerable<FeedbackDTO>>.ErrorResult(ex.Message));
+            }
+        }
     }
 }

@@ -14,6 +14,9 @@ namespace BrandLoop.Infratructure.Models.UserModel
 
         public string Bio { get; set; }
 
+        [StringLength(255)]
+        public string Email { get; set; }
+
         [StringLength(100)]
         public string ContentCategory { get; set; }
 
@@ -23,10 +26,9 @@ namespace BrandLoop.Infratructure.Models.UserModel
         [StringLength(255)]
         public string Languages { get; set; }
 
+
         [StringLength(255)]
         public string PortfolioUrl { get; set; }
-
-        public decimal? AverageRate { get; set; }
 
         [StringLength(255)]
         public string Facebook { get; set; }
@@ -40,13 +42,13 @@ namespace BrandLoop.Infratructure.Models.UserModel
         [StringLength(255)]
         public string Youtube { get; set; }
 
-        public int? FollowerCount { get; set; }
-
-        public decimal? EngagementRate { get; set; }
-
         [StringLength(10)]
         public string Gender { get; set; }
 
         public DateOnly? DayOfBirth { get; set; }
+
+        [StringLength(20)]
+        public string Phone { get; set; }
+        public string FullName { get; set; }
     }
 }

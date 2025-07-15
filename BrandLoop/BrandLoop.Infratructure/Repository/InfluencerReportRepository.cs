@@ -45,5 +45,11 @@ namespace BrandLoop.Infratructure.Repository
                 .ToListAsync();
             return reports;
         }
+
+        public async Task UpdateCampaignReport(CampaignReport campaignReport)
+        {
+            _context.CampaignReports.Update(campaignReport);
+            await _context.SaveChangesAsync();
+        }
     }
 }

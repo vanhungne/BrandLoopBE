@@ -32,6 +32,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<List<Campaign>> GetAllCampaignsInfluJoined(string uid);
         Task<List<Campaign>> GetAllCampaignsInfluJoined(string uid, int year);
         Task<List<Campaign>> GetAllCampaignsInfluJoinedWithStatus(string uid, CampaignStatus status);
-
+        Task<CampaignReport> GetCampaignReportByCampaignIdAsync(int campaignId);
     }
 }

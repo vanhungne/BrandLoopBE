@@ -425,14 +425,14 @@ namespace BrandLoop.Application.Service
             // Kiểm tra campaign tồn tại và quyền người dùng
             var checkcampaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
             if (checkcampaign == null)
-                throw new InvalidOperationException($"Campaign with ID {campaignId} not found or cannot be started.");
+                throw new InvalidOperationException($"Chiến dịch với id {campaignId} không tôn tại.");
             if (checkcampaign.CreatedBy != creatorId)
-                throw new UnauthorizedAccessException($"User {creatorId} is not authorized to start this campaign.");
+                throw new UnauthorizedAccessException($"Bạn không có quyền để bắt đầu chiến dịch này.");
 
             // Kiểm tra KOL đã join
             var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(campaignId);
             if (kolJoinCampaigns == null || !kolJoinCampaigns.Any())
-                throw new Exception($"No KOLs joined the campaign with ID {campaignId}.");
+                throw new Exception($"Chưa có Influencer nào tham gia chiến dịch này.");
             var existPayment = await _paymentRepository.GetPaymentByCamaignId(campaignId);
 
             // Kiểm tra payment đã tồn tại và trạng thái
@@ -479,25 +479,25 @@ namespace BrandLoop.Application.Service
 
             var payment = await _paymentRepository.GetPaymentByIdAsync(orderCode);
             if (payment == null)
-                throw new Exception($"Payment with ID {orderCode} not found.");
+                throw new Exception($"Không thể tìm thấy giao dịch với id: {orderCode}.");
 
             if (payment.Status != PaymentStatus.pending)
-                throw new Exception("Payment is not in pending status.");
+                throw new Exception("Giao dịch đang không trong trạng thái pending.");
             if (payment.Type != PaymentType.campaign)
-                throw new Exception("Payment type is not campaign.");
+                throw new Exception("Giaso dịch này không phải loại giao dịch dùng để thanh toán cho chiến dịch.");
 
             var campaign = await _campaignRepository.GetCampaignDetailAsync((int)payment.CampaignId);
             if (campaign.Creator == null)
-                throw new Exception($"Campaign with ID {(int)payment.CampaignId} not found.");
+                throw new Exception($"Không thể tìm thấy chiến dịch của giao dịch với id giao dịch: {(int)payment.CampaignId}.");
 
             var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(campaign.CampaignId);
             if (kolJoinCampaigns == null || !kolJoinCampaigns.Any())
-                throw new Exception($"No KOLs joined the campaign with ID {campaign.CampaignId}.");
+                throw new Exception($"Chưa có Influencer nào tham gia chiến dịch này.");
 
             foreach (var kol in kolJoinCampaigns)
             {
                 if (kol.User == null || kol.User.InfluenceProfile == null)
-                    throw new Exception($"KOL with ID {kol.UID} does not have a valid profile.");
+                    throw new Exception($"Influencer với UID {kol.UID} không có profile hợp lệ.");
                 item = new ItemData(
                     $"{kol.User.InfluenceProfile.InfluencerType.Name} Fee for {kol.User.FullName}",
                     kol.User.InfluenceProfile.InfluencerType.PlatformFee,
@@ -507,7 +507,7 @@ namespace BrandLoop.Application.Service
             }
             var creator = await _userRepository.GetBasicAccountProfileAsync(campaign.CreatedBy);
             if (creator == null)
-                throw new Exception($"User with ID {campaign.CreatedBy} not found.");
+                throw new Exception($"Không thể tìm thấy người dùng với UID: {campaign.CreatedBy}.");
 
             var paymentInfo = await _paySystem.CreatePaymentAsync(
                 creator,
@@ -524,13 +524,13 @@ namespace BrandLoop.Application.Service
         {
             var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(orderCode);
             if (payment == null)
-                throw new Exception($"Payment with order code {orderCode} not found.");
+                throw new Exception($"Không thể tìm thấy giao dịch với id: {orderCode}.");
             if (payment.Status != PaymentStatus.pending)
-                throw new Exception("Payment is not in pending status.");
+                throw new Exception("Giao dịch đang không trong trạng thái peding.");
 
             var paymentLinkInfo = await _paySystem.getPaymentLinkInformation(orderCode);
             if (paymentLinkInfo.status != "PAID")
-                throw new Exception($"Payment is not paid yet: {paymentLinkInfo.status}");
+                throw new Exception($"Giao dịch chưa được hoàn thành thanh toán, status ({paymentLinkInfo.status})");
 
             await _paymentRepository.UpdatePaymentStatus(orderCode, PaymentStatus.Succeeded);
             await _campaignRepository.ConfirmPaymentToStartCampaign((int)payment.CampaignId);
@@ -540,41 +540,29 @@ namespace BrandLoop.Application.Service
         {
             var checkCampaign = await _campaignRepository.GetCampaignDetailAsync(brandReport.CampaignId);
             if (checkCampaign == null)
-                throw new InvalidOperationException($"Campaign with ID {brandReport.CampaignId} not found.");
+                throw new InvalidOperationException($"Không thể tìm thấy chiến dịch có ID: {brandReport.CampaignId}.");
 
             if (checkCampaign.CreatedBy != creatorId)
-                throw new UnauthorizedAccessException($"User {creatorId} is not authorized to end this campaign.");
+                throw new UnauthorizedAccessException($"Bạn không có quyền kết thúc chiến dich này.");
             var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(brandReport.CampaignId);
             foreach (var kol in kolJoinCampaigns)
             {
                 if (kol.Status != KolJoinCampaignStatus.Completed)
-                    throw new InvalidOperationException($"KOL {kol.User.FullName} is not completed in this campaign yet.");
+                    throw new InvalidOperationException($"Influencer {kol.User.FullName} cần phải báo cáo trước khi kết thúc chiến dịch.");
                 var feedback = _feedbackRepository.GetFeedbackForKolOfCampaignAsync(brandReport.CampaignId, kol.UID);
                 if (feedback == null)
-                    throw new InvalidOperationException($"You need to give feedback to all influencer before end this campaign.");
+                    throw new InvalidOperationException($"Bạn cần phải cho nhận xét toàn bộ influencer đang tham gia trước khi kết thúc chiến dịch.");
             }
 
-            // Create campaign report
-            var campaignReport = new CampaignReport
-            {
-                CampaignId = brandReport.CampaignId,
-                TotalRevenue = brandReport.TotalRevenue,
-                TotalSpend = brandReport.TotalSpend,
-                CreatedAt = DateTimeHelper.GetVietnamNow()
-            };
-            var influencerReport = await _influencerReportRepository.GetReportsByCampaignId(brandReport.CampaignId);
-            foreach (var report in influencerReport)
-            {
-                campaignReport.TotalReach += report.TotalReach;
-                campaignReport.TotalImpressions += report.TotalImpressions;
-                campaignReport.TotalEngagement += report.TotalEngagement;
-                campaignReport.TotalClicks += report.TotalClicks;
-                campaignReport.AvgEngagementRate += report.AvgEngagementRate;
-            }
-            campaignReport.AvgEngagementRate = campaignReport.AvgEngagementRate / influencerReport.Count;
-            campaignReport.CostPerEngagement = campaignReport.TotalSpend / campaignReport.TotalEngagement;
-            campaignReport.ROAS = campaignReport.TotalRevenue / campaignReport.TotalSpend;
-            await _influencerReportRepository.AddCampaignReport(campaignReport);
+            // Update campaign report
+            var campaignReport = await _campaignRepository.GetCampaignReportByCampaignIdAsync(brandReport.CampaignId);
+
+            campaignReport.TotalRevenue = brandReport.TotalRevenue;
+            campaignReport.TotalSpend += brandReport.TotalSpend;
+
+            campaignReport.CostPerEngagement = campaignReport.TotalEngagement > 0 ? campaignReport.TotalSpend / campaignReport.TotalEngagement : 0;
+            campaignReport.ROAS = campaignReport.TotalSpend > 0 ? campaignReport.TotalRevenue / campaignReport.TotalSpend : 0;
+            await _influencerReportRepository.UpdateCampaignReport(campaignReport);
 
             return _mapper.Map<CampaignDto>(await _campaignRepository.EndCampaign(brandReport.CampaignId));
         }
@@ -583,10 +571,10 @@ namespace BrandLoop.Application.Service
         {
             var checkCampaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
             if (checkCampaign == null)
-                throw new InvalidOperationException($"Campaign with ID {campaignId} not found.");
+                throw new InvalidOperationException($"Không thể tìm thấy chiến dịch có id: {campaignId}.");
 
             if (checkCampaign.CreatedBy != creatorId)
-                throw new UnauthorizedAccessException($"User {creatorId} is not authorized to cancel this campaign.");
+                throw new UnauthorizedAccessException($"Bạn không có quyền để hủy chiến dịch này.");
 
             return _mapper.Map<CampaignDto>(await _campaignRepository.CancelCampaign(campaignId));
         }
@@ -595,9 +583,9 @@ namespace BrandLoop.Application.Service
         {
             var payment = await _paymentRepository.GetPaymentByOrderCodeAsync(orderCode);
             if (payment == null)
-                throw new Exception($"Payment with order code {orderCode} not found.");
+                throw new Exception($"Không thể tìm thấy giao dịch có id: {orderCode}.");
             if (payment.Status != PaymentStatus.pending)
-                throw new Exception("Payment is not in pending status.");
+                throw new Exception("Giao dịch không trong trạng thái pending.");
             await _paymentRepository.UpdatePaymentStatus(orderCode, PaymentStatus.Canceled);
         }
 
@@ -619,6 +607,14 @@ namespace BrandLoop.Application.Service
 
         public async Task GiveFeedback(CreateFeedback createFeedback, string userId)
         {
+            var kolJoinCampaign = (await _campaignRepository.GetKolsJoinCampaigns(createFeedback.CampaignId))
+                .FirstOrDefault(k => k.UID == createFeedback.ToUserId);
+            if (kolJoinCampaign == null)
+                throw new Exception($"Influencer với UID {createFeedback.ToUserId} không tham gia chiến dịch với ID {createFeedback.CampaignId}.");
+
+            if (kolJoinCampaign.Status != KolJoinCampaignStatus.Completed)
+                throw new Exception($"Influencer {kolJoinCampaign.User.FullName} chưa hoàn thành báo cáo, không thể đánh giá.");
+
             var feedback = new Feedback
             {
                 CampaignId = createFeedback.CampaignId,
@@ -642,6 +638,13 @@ namespace BrandLoop.Application.Service
                 EvidenceOf = EvidenceType.Brand,
             };
             await _evidenceRepository.AddEvidenceAsync(evidence);
+
+            // Update campaign spend base on feedback
+            var campaignReport = await _campaignRepository.GetCampaignReportByCampaignIdAsync(createFeedback.CampaignId);
+            campaignReport.TotalSpend += createFeedback.InfluencerMoney;
+            campaignReport.CostPerEngagement = campaignReport.TotalEngagement > 0 ? campaignReport.TotalSpend / campaignReport.TotalEngagement : 0;
+            campaignReport.ROAS = campaignReport.TotalSpend > 0 ? campaignReport.TotalRevenue / campaignReport.TotalSpend : 0;
+            await _influencerReportRepository.UpdateCampaignReport(campaignReport);
         }
 
         public async Task<CampaignTracking> GetCampaignDetail(int campaignId)
@@ -752,7 +755,7 @@ namespace BrandLoop.Application.Service
             if (campaign == null)
                 return null; // Return null if campaign not found
             if (campaign.CreatedBy != uid)
-                throw new AuthenticationException($"You can not view this campaign detail.");
+                throw new AuthenticationException($"Bạn không có quyền xem thông tin của chiến dịch này.");
 
             var result = new CampaignDashboardDetail
             {

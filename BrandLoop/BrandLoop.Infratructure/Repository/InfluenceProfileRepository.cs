@@ -23,7 +23,7 @@ namespace BrandLoop.Infratructure.Repository
         }
         public async Task<InfluenceProfile> GetByUidAsync(string uid)
         {
-            return await _context.InfluenceProfiles.FirstOrDefaultAsync(ip => ip.UID == uid);
+            return await _context.InfluenceProfiles.Include(ip => ip.User).FirstOrDefaultAsync(ip => ip.UID == uid);
         }
 
         public async Task UpdateAsync(InfluenceProfile influenceProfile)

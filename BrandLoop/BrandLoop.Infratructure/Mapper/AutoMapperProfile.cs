@@ -54,9 +54,16 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<BrandProfile, BrandProfileResponseDto>();
 
             // Influence Profile mappings
+            CreateMap<UpdateInfluenceProfileDto, User>()
+                .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.FullName))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
             CreateMap<UpdateInfluenceProfileDto, InfluenceProfile>()
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now))
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null)); // Fixed the error by replacing 'ForAllOtherMembers' with 'ForAllMembers'
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
 
             CreateMap<InfluenceProfile, InfluenceProfileResponseDto>();
 
@@ -155,6 +162,23 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.TotalClicks, opt => opt.MapFrom(src => src.InfluencerReport != null ? src.InfluencerReport.TotalClicks : 0))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
+            // Influencer Report
+            CreateMap<InfluencerReport, InfluReport>()
+                .ForMember(dest => dest.CampaignId, opt => opt.MapFrom(src => src.KolsJoinCampaign.CampaignId))
+                .ForMember(dest => dest.TotalContent, opt => opt.MapFrom(src => src.TotalContent))
+                .ForMember(dest => dest.TotalReach, opt => opt.MapFrom(src => src.TotalReach))
+                .ForMember(dest => dest.TotalImpressions, opt => opt.MapFrom(src => src.TotalImpressions))
+                .ForMember(dest => dest.TotalEngagement, opt => opt.MapFrom(src => src.TotalEngagement))
+                .ForMember(dest => dest.TotalClicks, opt => opt.MapFrom(src => src.TotalClicks))
+                .ForMember(dest => dest.Rating, opt => opt.Ignore()) // Vì entity không chứa Rating
+                .ForMember(dest => dest.Description, opt => opt.Ignore()) // Entity cũng không có Description
+                .ForMember(dest => dest.Evidences, opt => opt.MapFrom(src => src.Evidences));
+            CreateMap<Evidence, EvidenceDTO>();
+
+            CreateMap<InfluReport, InfluencerReportModel>()
+                .ForMember(dest => dest.Feedback, opt => opt.Ignore());
+
+
             // CampaignImage mappings
             CreateMap<CampaignImage, CampaignImageDto>();
             CreateMap<CampaignImageDto, CampaignImage>()
@@ -192,9 +216,18 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type));
 
             // Feedback mapping
-            CreateMap<Feedback, FeedbackDTO>().ReverseMap();
-            CreateMap<Feedback, ShowFeedback>();
+            CreateMap<Feedback, FeedbackDTO>()
+                .ForMember(dest => dest.FeedbackFrom, opt => opt.MapFrom(src => src.FromUser.BrandProfile != null
+                    ? src.FromUser.BrandProfile.CompanyName
+                    : src.FromUser.FullName))
+                .ForMember(dest => dest.FeedbackTo, opt => opt.MapFrom(src => src.ToUser.BrandProfile != null
+                    ? src.ToUser.BrandProfile.CompanyName
+                    : src.ToUser.FullName));
 
+            CreateMap<Feedback, ShowFeedback>()
+                .ForMember(dest => dest.FromUserName, opt => opt.MapFrom(src => src.FromUser.BrandProfile != null
+                    ? src.FromUser.BrandProfile.CompanyName
+                    : src.FromUser.FullName));
 
 
             CreateMap<UserOnlineStatus, UserOnlineStatusDto>();

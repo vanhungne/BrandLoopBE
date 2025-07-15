@@ -14,5 +14,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<List<InfluencerReport>> GetReportsByCampaignId(int campaignId);
         Task<InfluencerReport> GetReportById(int reportId);
         Task AddCampaignReport(CampaignReport campaignReport);
+        Task UpdateCampaignReport(CampaignReport campaignReport);
     }
 }

@@ -297,6 +297,13 @@ namespace BrandLoop.Infratructure.Repository
             return campaigns;
         }
 
+        public async Task<CampaignReport> GetCampaignReportByCampaignIdAsync(int campaignId)
+        {
+            var campaignReport = await _context.CampaignReports
+                .Include(cr => cr.Campaign)
+                .FirstOrDefaultAsync(cr => cr.CampaignId == campaignId);
+            return campaignReport;
+        }
     }
 
 }

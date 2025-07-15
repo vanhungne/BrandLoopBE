@@ -10,5 +10,7 @@ namespace BrandLoop.Application.Interfaces
     public interface IInfluReportService
     {
         Task FinishReport(string userId, InfluReport influReportDto);
+        Task<InfluencerReportModel> GetReportByCampaignId(int reportId, string influencerUID);
+        Task<List<FeedbackDTO>> GetFeedbacksOfBrandByCampaignId(int campaignId, string brandUID);
     }
 }

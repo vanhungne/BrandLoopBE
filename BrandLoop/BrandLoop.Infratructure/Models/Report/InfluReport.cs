@@ -38,4 +38,9 @@ namespace BrandLoop.Infratructure.Models.Report
         public string Description { get; set; }
         public string Link { get; set; }
     }
+    public class InfluencerReportModel : InfluReport
+    {
+        public double AvgEngagementRate { get; set; }
+        public FeedbackDTO Feedback { get; set; } = new FeedbackDTO();
+    }
 }

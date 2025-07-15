@@ -35,7 +35,7 @@ namespace BrandLoop.Application.Service
             var invitation = await _campaignInvitationRepository.GetInvitationByIdAsync(invitationId);
             var checkIsAllowed = (await _campaignInvitationRepository.CheckIsBrand(invitationId, uid)) || uid == invitation.UID;
             if (!checkIsAllowed)
-                throw new AuthenticationException("You are not authorized to approve this invitation.");
+                throw new AuthenticationException("Bạn không có quyền để chấp nhận lời mời này.");
 
             if (invitation.Status == CampaignInvitationStatus.pending)
             {
@@ -44,14 +44,14 @@ namespace BrandLoop.Application.Service
                     // check if the influencer already in this campaign
                     var kolJoinCampaign = (await _campaignRepository.GetKolsJoinCampaigns(invitation.CampaignId)).FirstOrDefault(k => k.UID == invitation.UID);
                     if (kolJoinCampaign != null)
-                        throw new Exception("This influencer has already joined this campaign.");
+                        throw new Exception("Influencer này đã tham gia chiến dịch.");
 
                     await _campaignInvitationRepository.AprroveInvitation(invitationId);
                     // Create a deal after approving the invitation
                     await _dealRepository.CreateDealAsync(invitation, (decimal)invitation.ProposedRate);
                 }
                 else
-                    throw new Exception("You are not allowed to approve this invitation in its current state.");
+                    throw new Exception("Bạn không thể chấp nhận lời mời này.");
             }
             else if (invitation.Status == CampaignInvitationStatus.negotiating)
             {
@@ -62,10 +62,10 @@ namespace BrandLoop.Application.Service
                     await _dealRepository.CreateDealAsync(invitation, (decimal)invitation.Price);
                 }
                 else
-                    throw new Exception("You are not allowed to approve this invitation in its current state.");
+                    throw new Exception("Bạn không thể chấp nhận lời mời này.");
             }
             else
-                throw new Exception("Invitation is not in a valid state to be approved.");
+                throw new Exception("Lời mời này có thể đã được chấp nhận hoặc từ chối.");
         }
 
         public async Task<InvitationDTO> CreateInvitationAsync(JoinCampaign joinCampaign, string uid, JoinCampaignType type)
@@ -76,7 +76,7 @@ namespace BrandLoop.Application.Service
                     // Check if user is already invited to the campaign
                     var existingInvitation = await _campaignInvitationRepository.GetByCampaignAndCreatedBy(joinCampaign.CampaignId, joinCampaign.UID);
                     if (existingInvitation != null)
-                        throw new Exception("You have already invited this influencer to this campaign.");
+                        throw new Exception("Bạn đã được mời vào chiến dịch này.");
                     var campaign = await _campaignRepository.GetCampaignDetailAsync(joinCampaign.CampaignId);
                     if (campaign.CreatedBy == uid)
                     {
@@ -85,14 +85,14 @@ namespace BrandLoop.Application.Service
                     }
 
                     else
-                        throw new AuthenticationException("You are not authorized to invite Influencer to this campaign.");
+                        throw new AuthenticationException("Bạn không có quyền mời Influencer vào chiến dịch này.");
 
                 default: // KOLs apply to join the campaign
                     joinCampaign.UID = uid;
                     // Check if user has already applied to the campaign
                     var existingKolInvitation = await _campaignInvitationRepository.GetByCampaignAndCreatedBy(joinCampaign.CampaignId, uid);
                     if (existingKolInvitation != null)
-                        throw new Exception("You have already applied to this campaign.");
+                        throw new Exception("Bạn đã được mời vào chiến dịch này.");
                     var kolInvitation = await _campaignInvitationRepository.CreateInvitationAsync(joinCampaign, type);
                     return _mapper.Map<InvitationDTO>(kolInvitation);
             }
@@ -103,9 +103,9 @@ namespace BrandLoop.Application.Service
             // Ensure the user is authorized to view the invitations for this campaign
             var campaign = await _campaignRepository.GetCampaignDetailAsync(campaignId);
             if (campaign == null)
-                throw new KeyNotFoundException("Campaign not found.");
+                throw new KeyNotFoundException("Không thể tìm thấy campaign.");
             if (campaign.CreatedBy != uid)
-                throw new AuthenticationException("You are not authorized to view invitations for this campaign.");
+                throw new AuthenticationException("Bạn không có quyền để xem các lời mời của chiến dịch này.");
 
             var invitations = await _campaignInvitationRepository.GetAllInvitationsOfCampaignAsync(campaignId, status);
             return _mapper.Map<List<InvitationDTO>>(invitations);
@@ -161,7 +161,7 @@ namespace BrandLoop.Application.Service
             var invitation = await _campaignInvitationRepository.GetInvitationByIdAsync(invitationId);
             var checkIsAllowed = (await _campaignInvitationRepository.CheckIsBrand(invitationId, uid)) || uid == invitation.UID;
             if (!checkIsAllowed)
-                throw new AuthenticationException("You are not authorized to view this invitation.");
+                throw new AuthenticationException("Bạn không có quyền để xem lời mời này.");
 
             return _mapper.Map<InvitationDTO>(invitation);
         }
@@ -219,12 +219,15 @@ namespace BrandLoop.Application.Service
         public async Task Negotiate(InvitationResponse response, string uid)
         {
             var invitation = await _campaignInvitationRepository.GetInvitationByIdAsync(response.InvitationId);
+            if (invitation == null || invitation.Campaign == null)
+                throw new KeyNotFoundException("Không thể tìm thấy lời mời này hoặc chiến dịch liên quan.");
+
             var checkIsAllowed = (await _campaignInvitationRepository.CheckIsBrand(response.InvitationId, uid)) || uid == invitation.UID;
 
             if (!checkIsAllowed)
-                throw new AuthenticationException("You are not authorized to negotiate this invitation.");
+                throw new AuthenticationException("Bạn không có quyền để đàm phán cho giao dịch này.");
             if (!await CheckCanNegotiate(invitation.InvitationId, uid))
-                throw new Exception("You are not allowed to negotiate this invitation.");
+                throw new Exception("Lời mời này hiện không thể đàm phán. Vui lòng kiểm tra trạng thái lời mời hoặc liên hệ quản trị viên.");
 
             await _campaignInvitationRepository.Negotiate(response);
         }
@@ -232,12 +235,14 @@ namespace BrandLoop.Application.Service
         public async Task RejectInvitation(int invitationId, string uid)
         {
             var invitation = await _campaignInvitationRepository.GetInvitationByIdAsync(invitationId);
+            if (invitation == null || invitation.Campaign == null)
+                throw new KeyNotFoundException("Không thể tìm thấy lời mời này hoặc chiến dịch liên quan.");
             var checkIsAllowed = (await _campaignInvitationRepository.CheckIsBrand(invitationId, uid)) || uid == invitation.UID;
             if (!checkIsAllowed)
-                throw new AuthenticationException("You are not authorized to negotiate this invitation.");
+                throw new AuthenticationException("Bạn không có quyền để từ chối lời mời này.");
 
             if (!await CheckCanReject(invitationId, uid))
-                throw new Exception("You are not allowed to reject this invitation.");
+                throw new Exception("Lời mời này hiện không thể từ chối. Vui lòng kiểm tra trạng thái lời mời hoặc liên hệ quản trị viên.");
             await _campaignInvitationRepository.RejectInvitation(invitationId);
         }
 

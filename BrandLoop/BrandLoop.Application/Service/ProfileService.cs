@@ -77,7 +77,7 @@ namespace BrandLoop.Application.Service
             return _profileRepository.GetUserSkillsAsync(uid);
         }
 
-        public async Task<ProfileResponseDto> UpdateUserProfileAsync(string uid, UpdateUserProfileDto updateDto)
+        public async Task<BasicAccountProfileModel> UpdateUserProfileAsync(string uid, UpdateUserProfileDto updateDto)
         {
             var user = await _profileRepository.GetByIdAsync(uid);
             if (user == null)
@@ -87,10 +87,10 @@ namespace BrandLoop.Application.Service
             await _profileRepository.UpdateAsync(user);
             await _profileRepository.SaveChangesAsync();
 
-            return await GetProfileAsync(uid);
+            return await GetBasicAccountProfileAsync(uid);
         }
 
-        public async Task<ProfileResponseDto> UpdateBrandProfileAsync(string uid, UpdateBrandProfileDto updateDto)
+        public async Task<BrandProfileModel> UpdateBrandProfileAsync(string uid, UpdateBrandProfileDto updateDto)
         {
             var brandProfile = await _brandProfileRepository.GetByUidAsync(uid);
             if (brandProfile == null)
@@ -100,20 +100,22 @@ namespace BrandLoop.Application.Service
             await _brandProfileRepository.UpdateAsync(brandProfile);
             await _brandProfileRepository.SaveChangesAsync();
 
-            return await GetProfileAsync(uid);
+            return await GetBrandProfileAsync(uid);
         }
 
-        public async Task<ProfileResponseDto> UpdateInfluenceProfileAsync(string uid, UpdateInfluenceProfileDto updateDto)
+        public async Task<InfluenceProfileModel> UpdateInfluenceProfileAsync(string uid, UpdateInfluenceProfileDto updateDto)
         {
             var influenceProfile = await _influenceProfileRepository.GetByUidAsync(uid);
             if (influenceProfile == null)
                 throw new ArgumentException("Influence profile not found");
 
             _mapper.Map(updateDto, influenceProfile);
+            _mapper.Map(updateDto, influenceProfile.User);
+
             await _influenceProfileRepository.UpdateAsync(influenceProfile);
             await _influenceProfileRepository.SaveChangesAsync();
 
-            return await GetProfileAsync(uid);
+            return await GetInfluenceProfileAsync(uid);
         }
         public async Task<List<InfluencerList>> SearchInfluencersAsync(InfluenceSearchOptions opts)
         {
