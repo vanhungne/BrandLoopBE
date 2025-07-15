@@ -94,7 +94,7 @@ namespace BrandLoop.Infratructure.Repository
 
         private IQueryable<InfluenceProfile> BuildBaseQuery(InfluenceSearchOptions opts)
         {
-            var q = _context.InfluenceProfiles.AsQueryable();
+            var q = _context.InfluenceProfiles.Include(u=>u.User).Include(u=>u.InfluencerType).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(opts.UID))
                 q = q.Where(p => p.UID == opts.UID);

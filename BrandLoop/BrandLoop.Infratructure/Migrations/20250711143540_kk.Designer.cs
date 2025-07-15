@@ -4,6 +4,7 @@ using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    partial class BLDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250711143540_kk")]
+    partial class kk
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -453,37 +456,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.ToTable("Deals");
                 });
 
-            modelBuilder.Entity("BrandLoop.Domain.Entities.Evidence", b =>
-                {
-                    b.Property<int>("EvidenceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EvidenceId"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("EvidenceOf")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("InfluencerReportId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("EvidenceId");
-
-                    b.HasIndex("InfluencerReportId");
-
-                    b.ToTable("Evidences");
-                });
-
             modelBuilder.Entity("BrandLoop.Domain.Entities.Feature", b =>
                 {
                     b.Property<int>("FeatureId")
@@ -778,9 +750,6 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int>("CampaignId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InfluencerEarning")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -1583,15 +1552,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.Navigation("Invitation");
                 });
 
-            modelBuilder.Entity("BrandLoop.Domain.Entities.Evidence", b =>
-                {
-                    b.HasOne("BrandLoop.Domain.Entities.InfluencerReport", "InfluencerReport")
-                        .WithMany("Evidences")
-                        .HasForeignKey("InfluencerReportId");
-
-                    b.Navigation("InfluencerReport");
-                });
-
             modelBuilder.Entity("BrandLoop.Domain.Entities.Feedback", b =>
                 {
                     b.HasOne("BrandLoop.Domain.Entities.Campaign", "Campaign")
@@ -1901,11 +1861,6 @@ namespace BrandLoop.Infratructure.Migrations
             modelBuilder.Entity("BrandLoop.Domain.Entities.Feature", b =>
                 {
                     b.Navigation("SubscriptionFeatures");
-                });
-
-            modelBuilder.Entity("BrandLoop.Domain.Entities.InfluencerReport", b =>
-                {
-                    b.Navigation("Evidences");
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.InfluencerType", b =>

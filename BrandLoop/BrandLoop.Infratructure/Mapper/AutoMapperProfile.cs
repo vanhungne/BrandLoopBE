@@ -4,10 +4,9 @@ using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.Authen;
 using BrandLoop.Infratructure.Models.CampainModel;
 using BrandLoop.Infratructure.Models.ChatDTO;
+using BrandLoop.Infratructure.Models.NewDTO;
 using BrandLoop.Infratructure.Models.Dashboard;
 using BrandLoop.Infratructure.Models.Influence;
-using BrandLoop.Infratructure.Models.Report;
-using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Infratructure.Models.SubcriptionModel;
 using BrandLoop.Infratructure.Models.UserModel;
@@ -194,8 +193,7 @@ namespace BrandLoop.Infratructure.Mapper
 
             // Feedback mapping
             CreateMap<Feedback, FeedbackDTO>().ReverseMap();
-            CreateMap<Feedback, ShowFeedback>()
-                .ForMember(dest => dest.FromUserName, opt => opt.MapFrom(src => src.FromUser != null ? src.FromUser.FullName : "Unknown User"));
+            CreateMap<Feedback, ShowFeedback>();
 
 
 
@@ -239,6 +237,29 @@ namespace BrandLoop.Infratructure.Mapper
                           opt => opt.MapFrom(src => src.CampaignImages))
                 .ForMember(dest => dest.BrandInfo,
                           opt => opt.MapFrom(src => src.Brand));
+
+            // News to NewsDto
+            CreateMap<News, NewsDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+            // News to NewsListDto (for listing pages)
+            CreateMap<News, NewsListDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+            // News to NewsDetailDto (for single news detail)
+            CreateMap<News, NewsDetailDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.AuthorUser));
+
+            // User to AuthorDto
+            CreateMap<User, AuthorDto>();
+
+            // News to MyNewsDto (for user's own news)
+            CreateMap<News, MyNewsDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
+            // News to PendingNewsDto (for admin pending news)
+            CreateMap<News, PendingNewsDto>();
         }
     }
 }

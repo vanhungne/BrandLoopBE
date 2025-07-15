@@ -89,6 +89,25 @@ namespace BrandLoop.API.Controllers
 
             return Ok(ApiResponse<object>.SuccessResult(result));
         }
+
+        [HttpGet("influencebyusername/{username}")]
+        public async Task<IActionResult> GetInfluenceUsernameProfile(string username)
+        {
+            var result = await _profileService.GetInfluenceProfileUsernameAsync(username);
+            if (result == null)
+                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy thông tin influencer"));
+
+            return Ok(ApiResponse<object>.SuccessResult(result));
+        }
+        [HttpGet("getlist-influencebyusername/{username}")]
+        public async Task<IActionResult> GetListInfluenceUsernameProfile(string username)
+        {
+            var result = await _profileService.GetListInfluenceProfilesByUsernameAsync(username);
+            if (result == null)
+                return NotFound(ApiResponse<object>.ErrorResult("Không tìm thấy thông tin influencer"));
+
+            return Ok(ApiResponse<object>.SuccessResult(result));
+        }
         /// <summary>
         /// Lấy thông tin profile của user (tự động detect role)
         /// </summary>

@@ -16,6 +16,7 @@ namespace BrandLoop.Infratructure.Models.Influence
         public string InfluencerType { get; set; }
         public int FollowerCount { get; set; }
         public int PlatformFee { get; set; }
+        public string Location { get; set; }
     }
 
     public class InfluencerTypeSelectionModel

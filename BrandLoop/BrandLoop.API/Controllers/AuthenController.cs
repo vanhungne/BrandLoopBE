@@ -138,7 +138,7 @@ namespace BrandLoop.API.Controllers
         {
             var result = await _service.RegisterKOL(model, avatarFile);
 
-            if (result.StartsWith("Your KOL registration has been submitted"))
+            if (result.StartsWith("Your Influencer registration has been submitted"))
                 return Ok(new { success = true, message = result });
 
             return BadRequest(new { success = false, message = result });

@@ -16,6 +16,8 @@ namespace BrandLoop.Application.Interfaces
         Task<BasicAccountProfileModel> GetBasicAccountProfileAsync(string uid);
         Task<BrandProfileModel> GetBrandProfileAsync(string uid);
         Task<InfluenceProfileModel> GetInfluenceProfileAsync(string uid);
+        Task<InfluenceProfileModel> GetInfluenceProfileUsernameAsync(string username);
+        Task<List<InfluenceProfileModel>> GetListInfluenceProfilesByUsernameAsync(string username);
         Task<ProfileResponseDto> GetUserProfileAsync(string uid);
         Task<List<SkillModel>> GetUserSkillsAsync(string uid);
         Task<List<ContentAndStyleModel>> GetUserContentAndStylesAsync(string uid);
@@ -23,8 +25,8 @@ namespace BrandLoop.Application.Interfaces
         Task<ProfileResponseDto> UpdateUserProfileAsync(string uid, UpdateUserProfileDto updateDto);
         Task<ProfileResponseDto> UpdateBrandProfileAsync(string uid, UpdateBrandProfileDto updateDto);
         Task<ProfileResponseDto> UpdateInfluenceProfileAsync(string uid, UpdateInfluenceProfileDto updateDto);
-        Task<List<InfluenceProfile>> SearchInfluencersAsync(InfluenceSearchOptions opts);
-        Task<List<InfluenceProfile>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts);
+        Task<List<InfluencerList>> SearchInfluencersAsync(InfluenceSearchOptions opts);
+        Task<List<InfluencerList>> SearchHomeFeaturedAsync(InfluenceSearchOptions opts);
         Task<List<BannerDto>> GetActiveBannersAsync();
         Task<List<InfluencerTypeSelectionModel>> GetAllInfluencerType();
         Task<List<InfluencerList>> SearchInfluencer(string? name, string? contentCategory, int? id);

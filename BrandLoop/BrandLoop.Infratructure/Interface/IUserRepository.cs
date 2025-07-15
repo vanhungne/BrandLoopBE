@@ -13,6 +13,8 @@ namespace BrandLoop.Infratructure.Interface
         Task<BasicAccountProfileModel> GetBasicAccountProfileAsync(string uid);
         Task<BrandProfileModel> GetBrandProfileAsync(string uid);
         Task<InfluenceProfileModel> GetInfluenceProfileAsync(string uid);
+        Task<InfluenceProfileModel> GetInfluenceProfileByUsernameAsync(string username);
+        Task<List<InfluenceProfileModel>> GetListInfluenceProfilesByUsernameAsync(string username);
         Task<bool> UserExistsAsync(string uid);
         Task<string> GetUserRoleAsync(string uid);
         Task<List<SkillModel>> GetUserSkillsAsync(string uid);

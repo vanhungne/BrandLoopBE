@@ -52,7 +52,6 @@ namespace BrandLoop.Infratructure.Repository
                 .Include(c => c.KolsJoinCampaigns)
                     .ThenInclude(kjc => kjc.User)
                 .Include(c => c.Feedbacks)
-                    .ThenInclude(f => f.FromUser)
                 .Include(c => c.CampaignInvitations)
                 .Include(c => c.CampaignReport)
                 .FirstOrDefaultAsync(c => c.CampaignId == campaignId && c.Status != CampaignStatus.Deleted);

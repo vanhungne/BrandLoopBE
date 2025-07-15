@@ -1,4 +1,5 @@
 ﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.News;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -14,6 +15,7 @@ namespace BrandLoop.Infratructure.Interface
         Task CreateNews(CreateNews news, IFormFile newsImage, string uid);
         Task<List<News>> GetMyNews(string uid);
         Task<List<News>> GetsAllNews();
+        Task<List<News>> GetsAllNewsPublished();
         Task<News> GetNewsById(int newsId);
         Task<List<News>> SearchNews(string searchTerm);
         Task<News> GetNewsBySlug(string slug);
@@ -23,5 +25,8 @@ namespace BrandLoop.Infratructure.Interface
         Task<List<News>> GetAllPendingNews();
         Task RejectNews(int newsId);
         Task ApproveNews(int newsId);
+        Task<List<string>> GetAllSlugs();
+        Task<List<string>> GetAllCategories();
+        Task UpdateNewsStatus(int newsId, NewsStatus status);
     }
 }

@@ -1,6 +1,9 @@
-﻿using BrandLoop.Application.Interfaces;
+﻿using AutoMapper;
+using BrandLoop.Application.Interfaces;
 using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
+using BrandLoop.Infratructure.Models.NewDTO;
 using BrandLoop.Infratructure.Models.News;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -15,10 +18,12 @@ namespace BrandLoop.Application.Service
     public class NewsService : INewsService
     {
         private readonly INewsRepository _newsRepository;
+        private readonly IMapper _mapper;
 
-        public NewsService(INewsRepository newsRepository)
+        public NewsService(INewsRepository newsRepository, IMapper mapper)
         {
             _newsRepository = newsRepository;
+            _mapper = mapper;
         }
 
         public async Task ApproveNewsAsync(int newsId)
@@ -34,40 +39,45 @@ namespace BrandLoop.Application.Service
         public async Task DeleteNewsAsync(int newsId, string UID)
         {
             var news = await _newsRepository.GetNewsById(newsId);
-            if(news.Author != UID)
-            throw new UnauthorizedAccessException("You do not have permission to delete this news.");
-
+            if (news.Author != UID)
+                throw new UnauthorizedAccessException("You do not have permission to delete this news.");
             await _newsRepository.DeleteNews(newsId);
         }
 
-        public async Task<List<News>> GetAllNewsAsync()
+        public async Task<List<NewsListDto>> GetAllNewsAsync()
         {
-            return await _newsRepository.GetsAllNews();
+            var newsList = await _newsRepository.GetsAllNews();
+            return _mapper.Map<List<NewsListDto>>(newsList);
         }
 
-        public async Task<List<News>> GetAllPendingNewsAsync()
+        public async Task<List<PendingNewsDto>> GetAllPendingNewsAsync()
         {
-            return await _newsRepository.GetAllPendingNews();
+            var pendingNews = await _newsRepository.GetAllPendingNews();
+            return _mapper.Map<List<PendingNewsDto>>(pendingNews);
         }
 
-        public async Task<List<News>> GetMyNewsAsync(string uid)
+        public async Task<List<MyNewsDto>> GetMyNewsAsync(string uid)
         {
-            return await _newsRepository.GetMyNews(uid);
+            var myNews = await _newsRepository.GetMyNews(uid);
+            return _mapper.Map<List<MyNewsDto>>(myNews);
         }
 
-        public async Task<List<News>> GetNewsByCategoryAsync(string category)
+        public async Task<List<NewsListDto>> GetNewsByCategoryAsync(string category)
         {
-            return await _newsRepository.GetNewsByCategory(category);
+            var newsByCategory = await _newsRepository.GetNewsByCategory(category);
+            return _mapper.Map<List<NewsListDto>>(newsByCategory);
         }
 
-        public async Task<News> GetNewsByIdAsync(int newsId)
+        public async Task<NewsDetailDto> GetNewsByIdAsync(int newsId)
         {
-            return await _newsRepository.GetNewsById(newsId);
+            var news = await _newsRepository.GetNewsById(newsId);
+            return _mapper.Map<NewsDetailDto>(news);
         }
 
-        public async Task<News> GetNewsBySlugAsync(string slug)
+        public async Task<NewsDetailDto> GetNewsBySlugAsync(string slug)
         {
-            return await _newsRepository.GetNewsBySlug(slug);
+            var news = await _newsRepository.GetNewsBySlug(slug);
+            return _mapper.Map<NewsDetailDto>(news);
         }
 
         public async Task RejectNewsAsync(int newsId)
@@ -75,18 +85,67 @@ namespace BrandLoop.Application.Service
             await _newsRepository.RejectNews(newsId);
         }
 
-        public async Task<List<News>> SearchNewsAsync(string searchTerm)
+        public async Task<List<NewsListDto>> SearchNewsAsync(string searchTerm)
         {
-            return await _newsRepository.SearchNews(searchTerm);
+            var searchResults = await _newsRepository.SearchNews(searchTerm);
+            return _mapper.Map<List<NewsListDto>>(searchResults);
         }
 
-        public async Task<News> UpdateNewsAsync(UpdateNews news, IFormFile newsImage, string UID)
+        public async Task<NewsDetailDto> UpdateNewsAsync(UpdateNews news, IFormFile newsImage, string UID)
         {
             var existNews = await _newsRepository.GetNewsById(news.NewsId);
             if (existNews.Author != UID)
-                throw new UnauthorizedAccessException("You do not have permission to delete this news.");
+                throw new UnauthorizedAccessException("You do not have permission to update this news.");
 
-            return await _newsRepository.UpdateNews(news, newsImage);
+            var updatedNews = await _newsRepository.UpdateNews(news, newsImage);
+
+            // Map the updated entity to DTO to avoid circular reference
+            return _mapper.Map<NewsDetailDto>(updatedNews);
+        }
+        public async Task<List<SlugDto>> GetAllSlugsAsync()
+        {
+            var slugs = await _newsRepository.GetAllSlugs();
+            return slugs.Select(s => new SlugDto { Slug = s }).ToList();
+        }
+        public async Task<List<CategoryDto>> GetAllCategoriesAsync()
+        {
+            var categories = await _newsRepository.GetAllCategories();
+            return categories.Select(c => new CategoryDto { Category = c }).ToList();
+        }
+
+        public async Task<List<NewsListDto>> GetsAllNewsPublished()
+        {
+            var newsList = await _newsRepository.GetsAllNewsPublished();
+            return _mapper.Map<List<NewsListDto>>(newsList);
+        }
+
+        public async Task UpdateNewsStatusAsync(int newsId, NewsStatus status, string uid)
+        {
+            var news = await _newsRepository.GetNewsById(newsId);
+            if (news == null)
+                throw new Exception("News not found");
+
+            if (news.Author != uid)
+                throw new UnauthorizedAccessException("You do not have permission to update this news status.");
+
+            await _newsRepository.UpdateNewsStatus(newsId, status);
+        }
+
+        // 5. Create DTO for the request
+        public class UpdateNewsStatusRequest
+        {
+            public int NewsId { get; set; }
+            public NewsStatus Status { get; set; }
+        }
+
+        public class SlugDto
+        {
+            public string Slug { get; set; }
+        }
+
+        public class CategoryDto
+        {
+            public string Category { get; set; }
         }
     }
 }
