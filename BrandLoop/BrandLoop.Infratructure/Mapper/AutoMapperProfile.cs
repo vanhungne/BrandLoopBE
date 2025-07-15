@@ -73,10 +73,10 @@ namespace BrandLoop.Infratructure.Mapper
             CreateMap<Campaign, CampaignDto>()
                 .ForMember(dest => dest.BrandIndustry,
                           opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Industry : null))
-                .ForMember(dest => dest.TotalKolsJoined,
-                          opt => opt.MapFrom(src => src.KolsJoinCampaigns != null ? src.KolsJoinCampaigns.Count : 0))
+                //.ForMember(dest => dest.TotalKolsJoined,
+                //          opt => opt.MapFrom(src => src.KolsJoinCampaigns != null ? src.KolsJoinCampaigns.Count : 0))
                 .ForMember(dest => dest.Images,
-                      opt => opt.MapFrom(src => src.CampaignImages));
+                          opt => opt.MapFrom(src => src.CampaignImages));
             // Campaign mappings
             CreateMap<Campaign, CampaignDto>()
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.CampaignImages));

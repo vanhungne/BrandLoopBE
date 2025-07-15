@@ -378,6 +378,7 @@ namespace BrandLoop.Application.Service
             var query = _campaignRepository.GetAll()
                 .Include(c => c.CampaignImages)
                 .Include(c => c.KolsJoinCampaigns)
+                 .ThenInclude(kjc => kjc.User)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
                 .AsQueryable();
@@ -414,7 +415,18 @@ namespace BrandLoop.Application.Service
             var skip = (filter.PageNumber - 1) * filter.PageSize;
             var campaigns = await query.Skip(skip).Take(filter.PageSize).ToListAsync();
 
-            return _mapper.Map<List<CampaignDto>>(campaigns);
+            var result = _mapper.Map<List<CampaignDto>>(campaigns);
+            // Get campaign IDs và query count từ repository
+            var campaignIds = campaigns.Select(c => c.CampaignId).ToList();
+            var kolCounts = await _kolsJoinCampaignRepository.GetKolsCountByCampaignIdsAsync(campaignIds);
+
+            // Gán count vào DTO
+            foreach (var dto in result)
+            {
+                dto.TotalKolsJoined = kolCounts.ContainsKey(dto.CampaignId) ? kolCounts[dto.CampaignId] : 0;
+            }
+
+            return result;
         }
 
         public async Task<PaymentCampaign> StartCampaign(string creatorId, int campaignId)
