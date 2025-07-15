@@ -76,5 +76,10 @@ namespace BrandLoop.Application.Service
         {
             return await _repository.RejectRegistration(uid, reason);
         }
+
+        public async Task RevokeRefreshToken(string token)
+        {
+             await _repository.RevokeRefreshToken(token);
+        }
     }
 }
