@@ -201,7 +201,7 @@ namespace BrandLoop.Application.Service
             }
         }
 
-        public async Task<CampaignDto> UpdateCampaignAsync(UpdateCampaignDto dto)
+        public async Task<CampaignDto> UpdateCampaignAsync(int campainId,UpdateCampaignDto dto)
         {
             try
             {
@@ -210,15 +210,15 @@ namespace BrandLoop.Application.Service
                     throw new ArgumentNullException(nameof(dto));
                 }
 
-                if (dto.CampaignId <= 0)
-                {
-                    throw new ArgumentException("Campaign ID phải lớn hơn 0");
-                }
+                //if (dto.CampaignId <= 0)
+                //{
+                //    throw new ArgumentException("Campaign ID phải lớn hơn 0");
+                //}
 
-                var existingCampaign = await _campaignRepository.GetCampaignDetailAsync(dto.CampaignId);
+                var existingCampaign = await _campaignRepository.GetCampaignDetailAsync(campainId);
                 if (existingCampaign == null)
                 {
-                    _logger.LogWarning("Campaign not found for update: {CampaignId}", dto.CampaignId);
+                    _logger.LogWarning("Campaign not found for update: {CampaignId}", campainId);
                     return null;
                 }
 
@@ -239,7 +239,7 @@ namespace BrandLoop.Application.Service
                 var result = await _campaignRepository.UpdateCampaignAsync(existingCampaign);
                 var mappedResult = _mapper.Map<CampaignDto>(result);
 
-                _logger.LogInformation("Updated campaign {CampaignId}", dto.CampaignId);
+                _logger.LogInformation("Updated campaign {CampaignId}", campainId);
                 return mappedResult;
             }
             catch (ArgumentException)
@@ -248,7 +248,7 @@ namespace BrandLoop.Application.Service
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating campaign {CampaignId}", dto?.CampaignId);
+                _logger.LogError(ex, "Error occurred while updating campaign {CampaignId}", campainId);
                 throw new InvalidOperationException("Lỗi khi cập nhật campaign", ex);
             }
         }
@@ -378,6 +378,7 @@ namespace BrandLoop.Application.Service
             var query = _campaignRepository.GetAll()
                 .Include(c => c.CampaignImages)
                 .Include(c => c.KolsJoinCampaigns)
+                 .ThenInclude(kjc => kjc.User)
                 .Include(c => c.Brand)
                 .Include(c => c.Creator)
                 .AsQueryable();
@@ -414,7 +415,18 @@ namespace BrandLoop.Application.Service
             var skip = (filter.PageNumber - 1) * filter.PageSize;
             var campaigns = await query.Skip(skip).Take(filter.PageSize).ToListAsync();
 
-            return _mapper.Map<List<CampaignDto>>(campaigns);
+            var result = _mapper.Map<List<CampaignDto>>(campaigns);
+            // Get campaign IDs và query count từ repository
+            var campaignIds = campaigns.Select(c => c.CampaignId).ToList();
+            var kolCounts = await _kolsJoinCampaignRepository.GetKolsCountByCampaignIdsAsync(campaignIds);
+
+            // Gán count vào DTO
+            foreach (var dto in result)
+            {
+                dto.TotalKolsJoined = kolCounts.ContainsKey(dto.CampaignId) ? kolCounts[dto.CampaignId] : 0;
+            }
+
+            return result;
         }
 
         public async Task<PaymentCampaign> StartCampaign(string creatorId, int campaignId)

@@ -9,7 +9,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
 {
     public class UpdateCampaignDto
     {
-        public int CampaignId { get; set; }
+        //public int CampaignId { get; set; }
         public string CampaignName { get; set; }
         public string Description { get; set; }
         public string ContentRequirements { get; set; }

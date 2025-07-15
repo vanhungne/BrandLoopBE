@@ -281,5 +281,43 @@ namespace BrandLoop.API.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("logout-all")]
+        public async Task<IActionResult> LogoutAll([FromBody] string refreshToken)
+        {
+            try
+            {
+                // Xóa cookie accessToken
+                Response.Cookies.Delete("accessToken", new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Path = "/"
+                });
+
+                // Revoke refresh token nếu có
+                if (!string.IsNullOrEmpty(refreshToken))
+                {
+                     await _service.RevokeRefreshToken(refreshToken);
+                }
+
+                return Ok(new
+                {
+                    code = 200,
+                    message = "Logout successful from all devices"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during logout from all devices");
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    code = 500,
+                    message = "An error occurred during logout"
+                });
+            }
+        }
+
     }
 }

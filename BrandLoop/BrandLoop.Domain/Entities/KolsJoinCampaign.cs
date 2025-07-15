@@ -22,7 +22,7 @@ namespace BrandLoop.Domain.Entities
         public string UID { get; set; }
 
         [Range(0, int.MaxValue)]
-        public int InfluencerEarning { get; set; } = 0; // Số tiền influencer nhận được từ chiến dịch
+        public int InfluencerEarning { get; set; } = 0; 
 
         [StringLength(50)]
         public KolJoinCampaignStatus Status { get; set; } = KolJoinCampaignStatus.Pending;

@@ -249,10 +249,10 @@ namespace BrandLoop.API.Controllers
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Campaign ID phải lớn hơn 0"));
                 }
 
-                if (dto.CampaignId != campaignId)
-                {
-                    return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Campaign ID trong URL và body không khớp"));
-                }
+                //if (dto.CampaignId != campaignId)
+                //{
+                //    return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Campaign ID trong URL và body không khớp"));
+                //}
 
                 if (!ModelState.IsValid)
                 {
@@ -262,7 +262,7 @@ namespace BrandLoop.API.Controllers
                     return BadRequest(ApiResponse<CampaignDto>.ErrorResult($"Dữ liệu không hợp lệ: {errors}"));
                 }
 
-                var result = await _campaignService.UpdateCampaignAsync(dto);
+                var result = await _campaignService.UpdateCampaignAsync(campaignId, dto);
                 if (result == null)
                 {
                     return NotFound(ApiResponse<CampaignDto>.ErrorResult("Không tìm thấy campaign để cập nhật"));

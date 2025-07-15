@@ -23,6 +23,7 @@ namespace BrandLoop.Infratructure.Interface
         string GenerateJwtToken(User user);
         Task<bool> Logout(string uid);
         Task<User> GetUserByEmail(string email);
+        Task RevokeRefreshToken(string token);
 
 
     }

@@ -45,5 +45,15 @@ namespace BrandLoop.Infratructure.Repository
             _context.KolsJoinCampaigns.Update(kolJoinCampaign);
             await _context.SaveChangesAsync();
         }
+        public async Task<Dictionary<int, int>> GetKolsCountByCampaignIdsAsync(List<int> campaignIds)
+        {
+            var kolCounts = await _context.KolsJoinCampaigns
+                .Where(k => campaignIds.Contains(k.CampaignId))
+                .GroupBy(k => k.CampaignId)
+                .Select(g => new { CampaignId = g.Key, Count = g.Count() })
+                .ToListAsync();
+
+            return kolCounts.ToDictionary(k => k.CampaignId, k => k.Count);
+        }
     }
 }

@@ -12,5 +12,6 @@ namespace BrandLoop.Infratructure.Interface
         Task UpdateKolMoney(int campaignId, string uid, int money);
         Task<List<KolsJoinCampaign>> GetKolsJoinCampaignsOfBrand(string brandUid, int year);
         Task<List<KolsJoinCampaign>> GetKolJoinCampaignOfInfluencer(string uid, int year);
+        Task<Dictionary<int, int>> GetKolsCountByCampaignIdsAsync(List<int> campaignIds);
     }
 }
