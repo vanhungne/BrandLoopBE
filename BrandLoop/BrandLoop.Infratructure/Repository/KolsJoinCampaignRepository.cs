@@ -1,4 +1,5 @@
 ﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var kolJoinCampaign = await _context.KolsJoinCampaigns.FirstOrDefaultAsync(k => k.CampaignId == campaignId && k.UID == uid);
             if (kolJoinCampaign == null)
-                throw new Exception("Kol Join Campaign not found");
+                throw new Exception("Không tìm thấy Influencer tham gia chiến dịch này.");
             kolJoinCampaign.InfluencerEarning = money;
             _context.KolsJoinCampaigns.Update(kolJoinCampaign);
             await _context.SaveChangesAsync();
@@ -54,6 +55,17 @@ namespace BrandLoop.Infratructure.Repository
                 .ToListAsync();
 
             return kolCounts.ToDictionary(k => k.CampaignId, k => k.Count);
+        }
+
+        public async Task UpdateKolJoinCampaignStatus(int campaignId, string uid, KolJoinCampaignStatus status)
+        {
+            var kolJoinCampaign = await _context.KolsJoinCampaigns.FirstOrDefaultAsync(k => k.CampaignId == campaignId && k.UID == uid);
+            if (kolJoinCampaign == null)
+                throw new Exception("Không tìm thấy Influencer tham gia chiến dịch này.");
+
+            kolJoinCampaign.Status = status;
+            _context.KolsJoinCampaigns.Update(kolJoinCampaign);
+            await _context.SaveChangesAsync();
         }
     }
 }

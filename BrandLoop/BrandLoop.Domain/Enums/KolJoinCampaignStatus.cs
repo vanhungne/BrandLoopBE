@@ -11,6 +11,7 @@ namespace BrandLoop.Domain.Enums
         Pending = 0,
         Active = 1,
         Completed = 2,
-        Cancelled = 3
+        Cancelled = 3,
+        Feedbacked = 4,
     }
 }
