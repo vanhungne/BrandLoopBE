@@ -62,10 +62,10 @@ namespace BrandLoop.Application.Service
                         break;
 
                     case CampaignStatus.InProgress:
-                        if (campaign.Deadline >= now)
-                            campaignCard.totalInprogressCampaigns++;
-                        else
-                            campaignCard.totalOverdueCampaigns++;
+                        campaignCard.totalInprogressCampaigns++;
+                        break;
+                    case CampaignStatus.Overdue:
+                        campaignCard.totalOverdueCampaigns++;
                         break;
 
                     case CampaignStatus.Completed:

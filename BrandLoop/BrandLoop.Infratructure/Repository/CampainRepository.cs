@@ -304,6 +304,14 @@ namespace BrandLoop.Infratructure.Repository
                 .FirstOrDefaultAsync(cr => cr.CampaignId == campaignId);
             return campaignReport;
         }
+
+        public Task<List<Campaign>> GetAllOverdueCampaignToUpdateStatus(DateTime currentDateTime)
+        {
+            var currentDate = currentDateTime.Date;
+            return _context.Campaigns
+                .Where(c => c.Status == CampaignStatus.InProgress && ((DateTime)c.Deadline).Date < currentDate)
+                .ToListAsync();
+        }
     }
 
 }
