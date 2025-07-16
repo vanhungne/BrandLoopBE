@@ -29,6 +29,16 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public List<CampaignImageDto> Images { get; set; } = new List<CampaignImageDto>();
     }
 
+    public class CampaignDtoVer2 : CampaignDto
+    {
+        public List<KoljoinStatus> KoljoinStatuses { get; set; } = new List<KoljoinStatus>();
+    }
+    public class KoljoinStatus
+    {
+        public string UID { get; set; }
+        public string Status { get; set; }
+    }
+
     public class CampaignDtoDetail
     {
         public int CampaignId { get; set; }

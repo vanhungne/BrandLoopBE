@@ -41,5 +41,9 @@ namespace BrandLoop.Infratructure.Models.UserModel
 
         [StringLength(255)]
         public string Tiktok { get; set; }
+        [StringLength(255)]
+        public string Email { get; set; }
+        [StringLength(20)]
+        public string Phone { get; set; }
     }
 }

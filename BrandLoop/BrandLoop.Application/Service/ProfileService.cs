@@ -97,6 +97,8 @@ namespace BrandLoop.Application.Service
                 throw new ArgumentException("Brand profile not found");
 
             _mapper.Map(updateDto, brandProfile);
+            _mapper.Map(updateDto, brandProfile.User);
+
             await _brandProfileRepository.UpdateAsync(brandProfile);
             await _brandProfileRepository.SaveChangesAsync();
 
