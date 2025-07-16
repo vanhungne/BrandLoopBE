@@ -172,27 +172,27 @@ namespace BrandLoop.API.Controllers
         /// <param name="campaignId">ID của campaign</param>
         /// <returns>Chi tiết campaign</returns>
         [HttpGet("{campaignId}")]
-        public async Task<ActionResult<ApiResponse<CampaignDto>>> GetCampaignDetail(int campaignId)
+        public async Task<ActionResult<ApiResponse<CampaignDtoVer2>>> GetCampaignDetail(int campaignId)
         {
             try
             {
                 if (campaignId <= 0)
                 {
-                    return BadRequest(ApiResponse<CampaignDto>.ErrorResult("Campaign ID phải lớn hơn 0"));
+                    return BadRequest(ApiResponse<CampaignDtoVer2>.ErrorResult("Campaign ID phải lớn hơn 0"));
                 }
 
                 var campaign = await _campaignService.GetCampaignDetailAsync(campaignId);
                 if (campaign == null)
                 {
-                    return NotFound(ApiResponse<CampaignDto>.ErrorResult("Không tìm thấy campaign"));
+                    return NotFound(ApiResponse<CampaignDtoVer2>.ErrorResult("Không tìm thấy campaign"));
                 }
 
-                return Ok(ApiResponse<CampaignDto>.SuccessResult(campaign, "Lấy chi tiết campaign thành công"));
+                return Ok(ApiResponse<CampaignDtoVer2>.SuccessResult(campaign, "Lấy chi tiết campaign thành công"));
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<CampaignDto>.ErrorResult(ex.Message));
+                    ApiResponse<CampaignDtoVer2>.ErrorResult(ex.Message));
             }
         }
 

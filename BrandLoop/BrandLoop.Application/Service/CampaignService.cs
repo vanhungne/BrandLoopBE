@@ -90,7 +90,7 @@ namespace BrandLoop.Application.Service
             }
         }
 
-        public async Task<CampaignDto> GetCampaignDetailAsync(int campaignId)
+        public async Task<CampaignDtoVer2> GetCampaignDetailAsync(int campaignId)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace BrandLoop.Application.Service
                     return null;
                 }
 
-                var result = _mapper.Map<CampaignDto>(campaign);
+                var result = _mapper.Map<CampaignDtoVer2>(campaign);
                 _logger.LogInformation("Retrieved campaign detail for {CampaignId}", campaignId);
                 return result;
             }

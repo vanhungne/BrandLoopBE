@@ -21,7 +21,7 @@ namespace BrandLoop.Infratructure.Repository
 
         public async Task<BrandProfile> GetByUidAsync(string uid)
         {
-            return await _context.BrandProfiles.FirstOrDefaultAsync(bp => bp.UID == uid);
+            return await _context.BrandProfiles.Include(bp => bp.User).FirstOrDefaultAsync(bp => bp.UID == uid);
         }
 
         public async Task UpdateAsync(BrandProfile brandProfile)

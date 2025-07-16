@@ -15,7 +15,7 @@ namespace BrandLoop.Application.Interfaces
     public interface ICampaignService
     {
         Task<IEnumerable<CampaignDto>> GetBrandCampaignsAsync(string uid);
-        Task<CampaignDto> GetCampaignDetailAsync(int campaignId);
+        Task<CampaignDtoVer2> GetCampaignDetailAsync(int campaignId);
         Task<CampaignDto> CreateCampaignAsync(CreateCampaignDto dto,string uid);
         Task<CampaignDto> UpdateCampaignAsync(int campainId,UpdateCampaignDto dto);
         Task<bool> DeleteCampaignAsync(int campaignId);

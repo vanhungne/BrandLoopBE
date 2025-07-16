@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using BrandLoop.Shared.Helper;
 
 
 namespace BrandLoop.Infratructure.Mapper
@@ -48,7 +49,11 @@ namespace BrandLoop.Infratructure.Mapper
 
             // Brand Profile mappings
             CreateMap<UpdateBrandProfileDto, BrandProfile>()
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTimeHelper.GetVietnamNow()))
+                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+            CreateMap<UpdateBrandProfileDto, User>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.Phone))
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<BrandProfile, BrandProfileResponseDto>();
@@ -87,6 +92,19 @@ namespace BrandLoop.Infratructure.Mapper
             // Campaign mappings
             CreateMap<Campaign, CampaignDto>()
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.CampaignImages));
+
+            CreateMap<Campaign, CampaignDtoVer2>()
+                // Ánh xạ các thuộc tính cơ bản kế thừa từ CampaignDto
+                .ForMember(dest => dest.BrandIndustry, opt => opt.MapFrom(src => src.Brand != null ? src.Brand.Industry : null))
+                .ForMember(dest => dest.TotalKolsJoined, opt => opt.MapFrom(src => src.KolsJoinCampaigns != null ? src.KolsJoinCampaigns.Count : 0))
+                .ForMember(dest => dest.Images,opt => opt.MapFrom( src => src.CampaignImages))
+                // Ánh xạ KoljoinStatuses từ danh sách KolsJoinCampaigns
+                .ForMember(dest => dest.KoljoinStatuses, opt => opt.MapFrom(src => src.KolsJoinCampaigns));
+
+            CreateMap<KolsJoinCampaign, KoljoinStatus>()
+                .ForMember(dest => dest.UID, opt => opt.MapFrom(src => src.UID))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+
 
             CreateMap<CreateCampaignDto, Campaign>()
                 .ForMember(dest => dest.CampaignId, opt => opt.Ignore())
