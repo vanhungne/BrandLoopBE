@@ -13,6 +13,7 @@ namespace BrandLoop.Domain.Enums
         InProgress = 3,
         Completed = 4,
         Cancelled = 5,
-        Deleted = 6
+        Deleted = 6,
+        Overdue = 7,
     }
 }

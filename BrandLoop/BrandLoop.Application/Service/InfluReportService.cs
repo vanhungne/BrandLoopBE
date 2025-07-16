@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BrandLoop.Application.Interfaces;
 using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.Report;
 using BrandLoop.Shared.Helper;
@@ -33,7 +34,7 @@ namespace BrandLoop.Application.Service
         public async Task FinishReport(string userId, InfluReport influReport)
         {
             var campaign = await _campaignRepository.GetCampaignDetailAsync(influReport.CampaignId);
-            if (campaign.Status != Domain.Enums.CampaignStatus.InProgress)
+            if (!(campaign.Status == CampaignStatus.InProgress || campaign.Status == CampaignStatus.Overdue))
                 throw new Exception("Chiến dịch chưa được bắt đầu.");
 
                 var kolJoinCampaign = campaign.KolsJoinCampaigns.FirstOrDefault(k => k.UID == userId);

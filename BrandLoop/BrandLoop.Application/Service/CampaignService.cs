@@ -451,6 +451,8 @@ namespace BrandLoop.Application.Service
                 throw new InvalidOperationException($"Chiến dịch với id {campaignId} không tôn tại.");
             if (checkcampaign.CreatedBy != creatorId)
                 throw new UnauthorizedAccessException($"Bạn không có quyền để bắt đầu chiến dịch này.");
+            if (checkcampaign.Status != CampaignStatus.Approved)
+                throw new InvalidOperationException($"Chiến dịch với id {campaignId} không trong trạng thái phù hơp để bắt đầu.");
 
             // Kiểm tra KOL đã join
             var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(campaignId);
@@ -710,10 +712,10 @@ namespace BrandLoop.Application.Service
                         break;
 
                     case CampaignStatus.InProgress:
-                        if (campaign.Deadline >= now)
-                            campaignCard.totalInprogressCampaigns++;
-                        else
-                            campaignCard.totalOverdueCampaigns++;
+                        campaignCard.totalInprogressCampaigns++;
+                        break;
+                    case CampaignStatus.Overdue:
+                        campaignCard.totalOverdueCampaigns++;
                         break;
 
                     case CampaignStatus.Completed:
