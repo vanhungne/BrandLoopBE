@@ -643,6 +643,8 @@ namespace BrandLoop.Application.Service
 
             // Update influencer's money received from campaign
             await _kolsJoinCampaignRepository.UpdateKolMoney(createFeedback.CampaignId, createFeedback.ToUserId, createFeedback.InfluencerMoney);
+            // Update kol join campaign status to Feedbacked
+            await _kolsJoinCampaignRepository.UpdateKolJoinCampaignStatus(createFeedback.CampaignId, createFeedback.ToUserId, KolJoinCampaignStatus.Feedbacked);
 
             // Create evidence for the feedback
             var evidence = new Evidence
