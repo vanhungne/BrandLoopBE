@@ -572,7 +572,7 @@ namespace BrandLoop.Application.Service
             var kolJoinCampaigns = await _campaignRepository.GetKolsJoinCampaigns(brandReport.CampaignId);
             foreach (var kol in kolJoinCampaigns)
             {
-                if (kol.Status != KolJoinCampaignStatus.Completed)
+                if (kol.Status != KolJoinCampaignStatus.Feedbacked)
                     throw new InvalidOperationException($"Influencer {kol.User.FullName} cần phải báo cáo trước khi kết thúc chiến dịch.");
                 var feedback = await _feedbackRepository.GetFeedbackForKolOfCampaignAsync(brandReport.CampaignId, kol.UID);
                 if (feedback == null)
