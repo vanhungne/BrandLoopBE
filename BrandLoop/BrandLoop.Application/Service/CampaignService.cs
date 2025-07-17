@@ -574,7 +574,7 @@ namespace BrandLoop.Application.Service
             {
                 if (kol.Status != KolJoinCampaignStatus.Completed)
                     throw new InvalidOperationException($"Influencer {kol.User.FullName} cần phải báo cáo trước khi kết thúc chiến dịch.");
-                var feedback = _feedbackRepository.GetFeedbackForKolOfCampaignAsync(brandReport.CampaignId, kol.UID);
+                var feedback = await _feedbackRepository.GetFeedbackForKolOfCampaignAsync(brandReport.CampaignId, kol.UID);
                 if (feedback == null)
                     throw new InvalidOperationException($"Bạn cần phải cho nhận xét toàn bộ influencer đang tham gia trước khi kết thúc chiến dịch.");
             }
@@ -639,6 +639,9 @@ namespace BrandLoop.Application.Service
 
             if (kolJoinCampaign.Status != KolJoinCampaignStatus.Completed)
                 throw new Exception($"Influencer {kolJoinCampaign.User.FullName} chưa hoàn thành báo cáo, không thể đánh giá.");
+
+            if (kolJoinCampaign.Status == KolJoinCampaignStatus.Feedbacked)
+                throw new Exception($"Influencer {kolJoinCampaign.User.FullName} đã được đánh giá rồi.");
 
             var feedback = new Feedback
             {
