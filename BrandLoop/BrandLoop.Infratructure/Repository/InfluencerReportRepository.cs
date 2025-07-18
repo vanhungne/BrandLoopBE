@@ -41,7 +41,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var reports = _context.InfluencerReports
                 .Include(r => r.KolsJoinCampaign)
-                .Where(r => r.InfluencerReportId == campaignId) // Assuming InfluencerReportId is the foreign key to Campaign
+                .Where(r => r.KolsJoinCampaign.CampaignId == campaignId) // Assuming InfluencerReportId is the foreign key to Campaign
                 .ToListAsync();
             return reports;
         }
