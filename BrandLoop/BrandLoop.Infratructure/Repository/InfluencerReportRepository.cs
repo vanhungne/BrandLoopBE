@@ -31,15 +31,15 @@ namespace BrandLoop.Infratructure.Repository
             await _context.SaveChangesAsync();
         }
 
-        public Task<InfluencerReport> GetReportById(int reportId)
+        public async Task<InfluencerReport> GetReportById(int reportId)
         {
-            var report = _context.InfluencerReports.FirstOrDefaultAsync(r => r.InfluencerReportId == reportId);
+            var report = await _context.InfluencerReports.FirstOrDefaultAsync(r => r.InfluencerReportId == reportId);
             return report;
         }
 
-        public Task<List<InfluencerReport>> GetReportsByCampaignId(int campaignId)
+        public async Task<List<InfluencerReport>> GetReportsByCampaignId(int campaignId)
         {
-            var reports = _context.InfluencerReports
+            var reports = await _context.InfluencerReports
                 .Include(r => r.KolsJoinCampaign)
                 .Where(r => r.KolsJoinCampaign.CampaignId == campaignId) // Assuming InfluencerReportId is the foreign key to Campaign
                 .ToListAsync();
