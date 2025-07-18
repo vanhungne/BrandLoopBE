@@ -161,7 +161,7 @@ namespace BrandLoop.API.Controllers
             }
         }
 
-        [HttpPut("brand")]
+        [HttpPatch("brand")]
         public async Task<ActionResult<ProfileResponseDto>> UpdateBrandProfile([FromBody] UpdateBrandProfileDto updateDto)
         {
             try
@@ -180,7 +180,7 @@ namespace BrandLoop.API.Controllers
             }
         }
 
-        [HttpPut("influence")]
+        [HttpPatch("influence")]
         public async Task<ActionResult<ProfileResponseDto>> UpdateInfluenceProfile([FromBody] UpdateInfluenceProfileDto updateDto)
         {
             try
