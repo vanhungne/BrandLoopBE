@@ -134,13 +134,17 @@ namespace BrandLoop.Application.Service
 
         public async Task<InfluencerReportModel> GetReportByCampaignId(int campaignId, string influencerUID)
         {
-            var report = await _influencerReportRepository.GetReportsByCampaignId(campaignId);
-            var influReport = _mapper.Map<InfluReport>(report.FirstOrDefault(r => r.KolsJoinCampaign.UID == influencerUID));
+            var report = (await _influencerReportRepository.GetReportsByCampaignId(campaignId)).FirstOrDefault(r => r.KolsJoinCampaign.UID == influencerUID);
 
-            if (influReport == null)
+            if (report == null)
                 throw new ArgumentException("Bạn chưa báo cáo cho chiến dịch này.");
+
+
+            var influReport = _mapper.Map<InfluReport>(report);
+            var evidences = await _evidenceRepository.GetEvidences(report.InfluencerReportId);
+            influReport.Evidences = _mapper.Map<List<EvidenceDTO>>(evidences);
             var model = _mapper.Map<InfluencerReportModel>(influReport);
-            model.AvgEngagementRate = report.FirstOrDefault(r => r.KolsJoinCampaign.UID == influencerUID).AvgEngagementRate;
+            model.AvgEngagementRate = report.AvgEngagementRate;
 
             var feedback = await _feedbackRepository.GetFeedbackOfKolByCampaignIdAsync(campaignId, influencerUID);
             if (feedback != null)
