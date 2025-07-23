@@ -28,5 +28,10 @@ namespace BrandLoop.Domain.Entities
         public int? InfluencerReportId { get; set; }
 
         public InfluencerReport InfluencerReport { get; set; }
+
+        public int? KolsJoinCampaignId { get; set; }
+
+        [ForeignKey("KolsJoinCampaignId")]
+        public KolsJoinCampaign KolsJoinCampaign { get; set; }
     }
 }

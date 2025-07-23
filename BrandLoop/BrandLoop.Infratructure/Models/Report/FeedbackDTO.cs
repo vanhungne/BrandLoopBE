@@ -48,4 +48,10 @@ namespace BrandLoop.Infratructure.Models.Report
         public string Description { get; set; }
         public int? Rating { get; set; }
     }
+    public class BrandFeedbackDTO : FeedbackDTO
+    {
+        public string EvidenceDescription { get; set; }
+        public string EvidenceLink { get; set; }
+        public int InfluencerMoney { get; set; }
+    }
 }

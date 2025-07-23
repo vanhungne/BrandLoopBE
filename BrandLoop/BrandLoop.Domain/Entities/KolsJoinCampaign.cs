@@ -37,6 +37,7 @@ namespace BrandLoop.Domain.Entities
 
         [ForeignKey("UID")]
         public virtual User User { get; set; }
+        public virtual ICollection<Evidence> BrandEvidences { get; set; }
 
     }
 }

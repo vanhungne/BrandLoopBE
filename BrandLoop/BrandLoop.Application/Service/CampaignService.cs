@@ -666,6 +666,7 @@ namespace BrandLoop.Application.Service
                 Description = createFeedback.EvidenceDescription,
                 Link = createFeedback.EvidenceLink,
                 EvidenceOf = EvidenceType.Brand,
+                KolsJoinCampaignId = kolJoinCampaign.KolsJoinCampaignId
             };
             await _evidenceRepository.AddEvidenceAsync(evidence);
 

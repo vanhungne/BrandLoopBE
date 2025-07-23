@@ -11,5 +11,6 @@ namespace BrandLoop.Infratructure.Interface
     {
         Task AddEvidenceAsync(Evidence evidence);
         Task<List<Evidence>> GetEvidences(int influencerReportId);
+        Task<Evidence> GetEvidencesOfBrand(int kolJoinCampaignId);
     }
 }

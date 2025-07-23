@@ -247,7 +247,13 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.FromUserName, opt => opt.MapFrom(src => src.FromUser.BrandProfile != null
                     ? src.FromUser.BrandProfile.CompanyName
                     : src.FromUser.FullName));
-
+            CreateMap<Feedback, BrandFeedbackDTO>()
+                .ForMember(dest => dest.FeedbackFrom, opt => opt.MapFrom(src => src.FromUser.BrandProfile != null
+                    ? src.FromUser.BrandProfile.CompanyName
+                    : src.FromUser.FullName))
+                .ForMember(dest => dest.FeedbackTo, opt => opt.MapFrom(src => src.ToUser.BrandProfile != null
+                    ? src.ToUser.BrandProfile.CompanyName
+                    : src.ToUser.FullName));
 
             CreateMap<UserOnlineStatus, UserOnlineStatusDto>();
 

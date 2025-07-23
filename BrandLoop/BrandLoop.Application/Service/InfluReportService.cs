@@ -126,17 +126,24 @@ namespace BrandLoop.Application.Service
 
         }
 
-        public async Task<FeedbackDTO> GetFeedbackOfInfluencerByCampaignId(int campaignId, string brandUID, string influencerUID)
+        public async Task<BrandFeedbackDTO> GetFeedbackOfInfluencerByCampaignId(int campaignId, string brandUID, string influencerUID)
         {
             var kolJoinCampaign = (await _campaignRepository.GetKolsJoinCampaigns(campaignId)).FirstOrDefault(k => k.UID == influencerUID);
             if (kolJoinCampaign == null)
                 throw new Exception("Influencer này chưa tham gia chiến dịch này hoặc uid của Influencer bị sai");
             var feedback = (await _feedbackRepository.GetFeedbacksOfBrandByCampaignId(campaignId, brandUID)).FirstOrDefault(fb => fb.ToUserId == influencerUID);
-
+            var evidence = await _evidenceRepository.GetEvidencesOfBrand(kolJoinCampaign.KolsJoinCampaignId);
+            
             if (feedback == null)
                 throw new Exception("Bạn chưa cho feedback cho Influencer trong chiến dịch này.");
+            if (evidence == null)
+                throw new Exception("Bạn chưa cung cấp bằng chứng cho Influencer trong chiến dịch này.");
 
-            return _mapper.Map<FeedbackDTO>(feedback);
+            var result = _mapper.Map<BrandFeedbackDTO>(feedback);
+            result.EvidenceLink = evidence.Link;
+            result.EvidenceDescription = evidence.Description;
+            result.InfluencerMoney = kolJoinCampaign.InfluencerEarning;
+            return result;
         }
 
         public async Task<List<FeedbackDTO>> GetFeedbacksOfBrandByCampaignId(int campaignId, string brandUID)

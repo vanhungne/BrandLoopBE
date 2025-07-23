@@ -602,25 +602,25 @@ namespace BrandLoop.API.Controllers
         /// 
         [HttpGet("feedback/influencer")]
         [Authorize(Roles = "Brand")]
-        public async Task<ActionResult<ApiResponse<FeedbackDTO>>> GetFeedbackOfInfluencer(int campaignId, string influencerUID)
+        public async Task<ActionResult<ApiResponse<BrandFeedbackDTO>>> GetFeedbackOfInfluencer(int campaignId, string influencerUID)
         {
             try
             {
                 var brandUID = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (string.IsNullOrEmpty(brandUID))
-                    return BadRequest(ApiResponse<FeedbackDTO>.ErrorResult("Không tìm thấy thông tin người dùng"));
+                    return BadRequest(ApiResponse<BrandFeedbackDTO>.ErrorResult("Không tìm thấy thông tin người dùng"));
                 var feedback = await _influReportService.GetFeedbackOfInfluencerByCampaignId(campaignId, brandUID, influencerUID);
                 if (feedback == null)
-                    return NotFound(ApiResponse<FeedbackDTO>.ErrorResult("Không tìm thấy feedback cho influencer trong campaign này"));
+                    return NotFound(ApiResponse<BrandFeedbackDTO>.ErrorResult("Không tìm thấy feedback cho influencer trong campaign này"));
 
                 
 
-                return Ok(ApiResponse<FeedbackDTO>.SuccessResult(feedback, "Lấy feedback thành công"));
+                return Ok(ApiResponse<BrandFeedbackDTO>.SuccessResult(feedback, "Lấy feedback thành công"));
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
-                    ApiResponse<FeedbackDTO>.ErrorResult(ex.Message));
+                    ApiResponse<BrandFeedbackDTO>.ErrorResult(ex.Message));
             }
         }
     }
