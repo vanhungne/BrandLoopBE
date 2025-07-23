@@ -126,6 +126,19 @@ namespace BrandLoop.Application.Service
 
         }
 
+        public async Task<FeedbackDTO> GetFeedbackOfInfluencerByCampaignId(int campaignId, string brandUID, string influencerUID)
+        {
+            var kolJoinCampaign = (await _campaignRepository.GetKolsJoinCampaigns(campaignId)).FirstOrDefault(k => k.UID == influencerUID);
+            if (kolJoinCampaign == null)
+                throw new Exception("Influencer này chưa tham gia chiến dịch này hoặc uid của Influencer bị sai");
+            var feedback = (await _feedbackRepository.GetFeedbacksOfBrandByCampaignId(campaignId, brandUID)).FirstOrDefault(fb => fb.ToUserId == influencerUID);
+
+            if (feedback == null)
+                throw new Exception("Bạn chưa cho feedback cho Influencer trong chiến dịch này.");
+
+            return _mapper.Map<FeedbackDTO>(feedback);
+        }
+
         public async Task<List<FeedbackDTO>> GetFeedbacksOfBrandByCampaignId(int campaignId, string brandUID)
         {
             var feedbacks = await _feedbackRepository.GetFeedbacksOfBrandByCampaignId(campaignId, brandUID);
