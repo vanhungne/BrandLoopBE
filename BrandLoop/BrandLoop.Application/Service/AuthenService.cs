@@ -33,6 +33,11 @@ namespace BrandLoop.Application.Service
             return await _emailSender.ConfirmEmailAsync(email);
         }
 
+        public Task<bool> ForgotPasswordAsync(string email)
+        {
+            return _repository.ForgotPasswordAsync(email);
+        }
+
         public string GenerateJwtToken(User user)
         {
             return _repository.GenerateJwtToken(user);
@@ -77,9 +82,19 @@ namespace BrandLoop.Application.Service
             return await _repository.RejectRegistration(uid, reason);
         }
 
+        public Task<bool> ResetPasswordAsync(string token, string newPassword)
+        {
+            return _repository.ResetPasswordAsync(token, newPassword);
+        }
+
         public async Task RevokeRefreshToken(string token)
         {
              await _repository.RevokeRefreshToken(token);
+        }
+
+        public Task<bool> ValidateResetTokenAsync(string token)
+        {
+            return _repository.ValidateResetTokenAsync(token);
         }
     }
 }

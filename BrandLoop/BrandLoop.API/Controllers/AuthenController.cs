@@ -1,16 +1,17 @@
-﻿using BrandLoop.Infratructure.Configurations;
+﻿using BrandLoop.API.Response;
+using BrandLoop.Application.Interfaces;
+using BrandLoop.Domain.Enums;
+using BrandLoop.Infratructure.Configurations;
+using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.Authen;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using BrandLoop.Infratructure.Models.UserModel;
+using BrandLoop.Infratructure.ReporitorY;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using BrandLoop.Infratructure.Interface;
-using BrandLoop.API.Response;
-using BrandLoop.Application.Interfaces;
-using BrandLoop.Domain.Enums;
-using BrandLoop.Infratructure.ReporitorY;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 namespace BrandLoop.API.Controllers
 {
     [Route("api/[controller]")]
@@ -318,6 +319,61 @@ namespace BrandLoop.API.Controllers
                 });
             }
         }
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            var result = await _service.ForgotPasswordAsync(model.Email);
+
+            // Luôn trả về success để tránh email enumeration
+            return Ok(new { message = "If your email exists in our system, you will receive a password reset link shortly." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Validate token trước
+            var isValidToken = await _service.ValidateResetTokenAsync(model.Token);
+            if (!isValidToken)
+            {
+                return BadRequest(new { message = "Invalid or expired reset token." });
+            }
+
+            var result = await _service.ResetPasswordAsync(model.Token, model.NewPassword);
+
+            if (result)
+            {
+                return Ok(new { message = "Password has been reset successfully. Please login with your new password." });
+            }
+
+            return BadRequest(new { message = "Failed to reset password. Please try again." });
+        }
+
+        [HttpGet("validate-reset-token")]
+        public async Task<IActionResult> ValidateResetToken([FromQuery] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(new { message = "Token is required." });
+            }
+
+            var isValid = await _service.ValidateResetTokenAsync(token);
+
+            if (isValid)
+            {
+                return Ok(new { message = "Token is valid." });
+            }
+
+            return BadRequest(new { message = "Invalid or expired token." });
+        }
     }
 }

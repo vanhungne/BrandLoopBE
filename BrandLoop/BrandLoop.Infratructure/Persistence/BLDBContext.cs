@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BrandLoop.Domain.Entities;
+using BrandLoop.Shared.Helper;
 
 namespace BrandLoop.Infratructure.Persistence
 {
@@ -51,6 +52,8 @@ namespace BrandLoop.Infratructure.Persistence
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Evidence> Evidences { get; set; }
 
+        public DbSet<ContactMessage> ContactMessages { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -343,6 +346,28 @@ namespace BrandLoop.Infratructure.Persistence
 
                 entity.Property(e => e.ConnectionId)
                     .HasMaxLength(100);
+            });
+            modelBuilder.Entity<ContactMessage>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FullName).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Category).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Subject).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Message).IsRequired().HasMaxLength(1000);
+                entity.Property(e => e.IsRead).HasDefaultValue(false);
+            });
+            modelBuilder.Entity<PasswordResetToken>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Token).IsRequired().HasMaxLength(500);
+                entity.Property(e => e.UID).IsRequired().HasMaxLength(32);
+                entity.HasIndex(e => e.Token).IsUnique();
+
+                entity.HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UID)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
             // Default data seeding
             modelBuilder.Entity<Role>().HasData(

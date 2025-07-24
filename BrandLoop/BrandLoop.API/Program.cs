@@ -178,14 +178,14 @@ public class Program
 
         //config ure Kestrel server to listen on specific ports
 
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-            options.ListenAnyIP(8880); // HTTP
-            options.ListenAnyIP(2053, listenOptions =>
-            {
-                listenOptions.UseHttps("/app/https/brandloop.io.vn.pfx", "12345");
-            });
-        });
+        //builder.WebHost.ConfigureKestrel(options =>
+        //{
+        //    options.ListenAnyIP(8880); // HTTP
+        //    options.ListenAnyIP(2053, listenOptions =>
+        //    {
+        //        listenOptions.UseHttps("/app/https/brandloop.io.vn.pfx", "12345");
+        //    });
+        //});
 
 
         // Set default time zone

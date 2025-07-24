@@ -4,6 +4,7 @@ using BrandLoop.Infratructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BrandLoop.Infratructure.Migrations
 {
     [DbContext(typeof(BLDBContext))]
-    partial class BLDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250724083325_upcontact")]
+    partial class upcontact
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -379,7 +382,9 @@ namespace BrandLoop.Infratructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValue(new DateTime(2025, 7, 24, 8, 33, 23, 411, DateTimeKind.Utc).AddTicks(7589));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -1052,43 +1057,6 @@ namespace BrandLoop.Infratructure.Migrations
                     b.HasIndex("UID");
 
                     b.ToTable("Notifications");
-                });
-
-            modelBuilder.Entity("BrandLoop.Domain.Entities.PasswordResetToken", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsUsed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("UID")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
-                    b.HasIndex("UID");
-
-                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("BrandLoop.Domain.Entities.Payment", b =>
@@ -1828,17 +1796,6 @@ namespace BrandLoop.Infratructure.Migrations
                 {
                     b.HasOne("BrandLoop.Domain.Entities.User", "User")
                         .WithMany("Notifications")
-                        .HasForeignKey("UID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BrandLoop.Domain.Entities.PasswordResetToken", b =>
-                {
-                    b.HasOne("BrandLoop.Domain.Entities.User", "User")
-                        .WithMany()
                         .HasForeignKey("UID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

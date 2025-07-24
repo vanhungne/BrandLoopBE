@@ -25,6 +25,9 @@ namespace BrandLoop.Infratructure.Interface
         Task<User> GetUserByEmail(string email);
         Task RevokeRefreshToken(string token);
 
+        Task<bool> ForgotPasswordAsync(string email);
+        Task<bool> ResetPasswordAsync(string token, string newPassword);
+        Task<bool> ValidateResetTokenAsync(string token);
 
     }
 }

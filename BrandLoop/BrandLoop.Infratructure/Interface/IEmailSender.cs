@@ -17,5 +17,7 @@ namespace BrandLoop.Infratructure.Interface
         Task UpdateUserAsync(User user);
         Task<string> ConfirmEmailAsync(string email);
         string GetMailBody(RegisterBaseModel model, string accountType = "User");
+        string GetPasswordResetEmailBody(User user, string resetToken);
+        string GetPasswordChangedEmailBody(User user);
     }
 }

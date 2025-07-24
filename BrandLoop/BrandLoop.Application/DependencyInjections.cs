@@ -37,6 +37,7 @@ namespace BrandLoop.Application
             services.AddScoped<IInfluencerDashboardService, InfluencerDashboardService>();
             services.AddScoped< IAdminDashboardService , AdminDashboardService>();
             services.AddHostedService<CampaignBackgroundService>();
+            services.AddScoped<IContactMessageService, ContactMessageService>();
             return services;
         }
     }
