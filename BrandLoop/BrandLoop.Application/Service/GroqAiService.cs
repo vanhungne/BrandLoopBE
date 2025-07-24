@@ -29,8 +29,9 @@ namespace BrandLoop.Application.Service
                                                    CancellationToken ct = default)
         {
             var systemPrompt = !string.IsNullOrEmpty(req.SystemPrompt)
-                     ? $"{_opt.DefaultSystemPrompt}\n\n{req.SystemPrompt}"
-                     : _opt.DefaultSystemPrompt;
+                 ? $"{_opt.DefaultSystemPrompt}\n\n{req.SystemPrompt}\n\nHãy trả lời hoàn toàn bằng tiếng Việt."
+                 : $"{_opt.DefaultSystemPrompt}\n\nHãy trả lời hoàn toàn bằng tiếng Việt.";
+
 
             var body = new
             {

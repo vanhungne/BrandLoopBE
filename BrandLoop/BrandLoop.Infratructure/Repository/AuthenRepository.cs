@@ -527,6 +527,119 @@ namespace BrandLoop.Infratructure.ReporitorY
                     });
             }
         }
+
+        public async Task<bool> ForgotPasswordAsync(string email)
+        {
+            try
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == email && u.Status == UserStatus.Active);
+
+                if (user == null)
+                {
+                    // Trả về true để tránh email enumeration attack
+                    return true;
+                }
+
+                // Tạo token reset password
+                var resetToken = GeneratePasswordResetToken();
+                var expiryTime = DateTimeHelper.GetVietnamNow().AddMinutes(30); // Token có hiệu lực 30 phút
+
+                // Lưu token vào database
+                var passwordResetToken = new PasswordResetToken
+                {
+                    UID = user.UID,
+                    Token = resetToken,
+                    ExpiresAt = expiryTime,
+                    IsUsed = false,
+                    CreatedAt = DateTimeHelper.GetVietnamNow()
+                };
+
+                // Xóa các token cũ chưa sử dụng của user này
+                var oldTokens = await _context.PasswordResetTokens
+                    .Where(t => t.UID == user.UID && !t.IsUsed)
+                    .ToListAsync();
+
+                _context.PasswordResetTokens.RemoveRange(oldTokens);
+                _context.PasswordResetTokens.Add(passwordResetToken);
+                await _context.SaveChangesAsync();
+
+                // Gửi email reset password
+                string emailBody = _emailSender.GetPasswordResetEmailBody(user, resetToken);
+                await _emailSender.EmailSendAsync(user.Email, "Reset Your Password - BrandLoop", emailBody);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                return false;
+            }
+        }
+
+        public async Task<bool> ResetPasswordAsync(string token, string newPassword)
+        {
+            try
+            {
+                var resetToken = await _context.PasswordResetTokens
+                    .Include(t => t.User)
+                    .FirstOrDefaultAsync(t => t.Token == token &&
+                                       !t.IsUsed &&
+                                       t.ExpiresAt > DateTimeHelper.GetVietnamNow());
+
+                if (resetToken == null)
+                {
+                    return false; // Token không hợp lệ hoặc đã hết hạn
+                }
+
+                var user = resetToken.User;
+                if (user == null || user.Status != UserStatus.Active)
+                {
+                    return false;
+                }
+
+                // Cập nhật password
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+                user.UpdatedAt = DateTimeHelper.GetVietnamNow();
+
+                // Đánh dấu token đã được sử dụng
+                resetToken.IsUsed = true;
+
+                // Xóa tất cả refresh tokens của user để buộc đăng nhập lại
+                var refreshTokens = await _context.RefreshTokens
+                    .Where(rt => rt.UID == user.UID)
+                    .ToListAsync();
+                _context.RefreshTokens.RemoveRange(refreshTokens);
+
+                await _context.SaveChangesAsync();
+
+                // Gửi email thông báo password đã được thay đổi
+                string emailBody = _emailSender.GetPasswordChangedEmailBody(user);
+                await _emailSender.EmailSendAsync(user.Email, "Password Changed Successfully - BrandLoop", emailBody);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                return false;
+            }
+        }
+
+        public async Task<bool> ValidateResetTokenAsync(string token)
+        {
+            var resetToken = await _context.PasswordResetTokens
+                .FirstOrDefaultAsync(t => t.Token == token &&
+                                   !t.IsUsed &&
+                                   t.ExpiresAt > DateTimeHelper.GetVietnamNow());
+
+            return resetToken != null;
+        }
+
+        private string GeneratePasswordResetToken()
+        {
+            return Guid.NewGuid().ToString("N") + Guid.NewGuid().ToString("N");
+        }
         public static string GenerateCompactUid()
         {
             return Guid.NewGuid().ToString("N");

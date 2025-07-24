@@ -37,6 +37,7 @@ namespace BrandLoop.Domain.Entities
 
         public string Address { get; set; }
 
+
         [StringLength(50)]
         public string? TaxCode { get; set; }
 

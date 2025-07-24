@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTO\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BrandLoop.Shared\BrandLoop.Shared.csproj" />
   </ItemGroup>
 

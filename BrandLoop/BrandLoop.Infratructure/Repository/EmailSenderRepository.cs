@@ -261,5 +261,60 @@ namespace BrandLoop.Infratructure.Reporitory
         </div>
     </div>", accountType, reason, supportEmail);
         }
+
+        public string GetPasswordResetEmailBody(User user, string resetToken)
+        {
+            string resetUrl = $"{_configuration["Host:https"]}/reset-password?token={resetToken}";
+
+            return string.Format(@"
+<div style='text-align: center; font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;'>
+    <div style='max-width: 500px; margin: auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);'>
+        <h1 style='color: #333;'>Password Reset Request</h1>
+        <p style='font-size: 16px; color: #555;'>Hello {0},</p>
+        <p style='font-size: 16px; color: #555;'>We received a request to reset your password for your BrandLoop account.</p>
+        <p style='font-size: 16px; color: #555;'>Click the button below to reset your password:</p>
+        <a href='{1}' style='display: inline-block; 
+                             text-decoration: none;
+                             background-color: #FF6B6B;
+                             color: #ffffff;
+                             font-size: 18px;
+                             font-weight: bold;
+                             padding: 12px 24px;
+                             border-radius: 8px;
+                             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                             transition: background-color 0.3s ease;'
+           onmouseover='this.style.backgroundColor=""#FF5252""'
+           onmouseout='this.style.backgroundColor=""#FF6B6B""'>
+            Reset Password
+        </a>
+        <p style='margin-top: 20px; font-size: 14px; color: #777;'>This link will expire in 30 minutes for security reasons.</p>
+        <p style='margin-top: 10px; font-size: 14px; color: #777;'>If you didn't request this password reset, please ignore this email or contact support if you have concerns.</p>
+        <hr style='margin: 20px 0; border: none; border-top: 1px solid #eee;'>
+        <p style='font-size: 12px; color: #999;'>For security reasons, this link can only be used once.</p>
+    </div>
+</div>", user.FullName, resetUrl);
+        }
+
+        public string GetPasswordChangedEmailBody(User user)
+        {
+            return string.Format(@"
+<div style='text-align: center; font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px;'>
+    <div style='max-width: 500px; margin: auto; background: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);'>
+        <h1 style='color: #333;'>Password Changed Successfully</h1>
+        <div style='margin: 20px 0; padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 5px;'>
+            <p style='margin: 0; color: #155724; font-weight: bold;'>✓ Your password has been changed successfully</p>
+        </div>
+        <p style='font-size: 16px; color: #555;'>Hello {0},</p>
+        <p style='font-size: 16px; color: #555;'>Your BrandLoop account password has been successfully changed.</p>
+        <p style='font-size: 16px; color: #555;'>If you made this change, no further action is required.</p>
+        <div style='background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin: 20px 0;'>
+            <p style='margin: 0; color: #856404;'><strong>Security Notice:</strong> If you didn't make this change, please contact our support team immediately.</p>
+        </div>
+        <p style='margin-top: 20px; font-size: 14px; color: #777;'>Changed on: {1}</p>
+        <hr style='margin: 20px 0; border: none; border-top: 1px solid #eee;'>
+        <p style='font-size: 12px; color: #999;'>If you have any concerns, please contact support@brandloop.com</p>
+    </div>
+</div>", user.FullName, DateTimeHelper.GetVietnamNow().ToString("dd/MM/yyyy HH:mm"));
+        }
     }
 }
