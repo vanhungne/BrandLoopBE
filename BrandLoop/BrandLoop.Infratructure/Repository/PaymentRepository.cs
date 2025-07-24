@@ -2,6 +2,7 @@
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Persistence;
+using BrandLoop.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -129,7 +130,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var payments = _context.Payments
                 .Include(p => p.campaign)
-                .Where(p => p.campaign.CreatedBy == uid && p.campaign.UploadedDate.Year == year && p.Type == PaymentType.campaign)
+                .Where(p => p.campaign.CreatedBy == uid && p.campaign.UploadedDate.Year == year && p.Type == PaymentType.campaign && p.Status == PaymentStatus.Succeeded)
                 .ToListAsync();
             return payments;
         }
@@ -138,7 +139,7 @@ namespace BrandLoop.Infratructure.Repository
         {
             var payments = _context.Payments
                 .Include(p => p.SubscriptionRegister)
-                .Where(p => p.SubscriptionRegister.UID == uid && p.CreatedAt.Year == year && p.Type == PaymentType.subscription)
+                .Where(p => p.SubscriptionRegister.UID == uid && p.CreatedAt.Year == year && p.Type == PaymentType.subscription && p.Status == PaymentStatus.Succeeded)
                 .ToListAsync();
             return payments;
         }
@@ -152,6 +153,17 @@ namespace BrandLoop.Infratructure.Repository
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
             return payments;
+        }
+
+        public Task<List<Payment>> GetAllOverduePayment()
+        {
+            var thresholdTime = DateTimeHelper.GetVietnamNow().AddMinutes(-10);
+            var overduePayments = _context.Payments
+                .AsNoTracking()
+                .Where(p => p.Status == PaymentStatus.pending && p.CreatedAt < thresholdTime)
+                .ToListAsync();
+
+            return overduePayments;
         }
     }
 }
