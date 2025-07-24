@@ -1,4 +1,6 @@
-﻿using BrandLoop.Application.Interfaces;
+﻿using AutoMapper;
+using BrandLoop.Application.Interfaces;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.Dashboard;
 using System;
@@ -13,11 +15,13 @@ namespace BrandLoop.Application.Service
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public AdminDashboardService(IPaymentRepository paymentRepository, IUserRepository userRepository)
+        public AdminDashboardService(IPaymentRepository paymentRepository, IUserRepository userRepository, IMapper mapper)
         {
             _paymentRepository = paymentRepository;
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
         public async Task<PaymentChart> GetPaymentChart(int? year)
@@ -91,5 +95,25 @@ namespace BrandLoop.Application.Service
             return result;
         }
 
+        public async Task BanUser(string uid)
+        {
+            var user = await _userRepository.GetByIdAsync(uid);
+            if (user.Status == UserStatus.Banned)
+                throw new Exception("User is already banned.");
+
+            await _userRepository.UpdateUserStatus(uid, UserStatus.Banned);
+        }
+
+        public async Task<List<PaymentDTO>> GetAllPayment(int? year, PaymentStatus? status, PaymentType? type)
+        {
+            var payments = await _paymentRepository.GetAllPaymentByYearTypeAndStatus(year, type, status);
+            return _mapper.Map<List<PaymentDTO>>(payments);
+        }
+
+        public async Task<PaymentDetailDTO> GetPaymentDetail(long paymentId)
+        {
+            var payment = await _paymentRepository.GetPaymentDetail(paymentId);
+            return _mapper.Map<PaymentDetailDTO>(payment);
+        }
     }
 }

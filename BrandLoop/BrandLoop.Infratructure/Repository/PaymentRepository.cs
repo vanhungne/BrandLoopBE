@@ -147,6 +147,7 @@ namespace BrandLoop.Infratructure.Repository
         public Task<List<Payment>> GetAllPaymentsByYear(int? year)
         {
             var payments = _context.Payments
+                .AsNoTracking()
                 .Include(p => p.SubscriptionRegister)
                 .Include(p => p.campaign)
                 .Where(p => (year == null || p.CreatedAt.Year == year) && p.Status == PaymentStatus.Succeeded)
@@ -164,6 +165,41 @@ namespace BrandLoop.Infratructure.Repository
                 .ToListAsync();
 
             return overduePayments;
+        }
+
+        public async Task<Payment> GetPaymentDetail(long paymentId)
+        {
+            var payment = await _context.Payments
+                .AsNoTracking()
+                .Include(p => p.SubscriptionRegister)
+                    .ThenInclude(sr => sr.User)
+                .Include(p => p.SubscriptionRegister)
+                    .ThenInclude(sr => sr.Subscription)
+                .Include(p => p.campaign)
+                    .ThenInclude(c => c.Brand)
+                .Include(p => p.campaign)
+                    .ThenInclude(c => c.Creator)
+                .FirstOrDefaultAsync(p => p.PaymentId == paymentId);
+            if (payment == null)
+                throw new Exception("Payment not found");
+            return payment;
+        }
+
+        public async Task<List<Payment>> GetAllPaymentByYearTypeAndStatus(int? year, PaymentType? type, PaymentStatus? status)
+        {
+            var query = _context.Payments
+                .AsNoTracking()
+                .Include(p => p.SubscriptionRegister)
+                .Include(p => p.campaign)
+                .Where(p => (year == null || p.CreatedAt.Year == year));
+
+            if (status.HasValue)
+                query = query.Where(p => p.Status == status.Value);
+
+            if (type.HasValue)
+                query = query.Where(p => p.Type == type.Value);
+
+            return await query.OrderByDescending(p => p.CreatedAt).ToListAsync();
         }
     }
 }

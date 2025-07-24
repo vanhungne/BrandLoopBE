@@ -109,9 +109,9 @@ namespace BrandLoop.Infratructure.Repository
                 return subscriptionRegister;
             }
             else
-                throw new Exception($"Subscription register with ID {registrationId} not found.");
+                throw new Exception($"Không tìm thấy gói đăng ký của người dùng.");
         }
-        
+
         public async Task<List<SubscriptionRegister>> GetActiveSubscriptionByUserIdAsync(string uid)
         {
             return await _context.SubscriptionRegisters
@@ -120,5 +120,14 @@ namespace BrandLoop.Infratructure.Repository
                 .ToListAsync();
         }
 
+        public async Task<List<SubscriptionRegister>> GetExpiredSubscriptionsAsync()
+        {
+            var thresholdTime = DateTimeHelper.GetVietnamNow().AddMinutes(-10);
+            var overdueRegistration = await _context.SubscriptionRegisters
+                .AsNoTracking()
+                .Where(sr => sr.Status == RegisterSubStatus.Pending && sr.RegistrationDate < thresholdTime)
+                .ToListAsync();
+            return overdueRegistration;
+        }
     }
 }

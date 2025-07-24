@@ -234,6 +234,20 @@ namespace BrandLoop.Infratructure.Mapper
                 .ForMember(dest => dest.PaymentId, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().PaymentId))
                 .ForMember(dest => dest.paymentType, opt => opt.MapFrom(src => src.Payments.FirstOrDefault().Type));
 
+            // payment mapping
+            CreateMap<Payment, PaymentDTO>();
+
+            CreateMap<Payment, PaymentDetailDTO>()
+                .ForMember(dest => dest.SubscriptionName,
+                    opt => opt.MapFrom(src => src.SubscriptionRegister != null ? src.SubscriptionRegister.Subscription.SubscriptionName : null))
+                .ForMember(dest => dest.FullName,
+                    opt => opt.MapFrom(src => src.SubscriptionRegister != null ? src.SubscriptionRegister.User.FullName : null))
+                .ForMember(dest => dest.CampaignName,
+                    opt => opt.MapFrom(src => src.campaign != null ? src.campaign.CampaignName : null))
+                .ForMember(dest => dest.CompanyName,
+                    opt => opt.MapFrom(src => src.campaign != null ? src.campaign.Brand.CompanyName : null));
+
+
             // Feedback mapping
             CreateMap<Feedback, FeedbackDTO>()
                 .ForMember(dest => dest.FeedbackFrom, opt => opt.MapFrom(src => src.FromUser.BrandProfile != null

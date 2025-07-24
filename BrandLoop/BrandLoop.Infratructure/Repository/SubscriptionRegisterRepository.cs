@@ -2,6 +2,7 @@
 using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Persistence;
+using BrandLoop.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -97,7 +98,7 @@ namespace BrandLoop.Infratructure.Repository
             return await _context.SubscriptionRegisters
                 .Include(sr => sr.User)
                 .Include(sr => sr.Subscription)
-                .Where(sr => sr.ExpirationDate != null && sr.ExpirationDate <= DateTime.Now)
+                .Where(sr => sr.Status == RegisterSubStatus.Active && sr.ExpirationDate != null && sr.ExpirationDate <= DateTimeHelper.GetVietnamNow())
                 .ToListAsync();
         }
 

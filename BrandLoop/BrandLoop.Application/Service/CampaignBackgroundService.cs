@@ -41,7 +41,7 @@ namespace BrandLoop.Application.Service
                         foreach (var campaign in overdueCampaigns)
                         {
                             await campaignRepository.UpdateCampaignStatusAsync(campaign.CampaignId, CampaignStatus.Overdue);
-                            _logger.LogInformation($"Đã cập nhật campaign {campaign.CampaignId} sang trạng thái Overdue.");
+                            _logger.LogInformation($"Updated campaign with id {campaign.CampaignId} into status Overdue.");
                         }
 
                         // Cap nhat cac paymnt qua han
@@ -52,13 +52,36 @@ namespace BrandLoop.Application.Service
                         foreach (var payment in overduePayments)
                         {
                             await paymentRepository.UpdatePaymentStatus(payment.PaymentId, PaymentStatus.Failed);
-                            _logger.LogInformation($"Đã cập nhật payment {payment.PaymentId} sang trạng thái Failed.");
+                            _logger.LogInformation($"Updated payment with id {payment.PaymentId} into status Failed.");
                         }
+
+                        // Cập nhật các subscription đã hết hạn
+                        
+                        var subscriptionRepository = scope.ServiceProvider.GetRequiredService<ISubscriptionRepository>();
+                        var subscriptionRegisterRepository = scope.ServiceProvider.GetRequiredService<ISubscriptionRegisterRepository>();
+
+                        var expiredSubscriptions = await subscriptionRegisterRepository.GetExpiredSubscriptionsAsync();
+                        foreach (var subscriptionRegister in expiredSubscriptions)
+                        {
+                            // Cập nhật trạng thái đăng ký
+                             await subscriptionRepository.UpdateRegisterStatus(subscriptionRegister.Id, RegisterSubStatus.Expired);
+                            _logger.LogInformation($"Updated subscription register with id {subscriptionRegister.Id} into status Expired.");
+                        }
+
+                        // Câp nhật các đăng ký đang chờ xử lý quá hạn
+                        var pendingSubscriptions = await subscriptionRepository.GetExpiredSubscriptionsAsync();
+                        foreach (var subscriptionRegister in pendingSubscriptions)
+                        {
+                            // Cập nhật trạng thái đăng ký
+                            await subscriptionRepository.UpdateRegisterStatus(subscriptionRegister.Id, RegisterSubStatus.Failed);
+                            _logger.LogInformation($"Updated subscription register with id {subscriptionRegister.Id} into status Failed.");
+                        }
+
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Lỗi khi cập nhật trạng thái campaign hoac paymnt.");
+                    _logger.LogError(ex, "Lỗi khi cập nhật trạng thái trong backgroud service.");
                 }
 
                 await Task.Delay(_interval, stoppingToken); // chờ 10 phút rồi chạy tiếp

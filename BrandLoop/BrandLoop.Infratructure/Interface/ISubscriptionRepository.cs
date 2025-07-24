@@ -23,5 +23,6 @@ namespace BrandLoop.Infratructure.Interface
         Task<SubscriptionRegister> RegisterSubscription(SubscriptionRegister subscriptionRegister);
         Task<SubscriptionRegister> UpdateRegisterStatus(int registrationId, RegisterSubStatus status);
         Task<List<SubscriptionRegister>> GetActiveSubscriptionByUserIdAsync(string uid);
+        Task<List<SubscriptionRegister>> GetExpiredSubscriptionsAsync();
     }
 }

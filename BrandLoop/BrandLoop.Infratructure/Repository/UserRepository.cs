@@ -4,6 +4,7 @@ using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Interface;
 using BrandLoop.Infratructure.Models.UserModel;
 using BrandLoop.Infratructure.Persistence;
+using BrandLoop.Shared.Helper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -458,6 +459,16 @@ namespace BrandLoop.Infratructure.Repository
             return results;
         }
 
+        public async Task UpdateUserStatus(string uid, UserStatus status)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UID == uid);
+            if (user == null)
+                throw new Exception("Không tìm thấy tài khoản người dùng.");
+
+            user.Status = status;
+            user.UpdatedAt = DateTimeHelper.GetVietnamNow();
+            await _context.SaveChangesAsync();
+        }
 
     }
 }

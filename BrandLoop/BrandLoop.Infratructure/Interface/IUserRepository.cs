@@ -1,4 +1,5 @@
 ﻿using BrandLoop.Domain.Entities;
+using BrandLoop.Domain.Enums;
 using BrandLoop.Infratructure.Models.UserModel;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,6 @@ namespace BrandLoop.Infratructure.Interface
         Task UpdateAsync(User user);
         Task SaveChangesAsync();
         Task<List<User>> GetAllNewsUserInYear(int? year);
+        Task UpdateUserStatus(string uid, UserStatus status);
     }
 }
