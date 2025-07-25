@@ -104,6 +104,15 @@ namespace BrandLoop.Application.Service
             await _userRepository.UpdateUserStatus(uid, UserStatus.Banned);
         }
 
+        public async Task UnBanUser(string uid)
+        {
+            var user = await _userRepository.GetByIdAsync(uid);
+            if (user.Status == UserStatus.Active)
+                throw new Exception("User is already Active.");
+
+            await _userRepository.UpdateUserStatus(uid, UserStatus.Active);
+        }
+
         public async Task<List<PaymentDTO>> GetAllPayment(int? year, PaymentStatus? status, PaymentType? type)
         {
             var payments = await _paymentRepository.GetAllPaymentByYearTypeAndStatus(year, type, status);

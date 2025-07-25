@@ -28,7 +28,6 @@ namespace BrandLoop.Infratructure.Models.Dashboard
         public string Type { get; set; }
         public string PaymentMethod { get; set; }
         public string TransactionCode { get; set; }
-        public string? PaymentLink { get; set; }
         public string? SubscriptionName { get; set; }
         public string? FullName { get; set; }
         public string? CampaignName { get; set; }

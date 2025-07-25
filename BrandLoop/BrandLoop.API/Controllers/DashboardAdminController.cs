@@ -69,6 +69,24 @@ namespace BrandLoop.API.Controllers
         }
 
         /// <summary>
+        /// Go ban tai khoan nguoi dung
+        /// </summary>
+        /// 
+        [HttpPut("unban-user/{uid}")]
+        public async Task<IActionResult> UnBanUser(string uid)
+        {
+            try
+            {
+                await _adminDashboardService.UnBanUser(uid);
+                return Ok(new { message = "User unbanned successfully." });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { message = e.Message });
+            }
+        }
+
+        /// <summary>
         /// Lấy danh sách tất cả giao dịch
         /// </summary>
         /// 
