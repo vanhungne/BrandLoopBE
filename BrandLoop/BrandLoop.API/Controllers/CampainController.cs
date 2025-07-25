@@ -623,5 +623,55 @@ namespace BrandLoop.API.Controllers
                     ApiResponse<BrandFeedbackDTO>.ErrorResult(ex.Message));
             }
         }
+
+        /// <summary>
+        /// Influencer lấy feedback của brand trong chiến dịch
+        /// </summary> 
+        /// 
+        [HttpGet("feedback/influencer/my-feedback")]
+        [Authorize(Roles = "Influencer")]
+        public async Task<ActionResult<ApiResponse<BrandFeedbackDTO>>> GetFeedbackFromBrandOfInfluencer(int campaignId)
+        {
+            try
+            {
+                var influencerUID = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(influencerUID))
+                    return BadRequest(ApiResponse<BrandFeedbackDTO>.ErrorResult("Không tìm thấy thông tin người dùng"));
+                var feedback = await _influReportService.GetFeedbackFromBrandOfKol(campaignId, influencerUID);
+                if (feedback == null)
+                    return NotFound(ApiResponse<BrandFeedbackDTO>.ErrorResult("Không tìm thấy feedback cho influencer trong campaign này"));
+
+                return Ok(ApiResponse<BrandFeedbackDTO>.SuccessResult(feedback, "Lấy feedback thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<BrandFeedbackDTO>.ErrorResult(ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Brand lay thong tin report của influencer o campaign (campaignId)
+        /// </summary>
+        /// 
+        [HttpGet("get-influencer-report")]
+        [Authorize(Roles = "Brand")]
+        public async Task<ActionResult<ApiResponse<InfluencerReportModel>>> BrandGetInfluencerReport(int campaignId, string influencerUID)
+        {
+            try
+            {
+                var report = await _influReportService.GetReportByCampaignId(campaignId, influencerUID);
+                if (report == null)
+                {
+                    return NotFound(ApiResponse<InfluencerReportModel>.ErrorResult("Không tìm thấy báo cáo cho campaign này"));
+                }
+                return Ok(ApiResponse<InfluencerReportModel>.SuccessResult(report, "Lấy báo cáo thành công"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ApiResponse<InfluencerReportModel>.ErrorResult(ex.Message));
+            }
+        }
     }
 }

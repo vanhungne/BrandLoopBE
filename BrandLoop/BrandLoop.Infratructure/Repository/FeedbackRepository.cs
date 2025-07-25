@@ -52,6 +52,9 @@ namespace BrandLoop.Infratructure.Repository
         public async Task<Feedback> GetFeedbackForKolOfCampaignAsync(int campaignId, string kolId)
         {
             var feedback = await _context.Feedbacks
+                .Include(f => f.FromUser)
+                    .ThenInclude(fu => fu.BrandProfile)
+                .Include(f => f.ToUser)
                 .FirstOrDefaultAsync(f => f.CampaignId == campaignId && f.ToUserId == kolId && f.FeedbackFrom == Domain.Enums.FeedbackType.Brand);
             return feedback;
         }

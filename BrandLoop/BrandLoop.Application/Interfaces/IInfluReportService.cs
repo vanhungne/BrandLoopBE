@@ -13,5 +13,6 @@ namespace BrandLoop.Application.Interfaces
         Task<InfluencerReportModel> GetReportByCampaignId(int reportId, string influencerUID);
         Task<List<FeedbackDTO>> GetFeedbacksOfBrandByCampaignId(int campaignId, string brandUID);
         Task<BrandFeedbackDTO> GetFeedbackOfInfluencerByCampaignId(int campaignId,string brandUID,  string influencerUID);
+        Task<BrandFeedbackDTO> GetFeedbackFromBrandOfKol(int campaignId, string influencerUID);
     }
 }

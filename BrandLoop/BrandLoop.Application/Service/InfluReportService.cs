@@ -172,5 +172,21 @@ namespace BrandLoop.Application.Service
 
             return model;
         }
+
+        public async Task<BrandFeedbackDTO> GetFeedbackFromBrandOfKol(int campaignId, string influencerUID)
+        {
+            var feedback = (await _feedbackRepository.GetFeedbackForKolOfCampaignAsync(campaignId, influencerUID));
+            if (feedback == null)
+                throw new Exception("Brand chưa cho feedback cho bạn trong chiến dịch này.");
+            var result = _mapper.Map<BrandFeedbackDTO>(feedback);
+            var evidence = await _evidenceRepository.GetEvidencesOfBrand(feedback.FeedbackId);
+            if (evidence == null)
+                throw new Exception("Brand chưa cung cấp bằng chứng cho bạn trong chiến dịch này.");
+
+            result.EvidenceLink = evidence.Link;
+            result.EvidenceDescription = evidence.Description;
+            result.InfluencerMoney = (await _campaignRepository.GetKolsJoinCampaigns(campaignId)).FirstOrDefault(k => k.UID == influencerUID)?.InfluencerEarning ?? 0;
+            return result;
+        }
     }
 }
