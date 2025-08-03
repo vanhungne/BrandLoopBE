@@ -119,8 +119,7 @@ public class Program
             options.AddPolicy("AllowSpecificOrigin", policy =>
             {
                 policy.WithOrigins("http://localhost:8880", "https://159.223.70.240:2053", "https://localhost:2053"
-                    , "https://brandloop.io.vn", "https://www.brandloop.io.vn", "https://139.59.226.2:2053", "http://localhost:5173"
-                    , "https://brandloop.pages.dev")
+                    , "https://brandloop.io.vn", "https://www.brandloop.io.vn")
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .AllowCredentials();
