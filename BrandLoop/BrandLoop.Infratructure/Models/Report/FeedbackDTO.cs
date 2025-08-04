@@ -53,5 +53,7 @@ namespace BrandLoop.Infratructure.Models.Report
         public string EvidenceDescription { get; set; }
         public string EvidenceLink { get; set; }
         public int InfluencerMoney { get; set; }
+        public string? FromImage { get; set; }
+        public string? ToImage { get; set; }
     }
 }
