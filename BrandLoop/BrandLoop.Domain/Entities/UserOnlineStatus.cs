@@ -14,7 +14,7 @@ namespace BrandLoop.Domain.Entities
         [StringLength(32)]
         public string UserId { get; set; }
 
-        public bool IsOnline { get; set; }
+        public bool IsOnline { get; set; } = true;
         public DateTime LastSeen { get; set; } = DateTime.UtcNow;
 
         [StringLength(100)]
