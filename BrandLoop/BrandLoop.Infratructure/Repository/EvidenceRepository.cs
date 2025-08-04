@@ -36,5 +36,13 @@ namespace BrandLoop.Infratructure.Repository
                 .FirstOrDefaultAsync(e => e.KolsJoinCampaignId == kolJoinCampaignId);
             return evidences;
         }
+
+        public async Task<Evidence> GetEvidencesOfBrand(int campaignId, string kolUID)
+        {
+            var evidences = await _context.Evidences
+                .Include(e => e.KolsJoinCampaign)
+                .FirstOrDefaultAsync(e => e.KolsJoinCampaign.CampaignId == campaignId && e.KolsJoinCampaign.UID == kolUID);
+            return evidences;
+        }
     }
 }

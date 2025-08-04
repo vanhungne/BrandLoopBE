@@ -179,7 +179,7 @@ namespace BrandLoop.Application.Service
             if (feedback == null)
                 throw new Exception("Brand chưa cho feedback cho bạn trong chiến dịch này.");
             var result = _mapper.Map<BrandFeedbackDTO>(feedback);
-            var evidence = await _evidenceRepository.GetEvidencesOfBrand(feedback.FeedbackId);
+            var evidence = await _evidenceRepository.GetEvidencesOfBrand(campaignId, influencerUID);
             if (evidence == null)
                 throw new Exception("Brand chưa cung cấp bằng chứng cho bạn trong chiến dịch này.");
 
