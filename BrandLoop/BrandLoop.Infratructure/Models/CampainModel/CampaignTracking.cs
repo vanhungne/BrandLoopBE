@@ -28,6 +28,7 @@ namespace BrandLoop.Infratructure.Models.CampainModel
         public int KolsJoinCampaignId { get; set; }
         public string UID { get; set; }
         public string KolName { get; set; }
+        public string ProfileImage { get; set; }
         public string Status { get; set; }
 
         public string TotalContent { get; set; }

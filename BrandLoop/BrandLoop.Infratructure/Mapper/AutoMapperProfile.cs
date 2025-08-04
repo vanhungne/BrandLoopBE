@@ -172,6 +172,7 @@ namespace BrandLoop.Infratructure.Mapper
 
             CreateMap<KolsJoinCampaign, KolInCampaignTracking>()
                 .ForMember(dest => dest.KolName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.ProfileImage, opt => opt.MapFrom(src => src.User.ProfileImage))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
                 .ForMember(dest => dest.TotalContent, opt => opt.MapFrom(src => src.InfluencerReport != null ? src.InfluencerReport.TotalContent : "0"))
                 .ForMember(dest => dest.TotalReach, opt => opt.MapFrom(src => src.InfluencerReport != null ? src.InfluencerReport.TotalReach : 0))
